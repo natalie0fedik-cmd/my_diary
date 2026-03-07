@@ -12,9 +12,9 @@ const MONTHS_UA = [
 ];
 
 const MONTH_COLORS = [
-  "#7c6af7", "#a78bfa", "#60a5fa", "#34d399",
-  "#fbbf24", "#f87171", "#fb923c", "#e879f9",
-  "#38bdf8", "#4ade80", "#facc15", "#f472b6",
+  "#4ade80", "#22c55e", "#86efac", "#34d399",
+  "#10b981", "#059669", "#4ec564", "#84cc16",
+  "#a3e635", "#52c46a", "#16a34a", "#34d399",
 ];
 
 interface Props {
@@ -88,7 +88,8 @@ export default function ConclusionPage({ params }: Props) {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)", padding: "2rem 1.5rem" }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg)", paddingLeft: 28 }}>
+      <div style={{ padding: "0 1.5rem" }}>
       <div style={{ maxWidth: 860, margin: "0 auto" }}>
         {/* Breadcrumb */}
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "1.5rem", fontSize: "0.85rem", color: "var(--muted)" }}>
@@ -423,6 +424,7 @@ export default function ConclusionPage({ params }: Props) {
             </button>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

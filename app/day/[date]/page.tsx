@@ -14,7 +14,7 @@ const MONTHS_UA = [
 const DAYS_UA_FULL = ["Неділя", "Понеділок", "Вівторок", "Середа", "Четвер", "П'ятниця", "Субота"];
 
 const MOOD_LABELS = ["", "Погано", "Нижче норми", "Нормально", "Добре", "Відмінно"];
-const MOOD_COLORS = ["", "#f87171", "#fb923c", "#fbbf24", "#4ade80", "#7c6af7"];
+const MOOD_COLORS = ["", "#f87171", "#fb923c", "#fbbf24", "#4ade80", "#4ec564"];
 
 interface Props {
   params: Promise<{ date: string }>;
@@ -105,7 +105,8 @@ export default function DayPage({ params }: Props) {
   const totalTasks = data.tasks.length;
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)", padding: "2rem 1.5rem" }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg)", paddingLeft: 28 }}>
+      <div style={{ padding: "0 1.5rem" }}>
       <div style={{ maxWidth: 860, margin: "0 auto" }}>
         {/* Breadcrumb */}
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "1.5rem", fontSize: "0.85rem", color: "var(--muted)" }}>
@@ -213,7 +214,7 @@ export default function DayPage({ params }: Props) {
                   >
                     <span style={{
                       fontSize: "0.78rem",
-                      color: entry.text.trim() ? "#7c6af7" : "var(--muted)",
+                      color: entry.text.trim() ? "var(--accent)" : "var(--muted)",
                       minWidth: 36,
                       fontWeight: 600,
                       paddingTop: 2,
@@ -347,9 +348,9 @@ export default function DayPage({ params }: Props) {
                   style={{
                     padding: "7px 14px",
                     borderRadius: 8,
-                    border: "1px solid #7c6af7",
-                    background: "#7c6af722",
-                    color: "#7c6af7",
+                    border: "1px solid var(--accent)",
+                    background: "var(--surface2)",
+                    color: "var(--accent)",
                     cursor: "pointer",
                     fontSize: "0.85rem",
                     fontWeight: 600,
@@ -376,17 +377,17 @@ export default function DayPage({ params }: Props) {
                 value={data.notes}
                 onChange={e => updateNotes(e.target.value)}
                 placeholder="Вільні нотатки за день..."
+                className="lined-paper"
                 style={{
                   width: "100%",
                   minHeight: 220,
-                  padding: "10px 12px",
+                  padding: "4px 12px",
                   borderRadius: 8,
                   border: "1px solid var(--border)",
                   background: "var(--surface2)",
                   fontSize: "0.88rem",
                   color: "var(--text)",
-                  lineHeight: 1.7,
-                  fontFamily: "inherit",
+                  fontFamily: "'Lora', Georgia, serif",
                   resize: "vertical",
                 }}
               />
@@ -411,6 +412,7 @@ export default function DayPage({ params }: Props) {
             ← Назад до місяця
           </Link>
         </div>
+      </div>
       </div>
     </div>
   );
