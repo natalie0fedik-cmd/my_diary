@@ -216,6 +216,17 @@ export default function DayPage({ params }: Props) {
                 Харчування
               </span>
             </Link>
+            {/* Activity link */}
+            <Link href={`/day/${date}/activity`} style={{ textDecoration: "none" }}>
+              <span style={{
+                display: "inline-block", padding: "5px 12px", borderRadius: 8,
+                border: "1px solid #60a5fa44", background: "#60a5fa12",
+                color: "#60a5fa", fontSize: "0.8rem", fontFamily: "'Lora',Georgia,serif",
+                cursor: "pointer",
+              }}>
+                Активність
+              </span>
+            </Link>
           </div>
         </div>
 

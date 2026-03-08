@@ -67,6 +67,24 @@ export interface BudgetPlan {
   financialGoal: string;
 }
 
+// ── Activity diary ───────────────────────────────────────────────────────────
+
+export type ActivityType = "cardio" | "strength" | "yoga" | "walk" | "sport" | "other";
+
+export interface ActivityEntry {
+  id: string;
+  type: ActivityType;
+  name: string;
+  duration: number; // minutes
+  note: string;
+}
+
+export interface DayActivity {
+  date: string;
+  entries: ActivityEntry[];
+  generalNote: string;
+}
+
 // ── Food diary ───────────────────────────────────────────────────────────────
 
 export type MealType = "breakfast" | "lunch" | "dinner" | "snacks";

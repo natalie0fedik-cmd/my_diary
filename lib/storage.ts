@@ -3,10 +3,11 @@ import {
   MonthGoals, Goal, GoalCategory,
   BudgetPlan, BudgetEntry,
   DayFood, FoodItem, MealType,
+  DayActivity, ActivityEntry, ActivityType,
 } from "./types";
 
 // suppress unused import warnings
-void (null as unknown as Task | KpiItem | Goal | GoalCategory | BudgetEntry | FoodItem | MealType);
+void (null as unknown as Task | KpiItem | Goal | GoalCategory | BudgetEntry | FoodItem | MealType | ActivityEntry | ActivityType);
 
 function isClient() {
   return typeof window !== "undefined";
@@ -109,6 +110,24 @@ export function saveDayFood(data: DayFood): void {
 
 function makeEmptyFood(date: string): DayFood {
   return { date, breakfast: [], lunch: [], dinner: [], snacks: [], water: 0, notes: "" };
+}
+
+// ── Activity diary ────────────────────────────────────────────────────────────
+
+export function getDayActivity(date: string): DayActivity {
+  if (!isClient()) return makeEmptyActivity(date);
+  const raw = localStorage.getItem("diary_activity_" + date);
+  if (!raw) return makeEmptyActivity(date);
+  return JSON.parse(raw) as DayActivity;
+}
+
+export function saveDayActivity(data: DayActivity): void {
+  if (!isClient()) return;
+  localStorage.setItem("diary_activity_" + data.date, JSON.stringify(data));
+}
+
+function makeEmptyActivity(date: string): DayActivity {
+  return { date, entries: [], generalNote: "" };
 }
 
 // ── Export / Import ──────────────────────────────────────────────────────────
