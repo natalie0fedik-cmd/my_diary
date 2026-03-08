@@ -1,5 +1,5 @@
 export interface HourEntry {
-  hour: number; // 0-23
+  hour: number;
   text: string;
 }
 
@@ -10,11 +10,11 @@ export interface Task {
 }
 
 export interface DayData {
-  date: string; // "YYYY-MM-DD"
+  date: string;
   schedule: HourEntry[];
   notes: string;
   tasks: Task[];
-  mood?: number; // 1-5
+  mood?: number;
 }
 
 export interface KpiItem {
@@ -26,9 +26,63 @@ export interface KpiItem {
 }
 
 export interface MonthConclusion {
-  monthKey: string; // "YYYY-MM"
+  monthKey: string;
   personal: string;
   wins: string;
   improvements: string;
   kpis: KpiItem[];
+}
+
+// ── Goals ────────────────────────────────────────────────────────────────────
+
+export type GoalCategory = "personal" | "work" | "health" | "finance" | "other";
+
+export interface Goal {
+  id: string;
+  text: string;
+  done: boolean;
+  category: GoalCategory;
+}
+
+export interface MonthGoals {
+  monthKey: string;
+  goals: Goal[];
+  generalNote: string;
+}
+
+// ── Budget ───────────────────────────────────────────────────────────────────
+
+export interface BudgetEntry {
+  id: string;
+  type: "income" | "expense";
+  category: string;
+  amount: number;
+  description: string;
+}
+
+export interface BudgetPlan {
+  monthKey: string;
+  entries: BudgetEntry[];
+  tipsForNext: string;
+  financialGoal: string;
+}
+
+// ── Food diary ───────────────────────────────────────────────────────────────
+
+export type MealType = "breakfast" | "lunch" | "dinner" | "snacks";
+
+export interface FoodItem {
+  id: string;
+  name: string;
+  calories?: string;
+}
+
+export interface DayFood {
+  date: string;
+  breakfast: FoodItem[];
+  lunch: FoodItem[];
+  dinner: FoodItem[];
+  snacks: FoodItem[];
+  water: number;
+  notes: string;
 }

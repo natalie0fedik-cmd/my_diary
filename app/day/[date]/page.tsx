@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { getDayData, saveDayData, generateId } from "@/lib/storage";
+import { getDayData, saveDayData, generateId, getImportantDates, toggleImportantDate } from "@/lib/storage";
 import { DayData, Task } from "@/lib/types";
 
 const MONTHS_UA = [
@@ -32,13 +32,18 @@ export default function DayPage({ params }: Props) {
   const monthNum = parseInt(monthStr);
   const monthIdx = monthNum - 1;
 
+  const monthKey = `${year}-${monthStr}`;
+  const dayNum = parseInt(dayStr);
+
   const [data, setData] = useState<DayData | null>(null);
   const [newTask, setNewTask] = useState("");
   const [saving, setSaving] = useState(false);
+  const [isImportant, setIsImportant] = useState(false);
 
   useEffect(() => {
     setData(getDayData(date));
-  }, [date]);
+    setIsImportant(getImportantDates(monthKey).has(dayNum));
+  }, [date, monthKey, dayNum]);
 
   const save = useCallback((updated: DayData) => {
     saveDayData(updated);
@@ -93,6 +98,11 @@ export default function DayPage({ params }: Props) {
     save(updated);
   };
 
+  const toggleImportant = () => {
+    toggleImportantDate(monthKey, dayNum);
+    setIsImportant(v => !v);
+  };
+
   if (!data) {
     return (
       <div style={{ minHeight: "100vh", background: "var(--bg)", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -106,7 +116,7 @@ export default function DayPage({ params }: Props) {
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)", paddingLeft: 28 }}>
-      <div style={{ padding: "0 1.5rem" }}>
+      <div style={{ padding: "2rem 1.5rem" }}>
       <div style={{ maxWidth: 860, margin: "0 auto" }}>
         {/* Breadcrumb */}
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "1.5rem", fontSize: "0.85rem", color: "var(--muted)" }}>
@@ -133,7 +143,7 @@ export default function DayPage({ params }: Props) {
           gap: 12,
         }}>
           <div>
-            <h1 style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--text)", margin: 0 }}>
+            <h1 style={{ fontFamily: "'Caveat',cursive", fontSize: "1.8rem", fontWeight: 700, color: "var(--accent2)", margin: 0 }}>
               {formatDateUA(date)}
             </h1>
             <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 10 }}>
@@ -165,23 +175,47 @@ export default function DayPage({ params }: Props) {
               )}
             </div>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
             {saving && (
-              <span style={{ fontSize: "0.78rem", color: "var(--muted)" }}>Збережено</span>
+              <span style={{ fontSize: "0.78rem", color: "var(--muted)", fontFamily: "'Lora',Georgia,serif" }}>Збережено</span>
             )}
             {totalTasks > 0 && (
               <div style={{
-                padding: "6px 14px",
-                borderRadius: 8,
+                padding: "5px 12px", borderRadius: 8,
                 background: doneTasks === totalTasks ? "#4ade8022" : "var(--surface2)",
                 border: `1px solid ${doneTasks === totalTasks ? "#4ade80" : "var(--border)"}`,
                 color: doneTasks === totalTasks ? "#4ade80" : "var(--muted)",
-                fontSize: "0.82rem",
-                fontWeight: 600,
+                fontSize: "0.8rem", fontWeight: 600, fontFamily: "'Lora',Georgia,serif",
               }}>
                 {doneTasks}/{totalTasks} задач
               </div>
             )}
+            {/* Mark as important */}
+            <button
+              onClick={toggleImportant}
+              title={isImportant ? "Прибрати позначку важливого" : "Позначити день як важливий"}
+              style={{
+                padding: "5px 12px", borderRadius: 8, cursor: "pointer",
+                border: `1px solid ${isImportant ? "#f6c54766" : "var(--border)"}`,
+                background: isImportant ? "#f6c54722" : "var(--surface2)",
+                color: isImportant ? "#f6c547" : "var(--muted)",
+                fontSize: "0.8rem", fontWeight: isImportant ? 600 : 400,
+                fontFamily: "'Lora',Georgia,serif",
+              }}
+            >
+              ★ {isImportant ? "Важливий" : "Позначити"}
+            </button>
+            {/* Food link */}
+            <Link href={`/day/${date}/food`} style={{ textDecoration: "none" }}>
+              <span style={{
+                display: "inline-block", padding: "5px 12px", borderRadius: 8,
+                border: "1px solid #f6c54744", background: "#f6c54712",
+                color: "#f6c547", fontSize: "0.8rem", fontFamily: "'Lora',Georgia,serif",
+                cursor: "pointer",
+              }}>
+                Харчування
+              </span>
+            </Link>
           </div>
         </div>
 
