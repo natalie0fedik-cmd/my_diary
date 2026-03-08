@@ -2,6 +2,7 @@
 
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
+import * as XLSX from "xlsx";
 import { getDayActivity } from "@/lib/storage";
 import { DayActivity, ActivityEntry, ActivityType } from "@/lib/types";
 
@@ -86,42 +87,41 @@ export default function MonthActivityPage({ params }: Props) {
     setRows(built);
   }, [year, month, days, yearStr, monthStr]);
 
-  // ── CSV export ──────────────────────────────────────────────────────────────
-  function downloadCSV() {
+  // ── XLSX export ─────────────────────────────────────────────────────────────
+  function downloadXLSX() {
     const headers = [
       "Дата", "День тижня",
       "Кроки", "Зарядка (хв)", "Розтяжка (хв)", "Степер (хв)",
       "Масаж (ділянки)", "Своя активність", "Нотатки",
     ];
-    const data = rows.map(r => {
+    const dataRows = rows.map(r => {
       const byType = (type: ActivityType) => r.activity.entries.filter(e => e.type === type);
       const minutesOf = (type: ActivityType) =>
         byType(type).reduce((s, e) => s + (parseInt(e.value) || 0), 0);
-      const stepsArr = byType("steps");
-      const totalSteps = stepsArr.reduce((s, e) => s + (parseInt(e.value) || 0), 0);
+      const totalSteps = byType("steps").reduce((s, e) => s + (parseInt(e.value) || 0), 0);
       const massageParts = byType("massage").map(e => e.value).join(", ");
       const custom = byType("custom").map(e => `${e.customName ?? "?"}: ${e.value}`).join("; ");
       return [
         `${String(r.day).padStart(2,"0")}.${monthStr}.${yearStr}`,
         DAYS_UA_FULL[r.weekday],
-        totalSteps > 0 ? String(totalSteps) : "—",
-        minutesOf("exercise") > 0 ? String(minutesOf("exercise")) : "—",
-        minutesOf("stretching") > 0 ? String(minutesOf("stretching")) : "—",
-        minutesOf("stepper") > 0 ? String(minutesOf("stepper")) : "—",
-        massageParts || "—",
-        custom || "—",
+        totalSteps > 0 ? totalSteps : "",
+        minutesOf("exercise") || "",
+        minutesOf("stretching") || "",
+        minutesOf("stepper") || "",
+        massageParts || "",
+        custom || "",
         r.activity.generalNote.replace(/\n/g, " ") || "",
       ];
     });
 
-    const csv = [headers, ...data]
-      .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(","))
-      .join("\n");
-    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = `активність-${yearStr}-${monthStr}.csv`;
-    a.click(); URL.revokeObjectURL(url);
+    const ws = XLSX.utils.aoa_to_sheet([headers, ...dataRows]);
+    ws["!cols"] = [
+      { wch: 12 }, { wch: 14 }, { wch: 10 }, { wch: 14 },
+      { wch: 14 }, { wch: 12 }, { wch: 28 }, { wch: 30 }, { wch: 40 },
+    ];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, `${MONTHS_UA[monthIdx]} ${yearStr}`);
+    XLSX.writeFile(wb, `активність-${yearStr}-${monthStr}.xlsx`);
   }
 
   const filledRows    = rows.filter(r => r.hasData);
@@ -177,7 +177,7 @@ export default function MonthActivityPage({ params }: Props) {
                 {showAll ? "Лише із записами" : "Всі дні"}
               </button>
               <button
-                onClick={downloadCSV}
+                onClick={downloadXLSX}
                 style={{
                   padding: "7px 18px", borderRadius: 8,
                   border: "1px solid #60a5fa", background: "#60a5fa22",
@@ -186,7 +186,7 @@ export default function MonthActivityPage({ params }: Props) {
                   display: "flex", alignItems: "center", gap: 6,
                 }}
               >
-                &#8659; Завантажити CSV
+                &#8659; Завантажити XLSX
               </button>
             </div>
           </div>

@@ -2,6 +2,7 @@
 
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
+import * as XLSX from "xlsx";
 import { getDayFood } from "@/lib/storage";
 import { DayFood, FoodItem } from "@/lib/types";
 
@@ -69,36 +70,31 @@ export default function MonthFoodPage({ params }: Props) {
     setRows(built);
   }, [year, month, days, yearStr, monthStr]);
 
-  // ── CSV export ──────────────────────────────────────────────────────────────
-  function downloadCSV() {
-    const headers = [
-      "Дата", "День тижня",
-      "Сніданок", "Обід", "Вечеря", "Перекуси",
-      "Вода (склянки)", "Нотатки",
-    ];
-    const data = rows.map(r => [
+  // ── XLSX export ─────────────────────────────────────────────────────────────
+  function downloadXLSX() {
+    const headers = ["Дата","День тижня","Сніданок","Обід","Вечеря","Перекуси","Вода (склянки)","Нотатки"];
+    const dataRows = rows.map(r => [
       `${String(r.day).padStart(2,"0")}.${monthStr}.${yearStr}`,
       DAYS_UA_FULL[r.weekday],
-      joinItems(r.food.breakfast) || "—",
-      joinItems(r.food.lunch)     || "—",
-      joinItems(r.food.dinner)    || "—",
-      joinItems(r.food.snacks)    || "—",
-      String(r.food.water),
+      joinItems(r.food.breakfast) || "",
+      joinItems(r.food.lunch)     || "",
+      joinItems(r.food.dinner)    || "",
+      joinItems(r.food.snacks)    || "",
+      r.food.water,
       r.food.notes.replace(/\n/g, " ") || "",
     ]);
 
-    const csv = [headers, ...data]
-      .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(","))
-      .join("\n");
+    const ws = XLSX.utils.aoa_to_sheet([headers, ...dataRows]);
 
-    // UTF-8 BOM so Excel opens it correctly
-    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement("a");
-    a.href     = url;
-    a.download = `харчування-${yearStr}-${monthStr}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    // column widths
+    ws["!cols"] = [
+      { wch: 12 }, { wch: 14 }, { wch: 30 }, { wch: 30 },
+      { wch: 30 }, { wch: 30 }, { wch: 14 }, { wch: 40 },
+    ];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, `${MONTHS_UA[monthIdx]} ${yearStr}`);
+    XLSX.writeFile(wb, `харчування-${yearStr}-${monthStr}.xlsx`);
   }
 
   const filledRows   = rows.filter(r => r.hasData);
@@ -154,7 +150,7 @@ export default function MonthFoodPage({ params }: Props) {
                 {showAll ? "Лише із записами" : "Всі дні"}
               </button>
               <button
-                onClick={downloadCSV}
+                onClick={downloadXLSX}
                 style={{
                   padding: "7px 18px", borderRadius: 8,
                   border: "1px solid #4ade80", background: "#4ade8022",
@@ -163,7 +159,7 @@ export default function MonthFoodPage({ params }: Props) {
                   display: "flex", alignItems: "center", gap: 6,
                 }}
               >
-                &#8659; Завантажити CSV
+                &#8659; Завантажити XLSX
               </button>
             </div>
           </div>
