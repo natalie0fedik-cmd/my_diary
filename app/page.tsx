@@ -3,6 +3,9 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { exportAllData, importAllData } from "@/lib/storage";
+import dynamic from "next/dynamic";
+
+const ThemePicker = dynamic(() => import("@/components/ThemePicker"), { ssr: false });
 
 const MONTHS_UA = [
   "Січень", "Лютий", "Березень", "Квітень",
@@ -19,6 +22,7 @@ const MONTH_COLORS = [
 export default function Home() {
   const now = new Date();
   const [year, setYear] = useState(now.getFullYear());
+  const [showThemePicker, setShowThemePicker] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const currentMonth = now.getMonth();
@@ -139,8 +143,8 @@ export default function Home() {
                 >›</button>
               </div>
 
-              {/* Save / Load */}
-              <div style={{ display: "flex", gap: 8 }}>
+              {/* Save / Load / Theme */}
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
                 <button
                   onClick={handleExport}
                   title="Зберегти всі дані як JSON файл"
@@ -182,6 +186,24 @@ export default function Home() {
                   onChange={handleImport}
                   style={{ display: "none" }}
                 />
+                <button
+                  onClick={() => setShowThemePicker(true)}
+                  title="Змінити тему щоденника"
+                  style={{
+                    padding: "6px 14px",
+                    borderRadius: 8,
+                    border: "1px solid var(--accent)",
+                    background: "var(--accent)",
+                    color: "var(--bg)",
+                    cursor: "pointer",
+                    fontSize: "0.78rem",
+                    fontFamily: "var(--font-body)",
+                    fontWeight: 700,
+                    display: "flex", alignItems: "center", gap: 5,
+                  }}
+                >
+                  Тема
+                </button>
               </div>
             </div>
           </div>
@@ -289,13 +311,17 @@ export default function Home() {
 
         <div style={{
           marginTop: "1.5rem", textAlign: "center",
-          fontFamily: "'Caveat', cursive",
+          fontFamily: "var(--font-heading)",
           color: "var(--muted)", fontSize: "1rem",
           letterSpacing: "0.03em",
         }}>
           Оберіть місяць, щоб переглянути записи
         </div>
       </div>
+
+      {showThemePicker && (
+        <ThemePicker onClose={() => setShowThemePicker(false)} />
+      )}
     </div>
   );
 }
