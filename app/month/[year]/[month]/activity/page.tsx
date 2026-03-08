@@ -3,7 +3,7 @@
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { getDayActivity } from "@/lib/storage";
-import { DayActivity, ActivityType } from "@/lib/types";
+import { DayActivity, ActivityEntry, ActivityType } from "@/lib/types";
 
 const MONTHS_UA = [
   "Січень","Лютий","Березень","Квітень",
@@ -28,42 +28,45 @@ const NAV = [
   { label: "Підсумки",   href: (y: string, m: string) => `/month/${y}/${m}/conclusion` },
 ];
 
-const ACTIVITY_TYPES: { key: ActivityType; label: string; emoji: string; color: string }[] = [
-  { key: "cardio",   label: "Кардіо",    emoji: "🏃", color: "#f87171" },
-  { key: "strength", label: "Силова",    emoji: "💪", color: "#fb923c" },
-  { key: "yoga",     label: "Йога",      emoji: "🧘", color: "#c084fc" },
-  { key: "walk",     label: "Прогулянка",emoji: "🚶", color: "#4ade80" },
-  { key: "sport",    label: "Спорт",     emoji: "⚽", color: "#60a5fa" },
-  { key: "other",    label: "Інше",      emoji: "✨", color: "#9ca3af" },
+interface ActivityDef { key: ActivityType; label: string; icon: string; color: string; unit: string }
+const ACTIVITY_DEFS: ActivityDef[] = [
+  { key: "steps",      label: "Кроки",    icon: "👣", color: "#4ade80", unit: "кроків"  },
+  { key: "massage",    label: "Масаж",    icon: "🤲", color: "#c084fc", unit: ""        },
+  { key: "exercise",   label: "Зарядка",  icon: "🌅", color: "#fb923c", unit: "хв"     },
+  { key: "stretching", label: "Розтяжка", icon: "🙆", color: "#f472b6", unit: "хв"     },
+  { key: "stepper",    label: "Степер",   icon: "🪜", color: "#60a5fa", unit: "хв"     },
+  { key: "custom",     label: "Своя",     icon: "✦",  color: "#fbbf24", unit: ""        },
 ];
 
-function typeInfo(key: ActivityType) {
-  return ACTIVITY_TYPES.find(t => t.key === key) ?? ACTIVITY_TYPES[ACTIVITY_TYPES.length - 1];
+function actDef(type: ActivityType): ActivityDef {
+  return ACTIVITY_DEFS.find(d => d.key === type) ?? ACTIVITY_DEFS[ACTIVITY_DEFS.length - 1];
 }
 
-function daysInMonth(year: number, month: number) {
-  return new Date(year, month, 0).getDate();
+function entryChipLabel(e: ActivityEntry): string {
+  const d = actDef(e.type);
+  if (e.type === "custom") return `${e.customName ?? "—"}: ${e.value}`;
+  if (d.unit) return `${e.value} ${d.unit}`;
+  return e.value;
 }
+
+function daysInMonth(year: number, month: number) { return new Date(year, month, 0).getDate(); }
 
 interface DayRow {
-  day: number;
-  weekday: number;
-  activity: DayActivity;
-  hasData: boolean;
-  totalMinutes: number;
+  day: number; weekday: number; activity: DayActivity; hasData: boolean;
+  totalSteps: number; totalMinutes: number;
 }
 
 interface Props { params: Promise<{ year: string; month: string }> }
 
 export default function MonthActivityPage({ params }: Props) {
   const { year: yearStr, month: monthStr } = use(params);
-  const year  = parseInt(yearStr);
+  const year = parseInt(yearStr);
   const month = parseInt(monthStr);
   const monthIdx = month - 1;
   const color = MONTH_COLORS[monthIdx];
-  const days  = daysInMonth(year, month);
+  const days = daysInMonth(year, month);
 
-  const [rows, setRows]   = useState<DayRow[]>([]);
+  const [rows, setRows] = useState<DayRow[]>([]);
   const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
@@ -72,8 +75,13 @@ export default function MonthActivityPage({ params }: Props) {
       const dateStr = `${yearStr}-${monthStr}-${String(d).padStart(2, "0")}`;
       const activity = getDayActivity(dateStr);
       const hasData = activity.entries.length > 0;
-      const totalMinutes = activity.entries.reduce((s, e) => s + e.duration, 0);
-      built.push({ day: d, weekday: new Date(year, month - 1, d).getDay(), activity, hasData, totalMinutes });
+      const totalSteps = activity.entries
+        .filter(e => e.type === "steps")
+        .reduce((s, e) => s + (parseInt(e.value) || 0), 0);
+      const totalMinutes = activity.entries
+        .filter(e => e.type === "exercise" || e.type === "stretching" || e.type === "stepper")
+        .reduce((s, e) => s + (parseInt(e.value) || 0), 0);
+      built.push({ day: d, weekday: new Date(year, month - 1, d).getDay(), activity, hasData, totalSteps, totalMinutes });
     }
     setRows(built);
   }, [year, month, days, yearStr, monthStr]);
@@ -82,29 +90,26 @@ export default function MonthActivityPage({ params }: Props) {
   function downloadCSV() {
     const headers = [
       "Дата", "День тижня",
-      "Тренувань", "Всього хвилин",
-      "Кардіо", "Силова", "Йога", "Прогулянка", "Спорт", "Інше",
-      "Деталі", "Нотатки",
+      "Кроки", "Зарядка (хв)", "Розтяжка (хв)", "Степер (хв)",
+      "Масаж (ділянки)", "Своя активність", "Нотатки",
     ];
-
     const data = rows.map(r => {
-      const countByType = (type: ActivityType) =>
-        r.activity.entries.filter(e => e.type === type).length;
-      const details = r.activity.entries
-        .map(e => `${typeInfo(e.type).emoji}${e.name}${e.duration ? ` (${e.duration}хв)` : ""}`)
-        .join("; ");
+      const byType = (type: ActivityType) => r.activity.entries.filter(e => e.type === type);
+      const minutesOf = (type: ActivityType) =>
+        byType(type).reduce((s, e) => s + (parseInt(e.value) || 0), 0);
+      const stepsArr = byType("steps");
+      const totalSteps = stepsArr.reduce((s, e) => s + (parseInt(e.value) || 0), 0);
+      const massageParts = byType("massage").map(e => e.value).join(", ");
+      const custom = byType("custom").map(e => `${e.customName ?? "?"}: ${e.value}`).join("; ");
       return [
         `${String(r.day).padStart(2,"0")}.${monthStr}.${yearStr}`,
         DAYS_UA_FULL[r.weekday],
-        String(r.activity.entries.length),
-        String(r.totalMinutes),
-        String(countByType("cardio")),
-        String(countByType("strength")),
-        String(countByType("yoga")),
-        String(countByType("walk")),
-        String(countByType("sport")),
-        String(countByType("other")),
-        details || "—",
+        totalSteps > 0 ? String(totalSteps) : "—",
+        minutesOf("exercise") > 0 ? String(minutesOf("exercise")) : "—",
+        minutesOf("stretching") > 0 ? String(minutesOf("stretching")) : "—",
+        minutesOf("stepper") > 0 ? String(minutesOf("stepper")) : "—",
+        massageParts || "—",
+        custom || "—",
         r.activity.generalNote.replace(/\n/g, " ") || "",
       ];
     });
@@ -112,25 +117,22 @@ export default function MonthActivityPage({ params }: Props) {
     const csv = [headers, ...data]
       .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(","))
       .join("\n");
-
     const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement("a");
-    a.href     = url;
-    a.download = `активність-${yearStr}-${monthStr}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `активність-${yearStr}-${monthStr}.csv`;
+    a.click(); URL.revokeObjectURL(url);
   }
 
-  const filledRows     = rows.filter(r => r.hasData);
-  const displayRows    = showAll ? rows : filledRows;
-  const totalMinutes   = rows.reduce((s, r) => s + r.totalMinutes, 0);
-  const totalSessions  = rows.reduce((s, r) => s + r.activity.entries.length, 0);
-  const daysWithData   = filledRows.length;
+  const filledRows    = rows.filter(r => r.hasData);
+  const displayRows   = showAll ? rows : filledRows;
+  const daysWithData  = filledRows.length;
+  const grandSteps    = rows.reduce((s, r) => s + r.totalSteps, 0);
+  const grandMinutes  = rows.reduce((s, r) => s + r.totalMinutes, 0);
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)", paddingLeft: 28 }}>
-      <div style={{ maxWidth: 960, margin: "0 auto", padding: "2rem 1.5rem" }}>
+      <div style={{ maxWidth: 1000, margin: "0 auto", padding: "2rem 1.5rem" }}>
 
         {/* Breadcrumb */}
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "1.25rem", fontSize: "0.82rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>
@@ -157,8 +159,9 @@ export default function MonthActivityPage({ params }: Props) {
                 Фізична активність
               </h1>
               <p style={{ fontFamily: "var(--font-body)", fontStyle: "italic", color: "var(--muted)", fontSize: "0.82rem", margin: "6px 0 0" }}>
-                {daysWithData} {daysWithData === 1 ? "активний день" : daysWithData < 5 ? "активних дні" : "активних днів"}
-                {totalMinutes > 0 && ` · ${totalMinutes} хвилин загалом`}
+                {daysWithData} {daysWithData < 5 ? "активних дні" : "активних днів"}
+                {grandSteps > 0 && ` · ${grandSteps.toLocaleString()} кроків`}
+                {grandMinutes > 0 && ` · ${grandMinutes} хв`}
               </p>
             </div>
             <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
@@ -189,7 +192,7 @@ export default function MonthActivityPage({ params }: Props) {
           </div>
         </div>
 
-        {/* Nav tabs */}
+        {/* Nav */}
         <div style={{ display: "flex", gap: 6, marginBottom: "1.25rem", flexWrap: "wrap" }}>
           {NAV.map(n => {
             const active = n.label === "Активність";
@@ -213,24 +216,25 @@ export default function MonthActivityPage({ params }: Props) {
         {/* Stats cards */}
         {daysWithData > 0 && (
           <div style={{ display: "flex", gap: 10, marginBottom: "1.25rem", flexWrap: "wrap" }}>
-            <div style={{ padding: "8px 16px", borderRadius: 10, background: "#60a5fa12", border: "1px solid #60a5fa33", textAlign: "center", minWidth: 80 }}>
-              <div style={{ fontFamily: "var(--font-heading)", fontSize: "1.3rem", fontWeight: 700, color: "#60a5fa" }}>{totalSessions}</div>
-              <div style={{ fontSize: "0.68rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>тренувань</div>
-            </div>
-            <div style={{ padding: "8px 16px", borderRadius: 10, background: "#818cf812", border: "1px solid #818cf833", textAlign: "center", minWidth: 80 }}>
-              <div style={{ fontFamily: "var(--font-heading)", fontSize: "1.3rem", fontWeight: 700, color: "#818cf8" }}>{totalMinutes}</div>
-              <div style={{ fontSize: "0.68rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>хвилин</div>
-            </div>
-            {ACTIVITY_TYPES.map(t => {
-              const count = rows.reduce((s, r) => s + r.activity.entries.filter(e => e.type === t.key).length, 0);
-              if (count === 0) return null;
-              return (
-                <div key={t.key} style={{ padding: "8px 16px", borderRadius: 10, background: `${t.color}12`, border: `1px solid ${t.color}33`, textAlign: "center", minWidth: 80 }}>
-                  <div style={{ fontFamily: "var(--font-heading)", fontSize: "1.3rem", fontWeight: 700, color: t.color }}>{count}</div>
-                  <div style={{ fontSize: "0.68rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{t.emoji} {t.label.toLowerCase()}</div>
-                </div>
-              );
-            })}
+            {[
+              { label: "Кроків за місяць", value: grandSteps > 0 ? grandSteps.toLocaleString() : "—", color: "#4ade80" },
+              { label: "Хвилин активності", value: grandMinutes > 0 ? String(grandMinutes) : "—", color: "#60a5fa" },
+              ...ACTIVITY_DEFS.map(d => ({
+                label: d.label,
+                value: String(rows.reduce((s, r) => s + r.activity.entries.filter(e => e.type === d.key).length, 0)),
+                color: d.color,
+                skip: rows.every(r => r.activity.entries.filter(e => e.type === d.key).length === 0),
+              })),
+            ].filter(c => !("skip" in c && c.skip)).map(c => (
+              <div key={c.label} style={{
+                padding: "8px 16px", borderRadius: 10,
+                background: `${c.color}12`, border: `1px solid ${c.color}33`,
+                textAlign: "center", minWidth: 80,
+              }}>
+                <div style={{ fontFamily: "var(--font-heading)", fontSize: "1.2rem", fontWeight: 700, color: c.color }}>{c.value}</div>
+                <div style={{ fontSize: "0.65rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{c.label}</div>
+              </div>
+            ))}
           </div>
         )}
 
@@ -244,13 +248,13 @@ export default function MonthActivityPage({ params }: Props) {
             <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "var(--font-body)" }}>
               <thead>
                 <tr style={{ background: "var(--surface2)" }}>
-                  {["День","","Тренувань","Хвилин","Активності","Нотатки"].map((h, i) => (
+                  {["День","","👣 Кроки","🌅 Зарядка","🙆 Розтяжка","🪜 Степер","🤲 Масаж","Інша активність"].map((h, i) => (
                     <th key={i} style={{
                       padding: i === 0 ? "10px 8px 10px 16px" : "10px 10px",
-                      textAlign: "left",
-                      fontSize: "0.72rem", fontWeight: 700,
+                      textAlign: i <= 1 ? "left" : "center",
+                      fontSize: "0.7rem", fontWeight: 700,
                       color: "var(--muted)", textTransform: "uppercase",
-                      letterSpacing: "0.06em",
+                      letterSpacing: "0.05em",
                       borderBottom: "1px solid var(--border)",
                       whiteSpace: "nowrap",
                     }}>
@@ -263,15 +267,25 @@ export default function MonthActivityPage({ params }: Props) {
                 {displayRows.map((row, idx) => {
                   const isWeekend = row.weekday === 0 || row.weekday === 6;
                   const isEven = idx % 2 === 0;
+
+                  const byType = (type: ActivityType) => row.activity.entries.filter(e => e.type === type);
+                  const minutesOf = (type: ActivityType) =>
+                    byType(type).reduce((s, e) => s + (parseInt(e.value) || 0), 0);
+
+                  const steps = row.totalSteps;
+                  const exerciseMins = minutesOf("exercise");
+                  const stretchMins = minutesOf("stretching");
+                  const stepperMins = minutesOf("stepper");
+                  const massParts = byType("massage").map(e => e.value).join(", ");
+                  const customEntries = byType("custom");
+
                   return (
                     <tr key={row.day} style={{
-                      background: !row.hasData
-                        ? "transparent"
-                        : isEven ? "var(--surface)" : "var(--surface2)",
-                      opacity: row.hasData ? 1 : 0.4,
+                      background: !row.hasData ? "transparent" : isEven ? "var(--surface)" : "var(--surface2)",
+                      opacity: row.hasData ? 1 : 0.35,
                     }}>
                       {/* Day */}
-                      <td style={{ padding: "9px 8px 9px 16px", borderBottom: "1px solid var(--border)", whiteSpace: "nowrap" }}>
+                      <td style={{ padding: "8px 8px 8px 16px", borderBottom: "1px solid var(--border)", whiteSpace: "nowrap" }}>
                         <Link href={`/day/${yearStr}-${monthStr}-${String(row.day).padStart(2,"0")}/activity`} style={{ textDecoration: "none" }}>
                           <span style={{ fontFamily: "var(--font-heading)", fontSize: "1.05rem", fontWeight: 700, color: isWeekend ? "#f87171" : "var(--accent2)" }}>
                             {String(row.day).padStart(2,"0")}
@@ -279,54 +293,63 @@ export default function MonthActivityPage({ params }: Props) {
                         </Link>
                       </td>
                       {/* Weekday */}
-                      <td style={{ padding: "9px 10px", borderBottom: "1px solid var(--border)", fontSize: "0.72rem", color: isWeekend ? "#f87171" : "var(--muted)", whiteSpace: "nowrap" }}>
+                      <td style={{ padding: "8px 10px", borderBottom: "1px solid var(--border)", fontSize: "0.72rem", color: isWeekend ? "#f87171" : "var(--muted)", whiteSpace: "nowrap" }}>
                         {DAYS_UA[row.weekday]}
                       </td>
-                      {/* Count */}
-                      <td style={{ padding: "9px 10px", borderBottom: "1px solid var(--border)", textAlign: "center" }}>
-                        {row.activity.entries.length > 0 ? (
-                          <span style={{ fontFamily: "var(--font-heading)", fontSize: "1rem", color: "#60a5fa", fontWeight: 600 }}>
-                            {row.activity.entries.length}
+                      {/* Steps */}
+                      <td style={{ padding: "8px 10px", borderBottom: "1px solid var(--border)", textAlign: "center" }}>
+                        {steps > 0 ? (
+                          <span style={{ fontFamily: "var(--font-heading)", fontSize: "0.95rem", color: "#4ade80", fontWeight: 700 }}>
+                            {steps.toLocaleString()}
                           </span>
                         ) : <span style={{ color: "var(--muted)", fontSize: "0.78rem" }}>—</span>}
                       </td>
-                      {/* Minutes */}
-                      <td style={{ padding: "9px 10px", borderBottom: "1px solid var(--border)", textAlign: "center" }}>
-                        {row.totalMinutes > 0 ? (
-                          <span style={{ fontFamily: "var(--font-heading)", fontSize: "1rem", color: "#818cf8", fontWeight: 600 }}>
-                            {row.totalMinutes}
+                      {/* Exercise */}
+                      <td style={{ padding: "8px 10px", borderBottom: "1px solid var(--border)", textAlign: "center" }}>
+                        {exerciseMins > 0 ? (
+                          <span style={{ fontFamily: "var(--font-heading)", fontSize: "0.95rem", color: "#fb923c", fontWeight: 700 }}>
+                            {exerciseMins} хв
                           </span>
                         ) : <span style={{ color: "var(--muted)", fontSize: "0.78rem" }}>—</span>}
                       </td>
-                      {/* Entries chips */}
-                      <td style={{ padding: "9px 10px", borderBottom: "1px solid var(--border)", maxWidth: 280 }}>
-                        {row.activity.entries.length > 0 ? (
+                      {/* Stretching */}
+                      <td style={{ padding: "8px 10px", borderBottom: "1px solid var(--border)", textAlign: "center" }}>
+                        {stretchMins > 0 ? (
+                          <span style={{ fontFamily: "var(--font-heading)", fontSize: "0.95rem", color: "#f472b6", fontWeight: 700 }}>
+                            {stretchMins} хв
+                          </span>
+                        ) : <span style={{ color: "var(--muted)", fontSize: "0.78rem" }}>—</span>}
+                      </td>
+                      {/* Stepper */}
+                      <td style={{ padding: "8px 10px", borderBottom: "1px solid var(--border)", textAlign: "center" }}>
+                        {stepperMins > 0 ? (
+                          <span style={{ fontFamily: "var(--font-heading)", fontSize: "0.95rem", color: "#60a5fa", fontWeight: 700 }}>
+                            {stepperMins} хв
+                          </span>
+                        ) : <span style={{ color: "var(--muted)", fontSize: "0.78rem" }}>—</span>}
+                      </td>
+                      {/* Massage */}
+                      <td style={{ padding: "8px 10px", borderBottom: "1px solid var(--border)", maxWidth: 130 }}>
+                        {massParts ? (
+                          <span style={{ fontSize: "0.78rem", color: "#c084fc" }}>{massParts}</span>
+                        ) : <span style={{ color: "var(--muted)", fontSize: "0.78rem" }}>—</span>}
+                      </td>
+                      {/* Custom */}
+                      <td style={{ padding: "8px 12px", borderBottom: "1px solid var(--border)", maxWidth: 180 }}>
+                        {customEntries.length > 0 ? (
                           <div style={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
-                            {row.activity.entries.map(e => {
-                              const info = typeInfo(e.type);
-                              return (
-                                <span key={e.id} style={{
-                                  display: "inline-block", padding: "1px 7px", borderRadius: 4,
-                                  fontSize: "0.73rem",
-                                  background: `${info.color}15`,
-                                  color: info.color,
-                                  border: `1px solid ${info.color}33`,
-                                  whiteSpace: "nowrap",
-                                }}>
-                                  {info.emoji} {e.name}{e.duration ? ` · ${e.duration}хв` : ""}
-                                </span>
-                              );
-                            })}
+                            {customEntries.map(e => (
+                              <span key={e.id} style={{
+                                display: "inline-block", padding: "1px 7px", borderRadius: 4,
+                                fontSize: "0.72rem", background: "#fbbf2415",
+                                color: "#fbbf24", border: "1px solid #fbbf2433",
+                                whiteSpace: "nowrap",
+                              }}>
+                                {e.customName}: {e.value}
+                              </span>
+                            ))}
                           </div>
-                        ) : "—"}
-                      </td>
-                      {/* Notes */}
-                      <td style={{ padding: "9px 12px", borderBottom: "1px solid var(--border)", fontSize: "0.78rem", color: "var(--muted)", maxWidth: 200 }}>
-                        {row.activity.generalNote ? (
-                          <span style={{ fontStyle: "italic" }}>
-                            {row.activity.generalNote.slice(0, 80)}{row.activity.generalNote.length > 80 ? "…" : ""}
-                          </span>
-                        ) : "—"}
+                        ) : <span style={{ color: "var(--muted)", fontSize: "0.78rem" }}>—</span>}
                       </td>
                     </tr>
                   );
@@ -338,20 +361,25 @@ export default function MonthActivityPage({ params }: Props) {
                   <tr style={{ background: "var(--surface2)" }}>
                     <td colSpan={2} style={{
                       padding: "9px 10px 9px 16px",
-                      fontSize: "0.72rem", fontWeight: 700,
-                      color: "var(--muted)", letterSpacing: "0.06em",
-                      textTransform: "uppercase",
+                      fontSize: "0.7rem", fontWeight: 700, color: "var(--muted)",
+                      letterSpacing: "0.06em", textTransform: "uppercase",
                     }}>
-                      Всього за місяць
+                      Всього
                     </td>
-                    <td style={{ padding: "9px 10px", textAlign: "center", fontFamily: "var(--font-heading)", fontSize: "1rem", fontWeight: 700, color: "#60a5fa" }}>
-                      {totalSessions}
+                    <td style={{ padding: "9px 10px", textAlign: "center", fontFamily: "var(--font-heading)", fontSize: "1rem", fontWeight: 700, color: "#4ade80" }}>
+                      {grandSteps > 0 ? grandSteps.toLocaleString() : "—"}
                     </td>
-                    <td style={{ padding: "9px 10px", textAlign: "center", fontFamily: "var(--font-heading)", fontSize: "1rem", fontWeight: 700, color: "#818cf8" }}>
-                      {totalMinutes}
-                    </td>
+                    {(["exercise","stretching","stepper"] as ActivityType[]).map(type => {
+                      const total = rows.reduce((s, r) => s + r.activity.entries.filter(e => e.type === type).reduce((a, e) => a + (parseInt(e.value) || 0), 0), 0);
+                      const c = actDef(type).color;
+                      return (
+                        <td key={type} style={{ padding: "9px 10px", textAlign: "center", fontFamily: "var(--font-heading)", fontSize: "1rem", fontWeight: 700, color: c }}>
+                          {total > 0 ? `${total} хв` : "—"}
+                        </td>
+                      );
+                    })}
                     <td colSpan={2} style={{ padding: "9px 10px", fontSize: "0.78rem", color: "var(--muted)" }}>
-                      {daysWithData} {daysWithData < 5 ? "активних дні" : "активних днів"}
+                      {daysWithData} {daysWithData < 5 ? "дні" : "днів"}
                     </td>
                   </tr>
                 </tfoot>

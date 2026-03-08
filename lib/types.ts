@@ -69,13 +69,13 @@ export interface BudgetPlan {
 
 // ── Activity diary ───────────────────────────────────────────────────────────
 
-export type ActivityType = "cardio" | "strength" | "yoga" | "walk" | "sport" | "other";
+export type ActivityType = "steps" | "massage" | "exercise" | "stretching" | "stepper" | "custom";
 
 export interface ActivityEntry {
   id: string;
   type: ActivityType;
-  name: string;
-  duration: number; // minutes
+  value: string;        // steps count, body part name, minutes, or custom value
+  customName?: string;  // only for "custom" type
   note: string;
 }
 
