@@ -102,6 +102,38 @@ export default function ConclusionPage({ params }: Props) {
           <span style={{ color: "var(--text)" }}>Висновки</span>
         </div>
 
+        {/* Nav tabs */}
+        {(() => {
+          const NAV = [
+            { label: "Календар",   href: `/month/${year}/${month}` },
+            { label: "Цілі",       href: `/month/${year}/${month}/goals` },
+            { label: "Бюджет",     href: `/month/${year}/${month}/budget` },
+            { label: "Харчування", href: `/month/${year}/${month}/food` },
+            { label: "Підсумки",   href: `/month/${year}/${month}/conclusion` },
+          ];
+          return (
+            <div style={{ display: "flex", gap: 6, marginBottom: "1rem", flexWrap: "wrap" }}>
+              {NAV.map(n => {
+                const active = n.label === "Підсумки";
+                return (
+                  <Link key={n.label} href={n.href} style={{ textDecoration: "none" }}>
+                    <span style={{
+                      display: "inline-block", padding: "5px 14px", borderRadius: 8,
+                      fontSize: "0.8rem", fontFamily: "var(--font-body)",
+                      background: active ? `${color}22` : "var(--surface)",
+                      color: active ? color : "var(--muted)",
+                      border: `1px solid ${active ? color+"66" : "var(--border)"}`,
+                      fontWeight: active ? 600 : 400,
+                    }}>
+                      {n.label}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          );
+        })()}
+
         {/* Header */}
         <div style={{
           background: "var(--surface)",

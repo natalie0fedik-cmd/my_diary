@@ -22,6 +22,7 @@ const NAV = [
   { label: "Календар",   href: (y: string, m: string) => `/month/${y}/${m}` },
   { label: "Цілі",       href: (y: string, m: string) => `/month/${y}/${m}/goals` },
   { label: "Бюджет",     href: (y: string, m: string) => `/month/${y}/${m}/budget` },
+  { label: "Харчування", href: (y: string, m: string) => `/month/${y}/${m}/food` },
   { label: "Підсумки",   href: (y: string, m: string) => `/month/${y}/${m}/conclusion` },
 ];
 

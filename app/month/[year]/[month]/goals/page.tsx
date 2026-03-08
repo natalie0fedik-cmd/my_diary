@@ -26,10 +26,11 @@ const CATEGORIES: { key: GoalCategory; label: string; color: string }[] = [
 ];
 
 const NAV = [
-  { label: "Календар",  href: (y: string, m: string) => `/month/${y}/${m}` },
-  { label: "Цілі",      href: (y: string, m: string) => `/month/${y}/${m}/goals` },
-  { label: "Бюджет",    href: (y: string, m: string) => `/month/${y}/${m}/budget` },
-  { label: "Підсумки",  href: (y: string, m: string) => `/month/${y}/${m}/conclusion` },
+  { label: "Календар",   href: (y: string, m: string) => `/month/${y}/${m}` },
+  { label: "Цілі",       href: (y: string, m: string) => `/month/${y}/${m}/goals` },
+  { label: "Бюджет",     href: (y: string, m: string) => `/month/${y}/${m}/budget` },
+  { label: "Харчування", href: (y: string, m: string) => `/month/${y}/${m}/food` },
+  { label: "Підсумки",   href: (y: string, m: string) => `/month/${y}/${m}/conclusion` },
 ];
 
 interface Props { params: Promise<{ year: string; month: string }> }
