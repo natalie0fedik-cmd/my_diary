@@ -105,10 +105,11 @@ interface SectionProps {
   def: ActivityDef;
   entries: ActivityEntry[];
   onAdd: (type: ActivityType, value: string, customName: string, note: string) => void;
-  onDeleteRequest: (id: string, label: string) => void;
+  onDeleteEntry: (id: string, label: string) => void;
+  onHideSection: (type: ActivityType) => void;
 }
 
-function ActivitySection({ def: d, entries, onAdd, onDeleteRequest }: SectionProps) {
+function ActivitySection({ def: d, entries, onAdd, onDeleteEntry, onHideSection }: SectionProps) {
   const [value, setValue] = useState("");
   const [customName, setCustomName] = useState("");
   const [note, setNote] = useState("");
@@ -129,22 +130,32 @@ function ActivitySection({ def: d, entries, onAdd, onDeleteRequest }: SectionPro
       <div style={{
         padding: "10px 14px",
         background: `${d.color}12`,
-        borderBottom: entries.length > 0 || true ? `1px solid ${d.color}22` : "none",
+        borderBottom: `1px solid ${d.color}22`,
         display: "flex", alignItems: "center", gap: 8,
       }}>
         <span style={{ fontSize: "1.1rem" }}>{d.icon}</span>
         <span style={{ fontFamily: "var(--font-heading)", fontSize: "1rem", fontWeight: 700, color: d.color }}>
           {d.label}
         </span>
+        <span style={{ flex: 1 }} />
         {entries.length > 0 && (
           <span style={{
-            marginLeft: "auto", fontSize: "0.72rem", color: d.color,
+            fontSize: "0.72rem", color: d.color,
             background: `${d.color}20`, border: `1px solid ${d.color}33`,
             borderRadius: 12, padding: "1px 8px", fontFamily: "var(--font-body)",
           }}>
             {entries.length}×
           </span>
         )}
+        <button
+          onClick={() => onHideSection(d.key)}
+          title="Прибрати розділ"
+          style={{
+            background: "none", border: "none", cursor: "pointer",
+            color: "var(--muted)", fontSize: "1rem", padding: "0 2px",
+            lineHeight: 1, opacity: 0.6,
+          }}
+        >×</button>
       </div>
 
       <div style={{ padding: "10px 14px" }}>
@@ -163,7 +174,7 @@ function ActivitySection({ def: d, entries, onAdd, onDeleteRequest }: SectionPro
                 {e.note}
               </span>
             )}
-            <button onClick={() => onDeleteRequest(e.id, entryLabel(e))} style={{
+            <button onClick={() => onDeleteEntry(e.id, entryLabel(e))} style={{
               color: "var(--muted)", background: "none", border: "none",
               cursor: "pointer", fontSize: "1rem", padding: 0, flexShrink: 0,
             }}>×</button>
@@ -231,9 +242,25 @@ export default function ActivityPage({ params }: Props) {
   const [year, monthStr] = date.split("-");
 
   const [data, setData] = useState<DayActivity | null>(null);
-  const [confirmTarget, setConfirmTarget] = useState<{ id: string; label: string } | null>(null);
+  const [hiddenTypes, setHiddenTypes] = useState<ActivityType[]>([]);
+  const [confirmTarget, setConfirmTarget] = useState<
+    | { kind: "entry"; id: string; label: string }
+    | { kind: "section"; type: ActivityType; label: string }
+    | null
+  >(null);
 
   useEffect(() => { setData(getDayActivity(date)); }, [date]);
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("diary_hidden_activity_types");
+      if (stored) setHiddenTypes(JSON.parse(stored));
+    } catch { /* ignore */ }
+  }, []);
+
+  const saveHidden = (types: ActivityType[]) => {
+    setHiddenTypes(types);
+    localStorage.setItem("diary_hidden_activity_types", JSON.stringify(types));
+  };
 
   const save = useCallback((updated: DayActivity) => saveDayActivity(updated), []);
 
@@ -244,15 +271,29 @@ export default function ActivityPage({ params }: Props) {
     setData(updated); save(updated);
   };
 
-  const requestDelete = (id: string, label: string) => {
-    setConfirmTarget({ id, label });
+  const requestDeleteEntry = (id: string, label: string) => {
+    setConfirmTarget({ kind: "entry", id, label });
   };
 
-  const confirmDelete = () => {
-    if (!data || !confirmTarget) return;
-    const updated = { ...data, entries: data.entries.filter(e => e.id !== confirmTarget.id) };
-    setData(updated); save(updated);
+  const requestHideSection = (type: ActivityType) => {
+    const d = ACTIVITY_DEFS.find(a => a.key === type)!;
+    setConfirmTarget({ kind: "section", type, label: d.label });
+  };
+
+  const handleConfirm = () => {
+    if (!confirmTarget) return;
+    if (confirmTarget.kind === "entry") {
+      if (!data) return;
+      const updated = { ...data, entries: data.entries.filter(e => e.id !== confirmTarget.id) };
+      setData(updated); save(updated);
+    } else {
+      saveHidden([...hiddenTypes, confirmTarget.type]);
+    }
     setConfirmTarget(null);
+  };
+
+  const restoreType = (type: ActivityType) => {
+    saveHidden(hiddenTypes.filter(t => t !== type));
   };
 
   const updateNote = (generalNote: string) => {
@@ -279,8 +320,12 @@ export default function ActivityPage({ params }: Props) {
     <div style={{ minHeight: "100vh", background: "var(--bg)", paddingLeft: 28 }}>
       {confirmTarget && (
         <ConfirmDialog
-          message={`Видалити "${confirmTarget.label}"?`}
-          onConfirm={confirmDelete}
+          message={
+            confirmTarget.kind === "entry"
+              ? `Видалити запис "${confirmTarget.label}"?`
+              : `Прибрати розділ "${confirmTarget.label}" зі списку?\nДані за попередні дні збережуться.`
+          }
+          onConfirm={handleConfirm}
           onCancel={() => setConfirmTarget(null)}
         />
       )}
@@ -331,28 +376,49 @@ export default function ActivityPage({ params }: Props) {
         </div>
 
         {/* Activity sections grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: "1rem" }}>
-          {ACTIVITY_DEFS.slice(0, 4).map(d => (
-            <ActivitySection
-              key={d.key}
-              def={d}
-              entries={data.entries.filter(e => e.type === d.key)}
-              onAdd={addEntry}
-              onDeleteRequest={requestDelete}
-            />
-          ))}
-        </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: "1rem" }}>
-          {ACTIVITY_DEFS.slice(4).map(d => (
-            <ActivitySection
-              key={d.key}
-              def={d}
-              entries={data.entries.filter(e => e.type === d.key)}
-              onAdd={addEntry}
-              onDeleteRequest={requestDelete}
-            />
-          ))}
-        </div>
+        {(() => {
+          const visible = ACTIVITY_DEFS.filter(d => !hiddenTypes.includes(d.key));
+          return (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: "1rem" }}>
+              {visible.map(d => (
+                <ActivitySection
+                  key={d.key}
+                  def={d}
+                  entries={data.entries.filter(e => e.type === d.key)}
+                  onAdd={addEntry}
+                  onDeleteEntry={requestDeleteEntry}
+                  onHideSection={requestHideSection}
+                />
+              ))}
+            </div>
+          );
+        })()}
+
+        {/* Restore hidden sections */}
+        {hiddenTypes.length > 0 && (
+          <div style={{
+            display: "flex", flexWrap: "wrap", gap: 6, marginBottom: "1rem",
+            padding: "10px 14px", borderRadius: 10,
+            background: "var(--surface)", border: "1px solid var(--border)",
+          }}>
+            <span style={{ fontSize: "0.75rem", color: "var(--muted)", fontFamily: "var(--font-body)", alignSelf: "center", marginRight: 4 }}>
+              Приховано:
+            </span>
+            {hiddenTypes.map(type => {
+              const d = ACTIVITY_DEFS.find(a => a.key === type)!;
+              return (
+                <button key={type} onClick={() => restoreType(type)} style={{
+                  padding: "3px 12px", borderRadius: 20,
+                  border: `1px solid ${d.color}44`, background: `${d.color}12`,
+                  color: d.color, cursor: "pointer",
+                  fontSize: "0.78rem", fontFamily: "var(--font-body)",
+                }}>
+                  {d.icon} {d.label} +
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         {/* General note */}
         <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "1rem 1.25rem", marginBottom: "1.25rem" }}>
