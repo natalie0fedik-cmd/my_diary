@@ -15,12 +15,20 @@ const BG_MAP: Record<string, string> = {
   kawaii: "#170d14", hogwarts: "#0a0505", starwars: "#020510",
   matrix: "#000a00", lotr: "#100c06", midnight: "#08080f",
   cyberpunk: "#050508", paper: "#f5f0e8",
+  pastel_milk: "#faf8f5", pastel_peach: "#fdf5ef", pastel_mint: "#f0faf5",
+  pastel_lilac: "#f8f5ff", pastel_pink: "#fff5f8",
+  pastel_sky: "#f0f7ff", pastel_lemon: "#fffdf0",
 };
 
 const foucScript = `(function(){try{
   var t=localStorage.getItem('diary_theme')||'forest';
-  var m=${JSON.stringify(BG_MAP)};
-  if(m[t]){document.documentElement.style.setProperty('--bg',m[t]);}
+  if(t==='custom'){
+    var c=JSON.parse(localStorage.getItem('diary_custom_theme')||'{}');
+    if(c['--bg'])document.documentElement.style.setProperty('--bg',c['--bg']);
+  } else {
+    var m=${JSON.stringify(BG_MAP)};
+    if(m[t])document.documentElement.style.setProperty('--bg',m[t]);
+  }
 }catch(e){}})();`;
 
 export default function RootLayout({
