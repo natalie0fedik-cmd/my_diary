@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import ThemeLoader from "@/components/ThemeLoader";
+import AuthProvider from "@/components/AuthProvider";
+import UserSync from "@/components/UserSync";
 
 export const metadata: Metadata = {
   title: "Мій щоденник",
@@ -41,20 +43,23 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: foucScript }} />
       </head>
       <body>
-        {/* Apply full theme on client */}
-        <ThemeLoader />
-        {/* Diary spine decoration — colour driven by CSS var */}
-        <div
-          style={{
-            position: "fixed",
-            left: 0, top: 0, bottom: 0,
-            width: 14,
-            background: "linear-gradient(to right, var(--spine) 0%, color-mix(in srgb, var(--spine) 60%, transparent) 50%, transparent 100%)",
-            zIndex: 50,
-            pointerEvents: "none",
-          }}
-        />
-        {children}
+        <AuthProvider>
+          <UserSync />
+          {/* Apply full theme on client */}
+          <ThemeLoader />
+          {/* Diary spine decoration — colour driven by CSS var */}
+          <div
+            style={{
+              position: "fixed",
+              left: 0, top: 0, bottom: 0,
+              width: 14,
+              background: "linear-gradient(to right, var(--spine) 0%, color-mix(in srgb, var(--spine) 60%, transparent) 50%, transparent 100%)",
+              zIndex: 50,
+              pointerEvents: "none",
+            }}
+          />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

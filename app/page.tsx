@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import Link from "next/link";
+import { signOut, useSession } from "next-auth/react";
 import { exportAllData, importAllData } from "@/lib/storage";
 import dynamic from "next/dynamic";
 
@@ -24,6 +25,7 @@ export default function Home() {
   const [year, setYear] = useState(now.getFullYear());
   const [showThemePicker, setShowThemePicker] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { data: session } = useSession();
 
   const currentMonth = now.getMonth();
   const currentYear = now.getFullYear();
@@ -108,6 +110,28 @@ export default function Home() {
               }}>
                 Планувальник · Розклад · Нотатки · KPI
               </div>
+              {session?.user && (
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 10 }}>
+                  {session.user.image && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={session.user.image} alt="" style={{ width: 22, height: 22, borderRadius: "50%", border: "1px solid var(--border)" }} />
+                  )}
+                  <span style={{ fontSize: "0.75rem", color: "var(--muted)", fontFamily: "'Lora', Georgia, serif" }}>
+                    {session.user.email}
+                  </span>
+                  <button
+                    onClick={() => { localStorage.removeItem("diary_current_user"); signOut({ callbackUrl: "/login" }); }}
+                    style={{
+                      padding: "2px 10px", borderRadius: 6,
+                      border: "1px solid var(--border)", background: "var(--surface2)",
+                      color: "var(--muted)", cursor: "pointer",
+                      fontSize: "0.72rem", fontFamily: "'Lora', Georgia, serif",
+                    }}
+                  >
+                    Вийти
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Controls */}
