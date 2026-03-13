@@ -60,8 +60,8 @@ export default function Home() {
 
         {/* Diary Cover Header */}
         <div style={{
-          background: "linear-gradient(135deg, #0e1c0f 0%, #132815 50%, #0e1c0f 100%)",
-          border: "1px solid #265430",
+          background: "linear-gradient(135deg, var(--surface) 0%, var(--surface2) 50%, var(--surface) 100%)",
+          border: "1px solid var(--border)",
           borderRadius: 16,
           padding: "2rem 2rem 1.5rem",
           marginBottom: "2rem",
@@ -71,7 +71,7 @@ export default function Home() {
           {/* decorative corner lines */}
           <div style={{
             position: "absolute", top: 12, left: 12, right: 12, bottom: 12,
-            border: "1px solid #1c3520",
+            border: "1px solid var(--border)",
             borderRadius: 10,
             pointerEvents: "none",
           }} />
