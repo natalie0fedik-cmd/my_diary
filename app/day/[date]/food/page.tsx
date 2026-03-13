@@ -25,12 +25,19 @@ function formatDate(dateStr: string) {
   return `${d} ${MONTHS_UA_GEN[m-1]} ${y}`;
 }
 
+function mealCalories(items: FoodItem[]): number {
+  return items.reduce((s, i) => s + (parseFloat(i.calories ?? "") || 0), 0);
+}
+
 export default function FoodPage({ params }: Props) {
   const { date } = use(params);
   const [year, monthStr] = date.split("-");
 
   const [data, setData] = useState<DayFood | null>(null);
-  const [inputs, setInputs] = useState<Record<MealType, string>>({
+  const [nameInputs, setNameInputs] = useState<Record<MealType, string>>({
+    breakfast: "", lunch: "", dinner: "", snacks: "",
+  });
+  const [calInputs, setCalInputs] = useState<Record<MealType, string>>({
     breakfast: "", lunch: "", dinner: "", snacks: "",
   });
 
@@ -39,11 +46,16 @@ export default function FoodPage({ params }: Props) {
   const save = useCallback((updated: DayFood) => saveDayFood(updated), []);
 
   const addItem = (meal: MealType) => {
-    if (!data || !inputs[meal].trim()) return;
-    const item: FoodItem = { id: generateId(), name: inputs[meal].trim() };
+    if (!data || !nameInputs[meal].trim()) return;
+    const item: FoodItem = {
+      id: generateId(),
+      name: nameInputs[meal].trim(),
+      calories: calInputs[meal].trim() || undefined,
+    };
     const updated = { ...data, [meal]: [...data[meal], item] };
     setData(updated); save(updated);
-    setInputs(p => ({ ...p, [meal]: "" }));
+    setNameInputs(p => ({ ...p, [meal]: "" }));
+    setCalInputs(p => ({ ...p, [meal]: "" }));
   };
 
   const deleteItem = (meal: MealType, id: string) => {
@@ -70,6 +82,8 @@ export default function FoodPage({ params }: Props) {
   );
 
   const totalItems = MEALS.reduce((s, m) => s + data[m.key].length, 0);
+  const totalCal = MEALS.reduce((s, m) => s + mealCalories(data[m.key]), 0);
+  const hasCal = MEALS.some(m => data[m.key].some(i => i.calories));
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)", paddingLeft: 28 }}>
@@ -101,11 +115,23 @@ export default function FoodPage({ params }: Props) {
               <h1 style={{ fontFamily: "'Caveat',cursive", fontSize: "2.4rem", fontWeight: 700, color: "#f6c547", margin: 0, lineHeight: 1 }}>
                 Харчування
               </h1>
-              {totalItems > 0 && (
-                <p style={{ fontFamily: "'Lora',Georgia,serif", fontStyle: "italic", color: "var(--muted)", fontSize: "0.82rem", margin: "6px 0 0" }}>
-                  {totalItems} записів за день
-                </p>
-              )}
+              <div style={{ display: "flex", gap: 12, marginTop: 6, flexWrap: "wrap" }}>
+                {totalItems > 0 && (
+                  <span style={{ fontFamily: "'Lora',Georgia,serif", fontStyle: "italic", color: "var(--muted)", fontSize: "0.82rem" }}>
+                    {totalItems} страв
+                  </span>
+                )}
+                {hasCal && totalCal > 0 && (
+                  <span style={{
+                    fontFamily: "'Caveat',cursive", fontSize: "1.1rem", fontWeight: 700,
+                    color: "#fb923c",
+                    background: "#fb923c15", border: "1px solid #fb923c33",
+                    padding: "0 10px", borderRadius: 8,
+                  }}>
+                    {totalCal} ккал
+                  </span>
+                )}
+              </div>
             </div>
 
             {/* Water tracker */}
@@ -141,65 +167,98 @@ export default function FoodPage({ params }: Props) {
 
         {/* Meal sections */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: "1rem" }}>
-          {MEALS.map(({ key, label, time, color }) => (
-            <div key={key} style={{
-              background: "var(--surface)", border: `1px solid ${color}33`,
-              borderRadius: 12, padding: "1rem 1.25rem",
-            }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-                <h3 style={{ fontFamily: "'Caveat',cursive", fontSize: "1.15rem", fontWeight: 700, color, margin: 0 }}>
-                  {label}
-                </h3>
-                <span style={{ fontSize: "0.68rem", color: "var(--muted)", fontFamily: "'Lora',Georgia,serif" }}>{time}</span>
-              </div>
-
-              {/* Items */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 8 }}>
-                {data[key].map((item: FoodItem) => (
-                  <div key={item.id} style={{
-                    display: "flex", alignItems: "center", gap: 8,
-                    padding: "5px 8px", borderRadius: 7,
-                    background: `${color}10`, border: `1px solid ${color}22`,
-                  }}>
-                    <div style={{ width: 5, height: 5, borderRadius: "50%", background: color, flexShrink: 0 }} />
-                    <span style={{ flex: 1, fontSize: "0.85rem", color: "var(--text)", fontFamily: "'Lora',Georgia,serif" }}>
-                      {item.name}
-                    </span>
-                    <button onClick={() => deleteItem(key, item.id)} style={{
-                      color: "var(--muted)", background: "none", border: "none",
-                      cursor: "pointer", fontSize: "0.9rem", padding: 0, flexShrink: 0,
-                    }}>×</button>
+          {MEALS.map(({ key, label, time, color }) => {
+            const mealCal = mealCalories(data[key]);
+            return (
+              <div key={key} style={{
+                background: "var(--surface)", border: `1px solid ${color}33`,
+                borderRadius: 12, padding: "1rem 1.25rem",
+              }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                  <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+                    <h3 style={{ fontFamily: "'Caveat',cursive", fontSize: "1.15rem", fontWeight: 700, color, margin: 0 }}>
+                      {label}
+                    </h3>
+                    {mealCal > 0 && (
+                      <span style={{ fontSize: "0.72rem", color, opacity: 0.8, fontFamily: "'Lora',Georgia,serif" }}>
+                        {mealCal} ккал
+                      </span>
+                    )}
                   </div>
-                ))}
-                {data[key].length === 0 && (
-                  <p style={{ color: "var(--muted)", fontSize: "0.78rem", fontFamily: "'Lora',Georgia,serif", fontStyle: "italic", margin: "0 0 2px" }}>
-                    Нічого не додано
-                  </p>
-                )}
-              </div>
+                  <span style={{ fontSize: "0.68rem", color: "var(--muted)", fontFamily: "'Lora',Georgia,serif" }}>{time}</span>
+                </div>
 
-              {/* Add item */}
-              <div style={{ display: "flex", gap: 6 }}>
-                <input
-                  type="text" value={inputs[key]}
-                  onChange={e => setInputs(p => ({ ...p, [key]: e.target.value }))}
-                  onKeyDown={e => e.key === "Enter" && addItem(key)}
-                  placeholder="Додати страву..."
-                  style={{
-                    flex: 1, padding: "5px 9px", borderRadius: 7,
-                    border: `1px solid ${color}44`, background: "var(--surface2)",
-                    fontSize: "0.8rem", color: "var(--text)", fontFamily: "'Lora',Georgia,serif",
-                  }}
-                />
-                <button onClick={() => addItem(key)} style={{
-                  padding: "5px 10px", borderRadius: 7,
-                  border: `1px solid ${color}88`, background: `${color}22`,
-                  color, cursor: "pointer", fontSize: "0.8rem", fontWeight: 600,
-                  fontFamily: "'Lora',Georgia,serif",
-                }}>+</button>
+                {/* Items */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 8 }}>
+                  {data[key].map((item: FoodItem) => (
+                    <div key={item.id} style={{
+                      display: "flex", alignItems: "center", gap: 8,
+                      padding: "5px 8px", borderRadius: 7,
+                      background: `${color}10`, border: `1px solid ${color}22`,
+                    }}>
+                      <div style={{ width: 5, height: 5, borderRadius: "50%", background: color, flexShrink: 0 }} />
+                      <span style={{ flex: 1, fontSize: "0.85rem", color: "var(--text)", fontFamily: "'Lora',Georgia,serif" }}>
+                        {item.name}
+                      </span>
+                      {item.calories && (
+                        <span style={{
+                          fontSize: "0.72rem", color,
+                          background: `${color}18`, border: `1px solid ${color}33`,
+                          padding: "1px 6px", borderRadius: 5,
+                          fontFamily: "'Lora',Georgia,serif", flexShrink: 0,
+                        }}>
+                          {item.calories} ккал
+                        </span>
+                      )}
+                      <button onClick={() => deleteItem(key, item.id)} style={{
+                        color: "var(--muted)", background: "none", border: "none",
+                        cursor: "pointer", fontSize: "0.9rem", padding: 0, flexShrink: 0,
+                      }}>×</button>
+                    </div>
+                  ))}
+                  {data[key].length === 0 && (
+                    <p style={{ color: "var(--muted)", fontSize: "0.78rem", fontFamily: "'Lora',Georgia,serif", fontStyle: "italic", margin: "0 0 2px" }}>
+                      Нічого не додано
+                    </p>
+                  )}
+                </div>
+
+                {/* Add item — name + calories */}
+                <div style={{ display: "flex", gap: 5 }}>
+                  <input
+                    type="text" value={nameInputs[key]}
+                    onChange={e => setNameInputs(p => ({ ...p, [key]: e.target.value }))}
+                    onKeyDown={e => e.key === "Enter" && addItem(key)}
+                    placeholder="Страва..."
+                    style={{
+                      flex: 1, padding: "5px 9px", borderRadius: 7,
+                      border: `1px solid ${color}44`, background: "var(--surface2)",
+                      fontSize: "0.8rem", color: "var(--text)", fontFamily: "'Lora',Georgia,serif",
+                      minWidth: 0,
+                    }}
+                  />
+                  <input
+                    type="number" value={calInputs[key]}
+                    onChange={e => setCalInputs(p => ({ ...p, [key]: e.target.value }))}
+                    onKeyDown={e => e.key === "Enter" && addItem(key)}
+                    placeholder="ккал"
+                    min={0}
+                    style={{
+                      width: 62, padding: "5px 7px", borderRadius: 7,
+                      border: `1px solid ${color}44`, background: "var(--surface2)",
+                      fontSize: "0.8rem", color: "var(--text)", fontFamily: "'Lora',Georgia,serif",
+                    }}
+                  />
+                  <button onClick={() => addItem(key)} style={{
+                    padding: "5px 10px", borderRadius: 7,
+                    border: `1px solid ${color}88`, background: `${color}22`,
+                    color, cursor: "pointer", fontSize: "0.8rem", fontWeight: 600,
+                    fontFamily: "'Lora',Georgia,serif",
+                  }}>+</button>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Notes */}
