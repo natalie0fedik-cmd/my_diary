@@ -222,13 +222,22 @@ export default function MonthFoodPage({ params }: Props) {
           </div>
         ) : (
           <div style={{ overflowX: "auto", borderRadius: 14, border: "1px solid var(--border)" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "var(--font-body)" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "var(--font-body)", tableLayout: "fixed" }}>
+              <colgroup>
+                <col style={{ width: 52 }} />
+                <col style={{ width: 34 }} />
+                <col />
+                <col />
+                <col />
+                <col />
+                <col style={{ width: 58 }} />
+              </colgroup>
               <thead>
                 <tr style={{ background: "var(--surface2)" }}>
                   {["День","","Сніданок","Обід","Вечеря","Перекуси","Вода"].map((h, i) => (
                     <th key={i} style={{
                       padding: i === 0 ? "10px 8px 10px 16px" : "10px 10px",
-                      textAlign: "left",
+                      textAlign: i === 6 ? "center" : "left",
                       fontSize: "0.72rem",
                       fontWeight: 700,
                       color: "var(--muted)",
@@ -236,6 +245,7 @@ export default function MonthFoodPage({ params }: Props) {
                       letterSpacing: "0.06em",
                       borderBottom: "1px solid var(--border)",
                       whiteSpace: "nowrap",
+                      overflow: "hidden",
                     }}>
                       {h}
                     </th>
@@ -301,7 +311,7 @@ export default function MonthFoodPage({ params }: Props) {
                             fontSize: "0.8rem",
                             color: items.length > 0 ? "var(--text)" : "var(--muted)",
                             fontStyle: items.length === 0 ? "italic" : "normal",
-                            maxWidth: 180,
+                            overflow: "hidden",
                           }}>
                             {items.length > 0 ? (
                               <div style={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
@@ -314,7 +324,8 @@ export default function MonthFoodPage({ params }: Props) {
                                     background: `${mealColors[meal]}15`,
                                     color: mealColors[meal],
                                     border: `1px solid ${mealColors[meal]}33`,
-                                    whiteSpace: "nowrap",
+                                    wordBreak: "break-word",
+                                    minWidth: 0,
                                   }}>
                                     {item.name}
                                   </span>
