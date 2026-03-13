@@ -37,6 +37,12 @@ function joinItems(items: FoodItem[]): string {
   return items.map(i => i.name).join(", ") || "";
 }
 
+function dayCalories(food: DayFood): number {
+  return (["breakfast","lunch","dinner","snacks"] as const)
+    .flatMap(m => food[m] as FoodItem[])
+    .reduce((s, i) => s + (parseFloat(i.calories ?? "") || 0), 0);
+}
+
 interface DayRow {
   day: number;
   weekday: number;
@@ -72,24 +78,28 @@ export default function MonthFoodPage({ params }: Props) {
 
   // ── XLSX export ─────────────────────────────────────────────────────────────
   function downloadXLSX() {
-    const headers = ["Дата","День тижня","Сніданок","Обід","Вечеря","Перекуси","Вода (склянки)","Нотатки"];
-    const dataRows = rows.map(r => [
-      `${String(r.day).padStart(2,"0")}.${monthStr}.${yearStr}`,
-      DAYS_UA_FULL[r.weekday],
-      joinItems(r.food.breakfast) || "",
-      joinItems(r.food.lunch)     || "",
-      joinItems(r.food.dinner)    || "",
-      joinItems(r.food.snacks)    || "",
-      r.food.water,
-      r.food.notes.replace(/\n/g, " ") || "",
-    ]);
+    const headers = ["Дата","День тижня","Сніданок","Обід","Вечеря","Перекуси","Вода (склянки)","Калорії (ккал)","Нотатки"];
+    const dataRows = rows.map(r => {
+      const cal = dayCalories(r.food);
+      return [
+        `${String(r.day).padStart(2,"0")}.${monthStr}.${yearStr}`,
+        DAYS_UA_FULL[r.weekday],
+        joinItems(r.food.breakfast) || "",
+        joinItems(r.food.lunch)     || "",
+        joinItems(r.food.dinner)    || "",
+        joinItems(r.food.snacks)    || "",
+        r.food.water,
+        cal > 0 ? cal : "",
+        r.food.notes.replace(/\n/g, " ") || "",
+      ];
+    });
 
     const ws = XLSX.utils.aoa_to_sheet([headers, ...dataRows]);
 
     // column widths
     ws["!cols"] = [
       { wch: 12 }, { wch: 14 }, { wch: 30 }, { wch: 30 },
-      { wch: 30 }, { wch: 30 }, { wch: 14 }, { wch: 40 },
+      { wch: 30 }, { wch: 30 }, { wch: 14 }, { wch: 14 }, { wch: 40 },
     ];
 
     const wb = XLSX.utils.book_new();
@@ -97,10 +107,12 @@ export default function MonthFoodPage({ params }: Props) {
     XLSX.writeFile(wb, `харчування-${yearStr}-${monthStr}.xlsx`);
   }
 
-  const filledRows   = rows.filter(r => r.hasData);
-  const displayRows  = showAll ? rows : filledRows;
-  const totalWater   = rows.reduce((s, r) => s + r.food.water, 0);
-  const daysWithData = filledRows.length;
+  const filledRows    = rows.filter(r => r.hasData);
+  const displayRows   = showAll ? rows : filledRows;
+  const totalWater    = rows.reduce((s, r) => s + r.food.water, 0);
+  const daysWithData  = filledRows.length;
+  const totalCalories = rows.reduce((s, r) => s + dayCalories(r.food), 0);
+  const avgCalories   = daysWithData > 0 ? Math.round(totalCalories / daysWithData) : 0;
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)", paddingLeft: 28 }}>
@@ -212,6 +224,26 @@ export default function MonthFoodPage({ params }: Props) {
               <div style={{ fontFamily: "var(--font-heading)", fontSize: "1.3rem", fontWeight: 700, color: "#60a5fa" }}>{totalWater}</div>
               <div style={{ fontSize: "0.68rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>склянок</div>
             </div>
+            {totalCalories > 0 && (
+              <div style={{
+                padding: "8px 16px", borderRadius: 10,
+                background: "#fb923c12", border: "1px solid #fb923c33",
+                textAlign: "center", minWidth: 80,
+              }}>
+                <div style={{ fontFamily: "var(--font-heading)", fontSize: "1.3rem", fontWeight: 700, color: "#fb923c" }}>{totalCalories}</div>
+                <div style={{ fontSize: "0.68rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>ккал загалом</div>
+              </div>
+            )}
+            {avgCalories > 0 && (
+              <div style={{
+                padding: "8px 16px", borderRadius: 10,
+                background: "#f6c54712", border: "1px solid #f6c54733",
+                textAlign: "center", minWidth: 80,
+              }}>
+                <div style={{ fontFamily: "var(--font-heading)", fontSize: "1.3rem", fontWeight: 700, color: "#f6c547" }}>~{avgCalories}</div>
+                <div style={{ fontSize: "0.68rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>ккал/день</div>
+              </div>
+            )}
           </div>
         )}
 
@@ -231,13 +263,14 @@ export default function MonthFoodPage({ params }: Props) {
                 <col />
                 <col />
                 <col style={{ width: 58 }} />
+                <col style={{ width: 70 }} />
               </colgroup>
               <thead>
                 <tr style={{ background: "var(--surface2)" }}>
-                  {["День","","Сніданок","Обід","Вечеря","Перекуси","Вода"].map((h, i) => (
+                  {["День","","Сніданок","Обід","Вечеря","Перекуси","Вода","Калорії"].map((h, i) => (
                     <th key={i} style={{
                       padding: i === 0 ? "10px 8px 10px 16px" : "10px 10px",
-                      textAlign: i === 6 ? "center" : "left",
+                      textAlign: i === 6 || i === 7 ? "center" : "left",
                       fontSize: "0.72rem",
                       fontWeight: 700,
                       color: "var(--muted)",
@@ -354,6 +387,30 @@ export default function MonthFoodPage({ params }: Props) {
                           <span style={{ color: "var(--muted)", fontSize: "0.78rem" }}>—</span>
                         )}
                       </td>
+
+                      {/* Calories */}
+                      {(() => {
+                        const cal = dayCalories(row.food);
+                        return (
+                          <td style={{
+                            padding: "9px 10px",
+                            borderBottom: "1px solid var(--border)",
+                            whiteSpace: "nowrap",
+                            textAlign: "center",
+                          }}>
+                            {cal > 0 ? (
+                              <span style={{
+                                fontFamily: "var(--font-heading)",
+                                fontSize: "0.9rem", color: "#fb923c", fontWeight: 600,
+                              }}>
+                                {cal}
+                              </span>
+                            ) : (
+                              <span style={{ color: "var(--muted)", fontSize: "0.78rem" }}>—</span>
+                            )}
+                          </td>
+                        );
+                      })()}
                     </tr>
                   );
                 })}
@@ -393,6 +450,13 @@ export default function MonthFoodPage({ params }: Props) {
                       fontWeight: 700, color: "#60a5fa",
                     }}>
                       {totalWater}
+                    </td>
+                    <td style={{
+                      padding: "9px 10px", textAlign: "center",
+                      fontFamily: "var(--font-heading)", fontSize: "1rem",
+                      fontWeight: 700, color: "#fb923c",
+                    }}>
+                      {totalCalories > 0 ? totalCalories : "—"}
                     </td>
                   </tr>
                 </tfoot>
