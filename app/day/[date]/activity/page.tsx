@@ -1,25 +1,30 @@
 "use client";
 
 import { use, useEffect, useState, useCallback } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { getDayActivity, saveDayActivity, generateId } from "@/lib/storage";
 import { DayActivity, ActivityEntry, ActivityType } from "@/lib/types";
 
-// ── Confirmation dialog ────────────────────────────────────────────────────────
+// ── Confirmation dialog (rendered via portal on document.body) ─────────────────
 function ConfirmDialog({ message, onConfirm, onCancel }: {
   message: string;
   onConfirm: () => void;
   onCancel: () => void;
 }) {
-  return (
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  if (!mounted) return null;
+
+  return createPortal(
     <>
       <div
         onClick={onCancel}
-        style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", zIndex: 300, backdropFilter: "blur(3px)" }}
+        style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", zIndex: 9000, backdropFilter: "blur(3px)" }}
       />
       <div style={{
         position: "fixed", top: "50%", left: "50%", transform: "translate(-50%,-50%)",
-        zIndex: 301, background: "var(--surface)", border: "1px solid var(--border)",
+        zIndex: 9001, background: "var(--surface)", border: "1px solid var(--border)",
         borderRadius: 14, padding: "1.5rem 1.75rem", width: "min(340px, 92vw)",
         boxShadow: "0 16px 60px rgba(0,0,0,0.5)",
       }}>
@@ -48,7 +53,8 @@ function ConfirmDialog({ message, onConfirm, onCancel }: {
           </button>
         </div>
       </div>
-    </>
+    </>,
+    document.body
   );
 }
 
