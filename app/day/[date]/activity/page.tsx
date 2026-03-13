@@ -5,6 +5,53 @@ import Link from "next/link";
 import { getDayActivity, saveDayActivity, generateId } from "@/lib/storage";
 import { DayActivity, ActivityEntry, ActivityType } from "@/lib/types";
 
+// ── Confirmation dialog ────────────────────────────────────────────────────────
+function ConfirmDialog({ message, onConfirm, onCancel }: {
+  message: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <>
+      <div
+        onClick={onCancel}
+        style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", zIndex: 300, backdropFilter: "blur(3px)" }}
+      />
+      <div style={{
+        position: "fixed", top: "50%", left: "50%", transform: "translate(-50%,-50%)",
+        zIndex: 301, background: "var(--surface)", border: "1px solid var(--border)",
+        borderRadius: 14, padding: "1.5rem 1.75rem", width: "min(340px, 92vw)",
+        boxShadow: "0 16px 60px rgba(0,0,0,0.5)",
+      }}>
+        <p style={{
+          fontFamily: "var(--font-body)", fontSize: "0.95rem", color: "var(--text)",
+          margin: "0 0 1.25rem", lineHeight: 1.5, textAlign: "center",
+        }}>
+          {message}
+        </p>
+        <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
+          <button onClick={onCancel} style={{
+            flex: 1, padding: "8px 0", borderRadius: 9,
+            border: "1px solid var(--border)", background: "var(--surface2)",
+            color: "var(--muted)", cursor: "pointer",
+            fontSize: "0.88rem", fontFamily: "var(--font-body)",
+          }}>
+            Ні
+          </button>
+          <button onClick={onConfirm} style={{
+            flex: 1, padding: "8px 0", borderRadius: 9,
+            border: "1px solid #f87171", background: "#f8717122",
+            color: "#f87171", cursor: "pointer",
+            fontSize: "0.88rem", fontWeight: 700, fontFamily: "var(--font-body)",
+          }}>
+            Так, видалити
+          </button>
+        </div>
+      </div>
+    </>
+  );
+}
+
 const MONTHS_UA = [
   "Січня", "Лютого", "Березня", "Квітня",
   "Травня", "Червня", "Липня", "Серпня",
@@ -52,10 +99,10 @@ interface SectionProps {
   def: ActivityDef;
   entries: ActivityEntry[];
   onAdd: (type: ActivityType, value: string, customName: string, note: string) => void;
-  onDelete: (id: string) => void;
+  onDeleteRequest: (id: string, label: string) => void;
 }
 
-function ActivitySection({ def: d, entries, onAdd, onDelete }: SectionProps) {
+function ActivitySection({ def: d, entries, onAdd, onDeleteRequest }: SectionProps) {
   const [value, setValue] = useState("");
   const [customName, setCustomName] = useState("");
   const [note, setNote] = useState("");
@@ -110,7 +157,7 @@ function ActivitySection({ def: d, entries, onAdd, onDelete }: SectionProps) {
                 {e.note}
               </span>
             )}
-            <button onClick={() => onDelete(e.id)} style={{
+            <button onClick={() => onDeleteRequest(e.id, entryLabel(e))} style={{
               color: "var(--muted)", background: "none", border: "none",
               cursor: "pointer", fontSize: "1rem", padding: 0, flexShrink: 0,
             }}>×</button>
@@ -178,6 +225,7 @@ export default function ActivityPage({ params }: Props) {
   const [year, monthStr] = date.split("-");
 
   const [data, setData] = useState<DayActivity | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<{ id: string; label: string } | null>(null);
 
   useEffect(() => { setData(getDayActivity(date)); }, [date]);
 
@@ -190,10 +238,15 @@ export default function ActivityPage({ params }: Props) {
     setData(updated); save(updated);
   };
 
-  const deleteEntry = (id: string) => {
-    if (!data) return;
-    const updated = { ...data, entries: data.entries.filter(e => e.id !== id) };
+  const requestDelete = (id: string, label: string) => {
+    setConfirmTarget({ id, label });
+  };
+
+  const confirmDelete = () => {
+    if (!data || !confirmTarget) return;
+    const updated = { ...data, entries: data.entries.filter(e => e.id !== confirmTarget.id) };
     setData(updated); save(updated);
+    setConfirmTarget(null);
   };
 
   const updateNote = (generalNote: string) => {
@@ -218,6 +271,13 @@ export default function ActivityPage({ params }: Props) {
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)", paddingLeft: 28 }}>
+      {confirmTarget && (
+        <ConfirmDialog
+          message={`Видалити "${confirmTarget.label}"?`}
+          onConfirm={confirmDelete}
+          onCancel={() => setConfirmTarget(null)}
+        />
+      )}
       <div style={{ maxWidth: 820, margin: "0 auto", padding: "2rem 1.5rem" }}>
 
         {/* Breadcrumb */}
@@ -272,7 +332,7 @@ export default function ActivityPage({ params }: Props) {
               def={d}
               entries={data.entries.filter(e => e.type === d.key)}
               onAdd={addEntry}
-              onDelete={deleteEntry}
+              onDeleteRequest={requestDelete}
             />
           ))}
         </div>
@@ -283,7 +343,7 @@ export default function ActivityPage({ params }: Props) {
               def={d}
               entries={data.entries.filter(e => e.type === d.key)}
               onAdd={addEntry}
-              onDelete={deleteEntry}
+              onDeleteRequest={requestDelete}
             />
           ))}
         </div>
