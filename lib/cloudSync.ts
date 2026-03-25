@@ -75,11 +75,11 @@ async function flushDirty(): Promise<void> {
  * Downloads all diary entries from Firestore and writes them to localStorage.
  * Called once after login. Returns number of entries synced.
  */
-export async function syncFromCloud(): Promise<number> {
+export async function syncFromCloud(silent = false): Promise<number> {
   const email = localStorage.getItem("diary_current_user");
   if (!email) return 0;
 
-  setStatus("syncing");
+  if (!silent) setStatus("syncing");
   try {
     const res = await fetch("/api/sync/load");
     if (!res.ok) throw new Error("load failed");
@@ -95,12 +95,11 @@ export async function syncFromCloud(): Promise<number> {
         count++;
       }
     }
-    // Remember we already did the initial sync on this device
     localStorage.setItem(`diary_synced_${email}`, "1");
-    setStatus("idle");
+    if (!silent) setStatus("idle");
     return count;
   } catch {
-    setStatus("error");
+    if (!silent) setStatus("error");
     return 0;
   }
 }

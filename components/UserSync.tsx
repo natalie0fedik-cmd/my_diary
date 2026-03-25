@@ -21,7 +21,7 @@ export default function UserSync() {
     localStorage.setItem("diary_current_user", email);
 
     // Always sync from cloud on login so all devices stay up to date
-    syncFromCloud().then((count) => {
+    syncFromCloud(true).then((count) => {
       if (count > 0) {
         window.location.reload();
       }
