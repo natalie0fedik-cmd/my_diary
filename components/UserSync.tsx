@@ -16,16 +16,16 @@ export default function UserSync() {
   useEffect(() => {
     if (!session?.user?.email) return;
     const email = session.user.email;
-
-    // Save email so storage.ts can namespace keys per user
     localStorage.setItem("diary_current_user", email);
 
-    // Always sync from cloud on login so all devices stay up to date
-    syncFromCloud(true).then((count) => {
-      if (count > 0) {
-        window.location.reload();
-      }
-    });
+    // Poll every 5 minutes — silently download any new cloud data
+    const interval = setInterval(() => {
+      syncFromCloud(true).then((count) => {
+        if (count > 0) window.location.reload();
+      });
+    }, 5 * 60 * 1000);
+
+    return () => clearInterval(interval);
   }, [session]);
 
   if (status === "idle") return null;
