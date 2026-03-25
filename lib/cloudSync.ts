@@ -85,19 +85,20 @@ export async function syncFromCloud(silent = false): Promise<number> {
     if (!res.ok) throw new Error("load failed");
     const data = (await res.json()) as Record<string, unknown>;
     const prefix = `u:${email}:`;
-    let count = 0;
+    let changed = 0;
     for (const [key, value] of Object.entries(data)) {
       if (key.startsWith("diary_")) {
-        localStorage.setItem(
-          prefix + key,
-          typeof value === "string" ? value : JSON.stringify(value)
-        );
-        count++;
+        const serialized = typeof value === "string" ? value : JSON.stringify(value);
+        const existing = localStorage.getItem(prefix + key);
+        if (existing !== serialized) {
+          localStorage.setItem(prefix + key, serialized);
+          changed++;
+        }
       }
     }
     localStorage.setItem(`diary_synced_${email}`, "1");
     if (!silent) setStatus("idle");
-    return count;
+    return changed;
   } catch {
     if (!silent) setStatus("error");
     return 0;
