@@ -89,7 +89,7 @@ export default function GoalsPage({ params }: Props) {
       <div style={{ maxWidth: 720, margin: "0 auto", padding: "2rem 1.5rem" }}>
 
         {/* Breadcrumb */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "1.25rem", fontSize: "0.82rem", color: "var(--muted)", fontFamily: "'Lora',Georgia,serif" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "1.25rem", fontSize: "0.82rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>
           <Link href="/" style={{ color: "var(--muted)", textDecoration: "none" }}>Щоденник</Link>
           <span>›</span>
           <Link href={`/month/${year}/${month}`} style={{ color: "var(--muted)", textDecoration: "none" }}>{MONTHS_UA[monthIdx]} {year}</Link>
@@ -106,17 +106,17 @@ export default function GoalsPage({ params }: Props) {
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 4, background: `linear-gradient(to right,${color},${color}88)` }} />
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginTop: 6, flexWrap: "wrap", gap: 12 }}>
             <div>
-              <div style={{ fontSize: "0.7rem", color: "var(--muted)", fontFamily: "'Lora',Georgia,serif", letterSpacing: "0.1em", marginBottom: 4 }}>
+              <div style={{ fontSize: "0.7rem", color: "var(--muted)", fontFamily: "var(--font-body)", letterSpacing: "0.1em", marginBottom: 4 }}>
                 {String(parseInt(month)).padStart(2,"0")} · {year}
               </div>
-              <h1 style={{ fontFamily: "'Caveat',cursive", fontSize: "2.4rem", fontWeight: 700, color, margin: 0, lineHeight: 1 }}>
+              <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "2.4rem", fontWeight: 700, color, margin: 0, lineHeight: 1 }}>
                 Цілі місяця
               </h1>
             </div>
             {total > 0 && (
               <div style={{ textAlign: "right" }}>
-                <div style={{ fontFamily: "'Caveat',cursive", fontSize: "1.8rem", fontWeight: 700, color }}>{pct}%</div>
-                <div style={{ fontSize: "0.75rem", color: "var(--muted)", fontFamily: "'Lora',Georgia,serif" }}>{done}/{total} виконано</div>
+                <div style={{ fontFamily: "var(--font-heading)", fontSize: "1.8rem", fontWeight: 700, color }}>{pct}%</div>
+                <div style={{ fontSize: "0.75rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{done}/{total} виконано</div>
               </div>
             )}
           </div>
@@ -135,7 +135,7 @@ export default function GoalsPage({ params }: Props) {
               <Link key={n.label} href={n.href(year, month)} style={{ textDecoration: "none" }}>
                 <span style={{
                   display: "inline-block", padding: "5px 14px", borderRadius: 8,
-                  fontSize: "0.8rem", fontFamily: "'Lora',Georgia,serif",
+                  fontSize: "0.8rem", fontFamily: "var(--font-body)",
                   background: active ? `${color}22` : "var(--surface)",
                   color: active ? color : "var(--muted)",
                   border: `1px solid ${active ? color+"66" : "var(--border)"}`,
@@ -160,10 +160,10 @@ export default function GoalsPage({ params }: Props) {
             }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
                 <div style={{ width: 10, height: 10, borderRadius: "50%", background: cat.color, flexShrink: 0 }} />
-                <h2 style={{ fontFamily: "'Caveat',cursive", fontSize: "1.15rem", fontWeight: 600, color: cat.color, margin: 0 }}>
+                <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "1.15rem", fontWeight: 600, color: cat.color, margin: 0 }}>
                   {cat.label}
                 </h2>
-                <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "'Lora',Georgia,serif" }}>
+                <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>
                   {catDone}/{catGoals.length}
                 </span>
               </div>
@@ -186,7 +186,7 @@ export default function GoalsPage({ params }: Props) {
                     </button>
                     <span style={{
                       flex: 1, fontSize: "0.9rem", lineHeight: 1.5,
-                      fontFamily: "'Lora',Georgia,serif",
+                      fontFamily: "var(--font-body)",
                       color: goal.done ? "var(--muted)" : "var(--text)",
                       textDecoration: goal.done ? "line-through" : "none",
                     }}>
@@ -201,14 +201,14 @@ export default function GoalsPage({ params }: Props) {
         })}
 
         {total === 0 && (
-          <div style={{ textAlign: "center", color: "var(--muted)", fontFamily: "'Caveat',cursive", fontSize: "1.2rem", padding: "2rem 0" }}>
+          <div style={{ textAlign: "center", color: "var(--muted)", fontFamily: "var(--font-heading)", fontSize: "1.2rem", padding: "2rem 0" }}>
             Ще немає цілей на цей місяць
           </div>
         )}
 
         {/* Add goal */}
         <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "1rem 1.25rem", marginBottom: 10 }}>
-          <h3 style={{ fontFamily: "'Caveat',cursive", fontSize: "1rem", color: "var(--muted)", margin: "0 0 10px" }}>
+          <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1rem", color: "var(--muted)", margin: "0 0 10px" }}>
             Нова ціль
           </h3>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -220,13 +220,13 @@ export default function GoalsPage({ params }: Props) {
               style={{
                 flex: 1, minWidth: 180, padding: "8px 12px", borderRadius: 8,
                 border: "1px solid var(--border)", background: "var(--surface2)",
-                fontSize: "0.88rem", color: "var(--text)", fontFamily: "'Lora',Georgia,serif",
+                fontSize: "0.88rem", color: "var(--text)", fontFamily: "var(--font-body)",
               }}
             />
             <select value={newCat} onChange={e => setNewCat(e.target.value as GoalCategory)} style={{
               padding: "8px 10px", borderRadius: 8, border: "1px solid var(--border)",
               background: "var(--surface2)", color: "var(--text)", fontSize: "0.85rem",
-              cursor: "pointer", fontFamily: "'Lora',Georgia,serif",
+              cursor: "pointer", fontFamily: "var(--font-body)",
             }}>
               {CATEGORIES.map(c => <option key={c.key} value={c.key}>{c.label}</option>)}
             </select>
@@ -234,7 +234,7 @@ export default function GoalsPage({ params }: Props) {
               padding: "8px 18px", borderRadius: 8,
               border: `1px solid ${color}`, background: `${color}22`,
               color, cursor: "pointer", fontSize: "0.88rem", fontWeight: 600,
-              fontFamily: "'Lora',Georgia,serif",
+              fontFamily: "var(--font-body)",
             }}>
               + Додати
             </button>
@@ -243,7 +243,7 @@ export default function GoalsPage({ params }: Props) {
 
         {/* General note */}
         <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "1rem 1.25rem" }}>
-          <h3 style={{ fontFamily: "'Caveat',cursive", fontSize: "1rem", color: "var(--muted)", margin: "0 0 10px" }}>
+          <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1rem", color: "var(--muted)", margin: "0 0 10px" }}>
             Загальний намір на місяць
           </h3>
           <textarea
@@ -253,7 +253,7 @@ export default function GoalsPage({ params }: Props) {
             style={{
               width: "100%", minHeight: 110, padding: "4px 12px", borderRadius: 8,
               border: "1px solid var(--border)", background: "var(--surface2)",
-              fontSize: "0.88rem", color: "var(--text)", fontFamily: "'Lora',Georgia,serif", resize: "vertical",
+              fontSize: "0.88rem", color: "var(--text)", fontFamily: "var(--font-body)", resize: "vertical",
             }}
           />
         </div>

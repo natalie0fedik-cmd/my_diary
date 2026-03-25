@@ -143,7 +143,7 @@ export default function DayPage({ params }: Props) {
           gap: 12,
         }}>
           <div>
-            <h1 style={{ fontFamily: "'Caveat',cursive", fontSize: "1.8rem", fontWeight: 700, color: "var(--accent2)", margin: 0 }}>
+            <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "1.8rem", fontWeight: 700, color: "var(--accent2)", margin: 0 }}>
               {formatDateUA(date)}
             </h1>
             <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 10 }}>
@@ -177,7 +177,7 @@ export default function DayPage({ params }: Props) {
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
             {saving && (
-              <span style={{ fontSize: "0.78rem", color: "var(--muted)", fontFamily: "'Lora',Georgia,serif" }}>Збережено</span>
+              <span style={{ fontSize: "0.78rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>Збережено</span>
             )}
             {totalTasks > 0 && (
               <div style={{
@@ -185,7 +185,7 @@ export default function DayPage({ params }: Props) {
                 background: doneTasks === totalTasks ? "#4ade8022" : "var(--surface2)",
                 border: `1px solid ${doneTasks === totalTasks ? "#4ade80" : "var(--border)"}`,
                 color: doneTasks === totalTasks ? "#4ade80" : "var(--muted)",
-                fontSize: "0.8rem", fontWeight: 600, fontFamily: "'Lora',Georgia,serif",
+                fontSize: "0.8rem", fontWeight: 600, fontFamily: "var(--font-body)",
               }}>
                 {doneTasks}/{totalTasks} задач
               </div>
@@ -200,7 +200,7 @@ export default function DayPage({ params }: Props) {
                 background: isImportant ? "#f6c54722" : "var(--surface2)",
                 color: isImportant ? "#f6c547" : "var(--muted)",
                 fontSize: "0.8rem", fontWeight: isImportant ? 600 : 400,
-                fontFamily: "'Lora',Georgia,serif",
+                fontFamily: "var(--font-body)",
               }}
             >
               ★ {isImportant ? "Важливий" : "Позначити"}
@@ -210,7 +210,7 @@ export default function DayPage({ params }: Props) {
               <span style={{
                 display: "inline-block", padding: "5px 12px", borderRadius: 8,
                 border: "1px solid #f6c54744", background: "#f6c54712",
-                color: "#f6c547", fontSize: "0.8rem", fontFamily: "'Lora',Georgia,serif",
+                color: "#f6c547", fontSize: "0.8rem", fontFamily: "var(--font-body)",
                 cursor: "pointer",
               }}>
                 Харчування
@@ -221,7 +221,7 @@ export default function DayPage({ params }: Props) {
               <span style={{
                 display: "inline-block", padding: "5px 12px", borderRadius: 8,
                 border: "1px solid #60a5fa44", background: "#60a5fa12",
-                color: "#60a5fa", fontSize: "0.8rem", fontFamily: "'Lora',Georgia,serif",
+                color: "#60a5fa", fontSize: "0.8rem", fontFamily: "var(--font-body)",
                 cursor: "pointer",
               }}>
                 Активність
@@ -432,7 +432,7 @@ export default function DayPage({ params }: Props) {
                   background: "var(--surface2)",
                   fontSize: "0.88rem",
                   color: "var(--text)",
-                  fontFamily: "'Lora', Georgia, serif",
+                  fontFamily: "var(--font-body)",
                   resize: "vertical",
                 }}
               />

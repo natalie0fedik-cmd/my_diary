@@ -8,15 +8,16 @@ import {
   DEFAULT_CUSTOM_VARS,
 } from "@/lib/themes";
 
-const CATEGORIES = ["всі", "пастель", "природа", "аніме", "фільми", "мінімал", "своя"] as const;
+const CATEGORIES = ["всі", "темна", "світла", "кольорова", "своя"] as const;
 type Category = (typeof CATEGORIES)[number];
 
 const FONT_OPTIONS = [
-  { value: "'Lora', Georgia, serif",           label: "Lora (з засічками)" },
-  { value: "'Caveat', cursive",                label: "Caveat (рукописний)" },
-  { value: "Georgia, serif",                   label: "Georgia (класичний)" },
-  { value: "system-ui, sans-serif",            label: "System (без засічок)" },
-  { value: "'Courier New', Courier, monospace",label: "Courier (машинопис)" },
+  { value: "'Inter', system-ui, sans-serif",            label: "Inter (сучасний)" },
+  { value: "'Montserrat', system-ui, sans-serif",       label: "Montserrat (геометричний)" },
+  { value: "'Poppins', system-ui, sans-serif",          label: "Poppins (м'який)" },
+  { value: "'Playfair Display', Georgia, serif",        label: "Playfair (елегантний)" },
+  { value: "system-ui, sans-serif",                     label: "System (системний)" },
+  { value: "'Courier New', Courier, monospace",         label: "Courier (монопросторовий)" },
 ];
 
 const COLOR_FIELDS: { key: string; label: string }[] = [
@@ -223,7 +224,7 @@ function CustomEditor({ currentId, onActivate }: { currentId: string; onActivate
 // ── Main ThemePicker ──────────────────────────────────────────────────────────
 
 export default function ThemePicker({ onClose }: Props) {
-  const [current, setCurrent] = useState("forest");
+  const [current, setCurrent] = useState("night");
   const [category, setCategory] = useState<Category>("всі");
 
   useEffect(() => {

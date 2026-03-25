@@ -1,275 +1,287 @@
 export interface DiaryTheme {
   id: string;
   nameUA: string;
-  category: "природа" | "аніме" | "фільми" | "мінімал" | "пастель";
+  category: "темна" | "світла" | "кольорова";
   emoji: string;
   vars: Record<string, string>;
   bgPattern?: string;
 }
 
+// ── ШРИФТИ ────────────────────────────────────────────────────────────────────
+const INTER   = "'Inter', system-ui, sans-serif";
+const MONT    = "'Montserrat', system-ui, sans-serif";
+const POPPINS = "'Poppins', system-ui, sans-serif";
+const PLAYFAIR = "'Playfair Display', Georgia, serif";
+
+// ── ТЕМИ ─────────────────────────────────────────────────────────────────────
 // Contrast targets:
-//  --text  vs --bg  ≥ 12:1  (near-white on near-black, or near-black on near-white)
-//  --muted vs --bg  ≥ 5:1   (readable secondary text)
-//  --accent on --bg ≥ 3:1   (decorative / large headings)
+//   --text  vs --bg  ≥ 12:1
+//   --muted vs --bg  ≥  5:1
 
 export const THEMES: DiaryTheme[] = [
 
-  // ── ПРИРОДА ──────────────────────────────────────────────────────────────
+  // ╔══════════════════════════════════════════════════════════════╗
+  // ║  ТЕМНІ ТЕМИ                                                  ║
+  // ╚══════════════════════════════════════════════════════════════╝
+
   {
-    id: "forest", nameUA: "Зелений ліс", category: "природа", emoji: "🌿",
+    id: "night",
+    nameUA: "Нічне місто",
+    category: "темна",
+    emoji: "🌃",
     vars: {
-      "--bg": "#080f08", "--surface": "#0f1a0f", "--surface2": "#172217",
-      "--border": "#2d4d2d", "--accent": "#4ade80", "--accent2": "#a7f3c8",
-      "--text": "#d8f0d8", "--muted": "#8ec898", "--spine": "#2d6e38",
-      "--important": "#f6c547",
-      "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
-    },
-  },
-  {
-    id: "sakura", nameUA: "Сакура", category: "природа", emoji: "🌸",
-    vars: {
-      "--bg": "#0e0608", "--surface": "#1a0d12", "--surface2": "#26121c",
-      "--border": "#4d2035", "--accent": "#f472b6", "--accent2": "#fce7f3",
-      "--text": "#fde8f5", "--muted": "#d490b8", "--spine": "#8b2252",
-      "--important": "#fbbf24",
-      "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
-    },
-    bgPattern: "radial-gradient(circle at 15% 25%, #f472b608 0%, transparent 45%), radial-gradient(circle at 85% 75%, #e879f908 0%, transparent 45%)",
-  },
-  {
-    id: "lavender", nameUA: "Лаванда", category: "природа", emoji: "💜",
-    vars: {
-      "--bg": "#09081a", "--surface": "#120f28", "--surface2": "#1a1636",
-      "--border": "#352c60", "--accent": "#a78bfa", "--accent2": "#ddd6fe",
-      "--text": "#eae5ff", "--muted": "#a898d8", "--spine": "#4c3899",
-      "--important": "#f9a8d4",
-      "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
-    },
-  },
-  {
-    id: "ocean", nameUA: "Океан", category: "природа", emoji: "🌊",
-    vars: {
-      "--bg": "#010c18", "--surface": "#051620", "--surface2": "#0a2030",
-      "--border": "#153a58", "--accent": "#38bdf8", "--accent2": "#bae6fd",
-      "--text": "#ddf2ff", "--muted": "#7ac4e0", "--spine": "#0e5272",
-      "--important": "#f6c547",
-      "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
-    },
-    bgPattern: "radial-gradient(ellipse at 50% 100%, #38bdf808 0%, transparent 60%)",
-  },
-  {
-    id: "autumn", nameUA: "Золота осінь", category: "природа", emoji: "🍂",
-    vars: {
-      "--bg": "#0e0806", "--surface": "#1c1008", "--surface2": "#281a0c",
-      "--border": "#4e3018", "--accent": "#fb923c", "--accent2": "#fed7aa",
-      "--text": "#fff2e0", "--muted": "#d09868", "--spine": "#7c3d18",
-      "--important": "#f6c547",
-      "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
-    },
-  },
-  {
-    id: "rose", nameUA: "Трояндовий сад", category: "природа", emoji: "🌹",
-    vars: {
-      "--bg": "#0e0507", "--surface": "#1c0c10", "--surface2": "#281018",
-      "--border": "#522030", "--accent": "#fb7185", "--accent2": "#fecdd3",
-      "--text": "#fff0f2", "--muted": "#d89098", "--spine": "#8b1c30",
-      "--important": "#fbbf24",
-      "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
+      "--bg": "#0f1117",
+      "--surface": "#1a1d24",
+      "--surface2": "#22262f",
+      "--border": "#2e3340",
+      "--accent": "#6c8ef7",      // soft blue
+      "--accent2": "#4468e8",
+      "--text": "#eef0f5",
+      "--muted": "#8892a8",
+      "--spine": "#4468e8",
+      "--important": "#f6a940",
+      "--font-body": INTER,
+      "--font-heading": MONT,
     },
   },
 
-  // ── ПАСТЕЛЬ (світлі теми) ─────────────────────────────────────────────────
   {
-    id: "pastel_milk", nameUA: "Молочний", category: "пастель", emoji: "🥛",
+    id: "forest",
+    nameUA: "Ліс",
+    category: "темна",
+    emoji: "🌲",
     vars: {
-      "--bg": "#faf8f5", "--surface": "#f2efe9", "--surface2": "#e8e4dc",
-      "--border": "#c8c0b4", "--accent": "#5a9470", "--accent2": "#2e6045",
-      "--text": "#1a1612", "--muted": "#645850", "--spine": "#7aaa8a",
+      "--bg": "#0c1410",
+      "--surface": "#131e18",
+      "--surface2": "#1c2a20",
+      "--border": "#2a4030",
+      "--accent": "#3ecf6a",      // vibrant green
+      "--accent2": "#2aaa58",
+      "--text": "#e8f5ec",
+      "--muted": "#7ab88a",
+      "--spine": "#2a7a40",
+      "--important": "#f6c547",
+      "--font-body": INTER,
+      "--font-heading": MONT,
+    },
+  },
+
+  {
+    id: "coffee",
+    nameUA: "Кава",
+    category: "темна",
+    emoji: "☕",
+    vars: {
+      "--bg": "#120e0a",
+      "--surface": "#1e1812",
+      "--surface2": "#2a2218",
+      "--border": "#3e3020",
+      "--accent": "#d4864a",      // warm amber
+      "--accent2": "#f0a668",
+      "--text": "#f5ede4",
+      "--muted": "#b09070",
+      "--spine": "#8c5420",
+      "--important": "#f6c547",
+      "--font-body": INTER,
+      "--font-heading": PLAYFAIR,
+    },
+  },
+
+  {
+    id: "space",
+    nameUA: "Космос",
+    category: "темна",
+    emoji: "🔭",
+    vars: {
+      "--bg": "#080810",
+      "--surface": "#101018",
+      "--surface2": "#181824",
+      "--border": "#262640",
+      "--accent": "#9060f0",      // violet
+      "--accent2": "#c090ff",
+      "--text": "#f0eeff",
+      "--muted": "#9090c0",
+      "--spine": "#6040c0",
+      "--important": "#f6a940",
+      "--font-body": INTER,
+      "--font-heading": MONT,
+    },
+    bgPattern: "radial-gradient(ellipse at 50% 0%, #9060f012 0%, transparent 60%)",
+  },
+
+  // ╔══════════════════════════════════════════════════════════════╗
+  // ║  СВІТЛІ ТЕМИ                                                 ║
+  // ╚══════════════════════════════════════════════════════════════╝
+
+  {
+    id: "milk",
+    nameUA: "Молочний",
+    category: "світла",
+    emoji: "🥛",
+    vars: {
+      "--bg": "#fafafa",
+      "--surface": "#f4f4f5",
+      "--surface2": "#e8e8ea",
+      "--border": "#d0d0d4",
+      "--accent": "#4a8c60",      // sage green
+      "--accent2": "#2e6040",
+      "--text": "#18181a",
+      "--muted": "#52525a",
+      "--spine": "#5a9a70",
       "--important": "#c05030",
-      "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
+      "--font-body": INTER,
+      "--font-heading": MONT,
     },
   },
+
   {
-    id: "pastel_peach", nameUA: "Персиковий", category: "пастель", emoji: "🍑",
+    id: "sky",
+    nameUA: "Хмари",
+    category: "світла",
+    emoji: "☁️",
     vars: {
-      "--bg": "#fdf5ef", "--surface": "#f8ece2", "--surface2": "#f2e0d0",
-      "--border": "#dcc4aa", "--accent": "#a85830", "--accent2": "#6c3010",
-      "--text": "#1e1208", "--muted": "#7a5038", "--spine": "#c4784a",
+      "--bg": "#f5f7fa",
+      "--surface": "#eef0f5",
+      "--surface2": "#e2e5ee",
+      "--border": "#c8cdd8",
+      "--accent": "#2d5ca8",      // navy blue
+      "--accent2": "#1a3d7a",
+      "--text": "#1a1e2c",
+      "--muted": "#4a5068",
+      "--spine": "#3d6ab8",
+      "--important": "#c06030",
+      "--font-body": INTER,
+      "--font-heading": MONT,
+    },
+  },
+
+  {
+    id: "peach",
+    nameUA: "Персик",
+    category: "світла",
+    emoji: "🍑",
+    vars: {
+      "--bg": "#fdf6f0",
+      "--surface": "#f8ede4",
+      "--surface2": "#f0e0d0",
+      "--border": "#ddc8b4",
+      "--accent": "#c06040",      // terracotta
+      "--accent2": "#903820",
+      "--text": "#1e1410",
+      "--muted": "#6a4a38",
+      "--spine": "#c87858",
       "--important": "#6040b8",
-      "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
+      "--font-body": INTER,
+      "--font-heading": PLAYFAIR,
     },
   },
+
   {
-    id: "pastel_mint", nameUA: "М'ятний", category: "пастель", emoji: "🌿",
+    id: "spring",
+    nameUA: "Весна",
+    category: "світла",
+    emoji: "🌱",
     vars: {
-      "--bg": "#f0faf5", "--surface": "#e0f4eb", "--surface2": "#cceedc",
-      "--border": "#90d0b0", "--accent": "#167848", "--accent2": "#0a5030",
-      "--text": "#081a10", "--muted": "#305e42", "--spine": "#2a9a60",
+      "--bg": "#f5fbf7",
+      "--surface": "#eaf5ed",
+      "--surface2": "#d8eedf",
+      "--border": "#b0d8bc",
+      "--accent": "#187840",      // forest green
+      "--accent2": "#0d5028",
+      "--text": "#0e1a12",
+      "--muted": "#3a6a4a",
+      "--spine": "#28a060",
       "--important": "#a83058",
-      "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
+      "--font-body": POPPINS,
+      "--font-heading": MONT,
     },
   },
+
+  // ╔══════════════════════════════════════════════════════════════╗
+  // ║  КОЛЬОРОВІ ТЕМИ                                              ║
+  // ╚══════════════════════════════════════════════════════════════╝
+
   {
-    id: "pastel_lilac", nameUA: "Бузковий", category: "пастель", emoji: "🪻",
+    id: "sunset",
+    nameUA: "Захід сонця",
+    category: "кольорова",
+    emoji: "🌅",
     vars: {
-      "--bg": "#f8f5ff", "--surface": "#ede5ff", "--surface2": "#dfd5ff",
-      "--border": "#b8a5e8", "--accent": "#5828a8", "--accent2": "#380e7a",
-      "--text": "#160e28", "--muted": "#504080", "--spine": "#7040c0",
+      "--bg": "#1a0f08",
+      "--surface": "#261608",
+      "--surface2": "#321c0a",
+      "--border": "#4e2e10",
+      "--accent": "#e08030",      // sunset orange
+      "--accent2": "#f0a850",
+      "--text": "#fff2e4",
+      "--muted": "#c09060",
+      "--spine": "#803c10",
+      "--important": "#60a0f0",
+      "--font-body": INTER,
+      "--font-heading": PLAYFAIR,
+    },
+  },
+
+  {
+    id: "lavender",
+    nameUA: "Лаванда",
+    category: "кольорова",
+    emoji: "💜",
+    vars: {
+      "--bg": "#f3f0ff",
+      "--surface": "#ebe5ff",
+      "--surface2": "#dfd8ff",
+      "--border": "#c0b0f0",
+      "--accent": "#5828a8",      // deep purple
+      "--accent2": "#3a1880",
+      "--text": "#140c28",
+      "--muted": "#504078",
+      "--spine": "#7048c0",
       "--important": "#b08010",
-      "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
+      "--font-body": INTER,
+      "--font-heading": MONT,
     },
   },
+
   {
-    id: "pastel_pink", nameUA: "Рожевий", category: "пастель", emoji: "🩷",
+    id: "rose",
+    nameUA: "Рожевий",
+    category: "кольорова",
+    emoji: "🌹",
     vars: {
-      "--bg": "#fff5f8", "--surface": "#fde8f0", "--surface2": "#fad5e6",
-      "--border": "#edb0ca", "--accent": "#a02860", "--accent2": "#6c0c3a",
-      "--text": "#1e0a14", "--muted": "#7a3050", "--spine": "#c0507a",
+      "--bg": "#fff4f7",
+      "--surface": "#fde8ef",
+      "--surface2": "#fad5e6",
+      "--border": "#edb0c8",
+      "--accent": "#a02860",      // deep rose
+      "--accent2": "#6c0c3a",
+      "--text": "#1e0a14",
+      "--muted": "#7a3050",
+      "--spine": "#d04080",
       "--important": "#3850c0",
-      "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
-    },
-  },
-  {
-    id: "pastel_sky", nameUA: "Небесний", category: "пастель", emoji: "☁️",
-    vars: {
-      "--bg": "#f0f7ff", "--surface": "#e0eeff", "--surface2": "#cee3ff",
-      "--border": "#9ac0e8", "--accent": "#0e50a0", "--accent2": "#083070",
-      "--text": "#081428", "--muted": "#2a5888", "--spine": "#2a70c0",
-      "--important": "#a86010",
-      "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
-    },
-  },
-  {
-    id: "pastel_lemon", nameUA: "Лимонний", category: "пастель", emoji: "🍋",
-    vars: {
-      "--bg": "#fffdf0", "--surface": "#fdf8e0", "--surface2": "#f8f2c8",
-      "--border": "#d8cc78", "--accent": "#906800", "--accent2": "#604400",
-      "--text": "#1c1808", "--muted": "#6a5820", "--spine": "#b8900a",
-      "--important": "#b03050",
-      "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
+      "--font-body": INTER,
+      "--font-heading": PLAYFAIR,
     },
   },
 
-  // ── АНІМЕ ─────────────────────────────────────────────────────────────────
   {
-    id: "magical", nameUA: "Магічна дівчинка", category: "аніме", emoji: "✨",
+    id: "shore",
+    nameUA: "Берег",
+    category: "кольорова",
+    emoji: "🏖️",
     vars: {
-      "--bg": "#0a0418", "--surface": "#140a28", "--surface2": "#1e1038",
-      "--border": "#402068", "--accent": "#e879f9", "--accent2": "#f5d0fe",
-      "--text": "#faf0ff", "--muted": "#c088e0", "--spine": "#7e22ce",
-      "--important": "#f9a8d4",
-      "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
-    },
-    bgPattern: "radial-gradient(circle at 20% 30%, #e879f912 0%, transparent 50%), radial-gradient(circle at 80% 70%, #a78bfa12 0%, transparent 50%)",
-  },
-  {
-    id: "animenight", nameUA: "Аніме ніч", category: "аніме", emoji: "🌙",
-    vars: {
-      "--bg": "#040412", "--surface": "#0a0a22", "--surface2": "#121236",
-      "--border": "#282868", "--accent": "#818cf8", "--accent2": "#c7d2fe",
-      "--text": "#eef0ff", "--muted": "#9098d8", "--spine": "#3730a3",
-      "--important": "#34d399",
-      "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
-    },
-    bgPattern: "radial-gradient(ellipse at 50% 0%, #1e1b4b28 0%, transparent 60%)",
-  },
-  {
-    id: "ghibli", nameUA: "Студія Ґіблі", category: "аніме", emoji: "🏡",
-    vars: {
-      "--bg": "#0a1208", "--surface": "#131e10", "--surface2": "#1c2c16",
-      "--border": "#304820", "--accent": "#84cc16", "--accent2": "#d9f99d",
-      "--text": "#f0fae0", "--muted": "#90b860", "--spine": "#3f6212",
-      "--important": "#f6c547",
-      "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
-    },
-  },
-  {
-    id: "kawaii", nameUA: "Kawaii", category: "аніме", emoji: "🐱",
-    vars: {
-      "--bg": "#120c10", "--surface": "#1e1420", "--surface2": "#2a1c2c",
-      "--border": "#502850", "--accent": "#f472b6", "--accent2": "#fce7f3",
-      "--text": "#fff0f8", "--muted": "#d898c0", "--spine": "#9d174d",
-      "--important": "#fbbf24",
-      "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
-    },
-    bgPattern: "radial-gradient(circle at 90% 10%, #f472b610 0%, transparent 40%), radial-gradient(circle at 10% 90%, #fb923c08 0%, transparent 40%)",
-  },
-
-  // ── ФІЛЬМИ / КНИГИ ────────────────────────────────────────────────────────
-  {
-    id: "hogwarts", nameUA: "Хогвартс", category: "фільми", emoji: "⚡",
-    vars: {
-      "--bg": "#090404", "--surface": "#140808", "--surface2": "#1e1010",
-      "--border": "#4a2010", "--accent": "#d4a017", "--accent2": "#fde68a",
-      "--text": "#fdf0e0", "--muted": "#c8a070", "--spine": "#8b0000",
-      "--important": "#d4a017",
-      "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
-    },
-    bgPattern: "radial-gradient(ellipse at 30% 20%, #d4a01708 0%, transparent 50%)",
-  },
-  {
-    id: "starwars", nameUA: "Зоряні Війни", category: "фільми", emoji: "⭐",
-    vars: {
-      "--bg": "#020408", "--surface": "#06091c", "--surface2": "#0c1030",
-      "--border": "#1c2a50", "--accent": "#60a5fa", "--accent2": "#bfdbfe",
-      "--text": "#e8f4ff", "--muted": "#7aA8d8", "--spine": "#1e3a6e",
-      "--important": "#f6c547",
-      "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
-    },
-    bgPattern: "radial-gradient(ellipse at 50% 30%, #1e3a6e20 0%, transparent 60%)",
-  },
-  {
-    id: "matrix", nameUA: "Матриця", category: "фільми", emoji: "💊",
-    vars: {
-      "--bg": "#000800", "--surface": "#001200", "--surface2": "#001c00",
-      "--border": "#003800", "--accent": "#00dd44", "--accent2": "#88ff99",
-      "--text": "#ccffaa", "--muted": "#44bb55", "--spine": "#005500",
-      "--important": "#00ff41",
-      "--font-body": "'Courier New', Courier, monospace",
-      "--font-heading": "'Courier New', Courier, monospace",
-    },
-  },
-  {
-    id: "lotr", nameUA: "Середзем'я", category: "фільми", emoji: "💍",
-    vars: {
-      "--bg": "#0e0a04", "--surface": "#1a1206", "--surface2": "#241c0c",
-      "--border": "#4a3818", "--accent": "#c8a94a", "--accent2": "#f0d888",
-      "--text": "#fff2d8", "--muted": "#c09860", "--spine": "#6b4c20",
-      "--important": "#c8a94a",
-      "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
-    },
-  },
-
-  // ── МІНІМАЛ ───────────────────────────────────────────────────────────────
-  {
-    id: "midnight", nameUA: "Опівніч", category: "мінімал", emoji: "🌑",
-    vars: {
-      "--bg": "#06060e", "--surface": "#0e0e1c", "--surface2": "#16162a",
-      "--border": "#242438", "--accent": "#8b5cf6", "--accent2": "#c4b5fd",
-      "--text": "#eeeeff", "--muted": "#9090c0", "--spine": "#3a2870",
-      "--important": "#f6c547",
-      "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
-    },
-  },
-  {
-    id: "cyberpunk", nameUA: "Кіберпанк", category: "мінімал", emoji: "🤖",
-    vars: {
-      "--bg": "#040408", "--surface": "#080814", "--surface2": "#101020",
-      "--border": "#1e1e38", "--accent": "#06b6d4", "--accent2": "#67e8f9",
-      "--text": "#d8f8ff", "--muted": "#68b0c0", "--spine": "#0e5c6e",
-      "--important": "#f6c547",
-      "--font-body": "system-ui, sans-serif", "--font-heading": "'Caveat', cursive",
-    },
-    bgPattern: "repeating-linear-gradient(0deg, transparent, transparent 39px, #06b6d408 39px, #06b6d408 40px)",
-  },
-  {
-    id: "paper", nameUA: "Паперовий", category: "мінімал", emoji: "📄",
-    vars: {
-      "--bg": "#f5f0e8", "--surface": "#ece8de", "--surface2": "#e0d8cc",
-      "--border": "#beb4a4", "--accent": "#466028", "--accent2": "#2c4018",
-      "--text": "#1c1812", "--muted": "#66604e", "--spine": "#4a5835",
-      "--important": "#b5451b",
-      "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
+      "--bg": "#f7f4ef",
+      "--surface": "#ede8e0",
+      "--surface2": "#e0d8cc",
+      "--border": "#c8bca8",
+      "--accent": "#2868a8",      // ocean blue
+      "--accent2": "#184880",
+      "--text": "#141018",
+      "--muted": "#4a5868",
+      "--spine": "#3878b8",
+      "--important": "#c06830",
+      "--font-body": INTER,
+      "--font-heading": POPPINS,
     },
   },
 ];
@@ -279,12 +291,18 @@ export const THEMES: DiaryTheme[] = [
 export const CUSTOM_THEME_KEY = "diary_custom_theme";
 
 export const DEFAULT_CUSTOM_VARS: Record<string, string> = {
-  "--bg": "#faf8f5", "--surface": "#f2efe9", "--surface2": "#e8e4dc",
-  "--border": "#c8c0b4", "--accent": "#5a9470", "--accent2": "#2e6045",
-  "--text": "#1a1612", "--muted": "#645850", "--spine": "#7aaa8a",
+  "--bg": "#fafafa",
+  "--surface": "#f4f4f5",
+  "--surface2": "#e8e8ea",
+  "--border": "#d0d0d4",
+  "--accent": "#4a8c60",
+  "--accent2": "#2e6040",
+  "--text": "#18181a",
+  "--muted": "#52525a",
+  "--spine": "#5a9a70",
   "--important": "#c05030",
-  "--font-body": "'Lora', Georgia, serif",
-  "--font-heading": "'Caveat', cursive",
+  "--font-body": INTER,
+  "--font-heading": MONT,
 };
 
 export function getCustomVars(): Record<string, string> {
@@ -303,8 +321,8 @@ export function saveCustomVars(vars: Record<string, string>): void {
 export const THEME_KEY = "diary_theme";
 
 export function getStoredTheme(): string {
-  if (typeof window === "undefined") return "forest";
-  return localStorage.getItem(THEME_KEY) || "forest";
+  if (typeof window === "undefined") return "night";
+  return localStorage.getItem(THEME_KEY) || "night";
 }
 
 export function applyTheme(themeId: string): void {

@@ -94,7 +94,7 @@ export default function BudgetPage({ params }: Props) {
       <div style={{ maxWidth: 800, margin: "0 auto", padding: "2rem 1.5rem" }}>
 
         {/* Breadcrumb */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "1.25rem", fontSize: "0.82rem", color: "var(--muted)", fontFamily: "'Lora',Georgia,serif" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "1.25rem", fontSize: "0.82rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>
           <Link href="/" style={{ color: "var(--muted)", textDecoration: "none" }}>Щоденник</Link>
           <span>›</span>
           <Link href={`/month/${year}/${month}`} style={{ color: "var(--muted)", textDecoration: "none" }}>{MONTHS_UA[monthIdx]} {year}</Link>
@@ -111,10 +111,10 @@ export default function BudgetPage({ params }: Props) {
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 4, background: `linear-gradient(to right,${color},${color}88)` }} />
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginTop: 6, flexWrap: "wrap", gap: 16 }}>
             <div>
-              <div style={{ fontSize: "0.7rem", color: "var(--muted)", fontFamily: "'Lora',Georgia,serif", letterSpacing: "0.1em", marginBottom: 4 }}>
+              <div style={{ fontSize: "0.7rem", color: "var(--muted)", fontFamily: "var(--font-body)", letterSpacing: "0.1em", marginBottom: 4 }}>
                 {String(parseInt(month)).padStart(2,"0")} · {year}
               </div>
-              <h1 style={{ fontFamily: "'Caveat',cursive", fontSize: "2.4rem", fontWeight: 700, color, margin: 0, lineHeight: 1 }}>
+              <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "2.4rem", fontWeight: 700, color, margin: 0, lineHeight: 1 }}>
                 Бюджет
               </h1>
             </div>
@@ -122,16 +122,16 @@ export default function BudgetPage({ params }: Props) {
             {/* Summary chips */}
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
               <div style={{ textAlign: "center" }}>
-                <div style={{ fontFamily: "'Caveat',cursive", fontSize: "1.3rem", fontWeight: 700, color: "#4ade80" }}>
+                <div style={{ fontFamily: "var(--font-heading)", fontSize: "1.3rem", fontWeight: 700, color: "#4ade80" }}>
                   +{totalIncome.toLocaleString("uk-UA")}
                 </div>
-                <div style={{ fontSize: "0.7rem", color: "var(--muted)", fontFamily: "'Lora',Georgia,serif" }}>доходи</div>
+                <div style={{ fontSize: "0.7rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>доходи</div>
               </div>
               <div style={{ textAlign: "center" }}>
-                <div style={{ fontFamily: "'Caveat',cursive", fontSize: "1.3rem", fontWeight: 700, color: "#f87171" }}>
+                <div style={{ fontFamily: "var(--font-heading)", fontSize: "1.3rem", fontWeight: 700, color: "#f87171" }}>
                   -{totalExpense.toLocaleString("uk-UA")}
                 </div>
-                <div style={{ fontSize: "0.7rem", color: "var(--muted)", fontFamily: "'Lora',Georgia,serif" }}>витрати</div>
+                <div style={{ fontSize: "0.7rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>витрати</div>
               </div>
               <div style={{
                 padding: "8px 16px", borderRadius: 10,
@@ -139,10 +139,10 @@ export default function BudgetPage({ params }: Props) {
                 border: `1px solid ${balance >= 0 ? "#4ade8066" : "#f8717166"}`,
                 textAlign: "center",
               }}>
-                <div style={{ fontFamily: "'Caveat',cursive", fontSize: "1.5rem", fontWeight: 700, color: balance >= 0 ? "#4ade80" : "#f87171" }}>
+                <div style={{ fontFamily: "var(--font-heading)", fontSize: "1.5rem", fontWeight: 700, color: balance >= 0 ? "#4ade80" : "#f87171" }}>
                   {balance >= 0 ? "+" : ""}{balance.toLocaleString("uk-UA")}
                 </div>
-                <div style={{ fontSize: "0.7rem", color: "var(--muted)", fontFamily: "'Lora',Georgia,serif" }}>залишок</div>
+                <div style={{ fontSize: "0.7rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>залишок</div>
               </div>
             </div>
           </div>
@@ -156,7 +156,7 @@ export default function BudgetPage({ params }: Props) {
               <Link key={n.label} href={n.href(year, month)} style={{ textDecoration: "none" }}>
                 <span style={{
                   display: "inline-block", padding: "5px 14px", borderRadius: 8,
-                  fontSize: "0.8rem", fontFamily: "'Lora',Georgia,serif",
+                  fontSize: "0.8rem", fontFamily: "var(--font-body)",
                   background: active ? `${color}22` : "var(--surface)",
                   color: active ? color : "var(--muted)",
                   border: `1px solid ${active ? color+"66" : "var(--border)"}`,
@@ -171,7 +171,7 @@ export default function BudgetPage({ params }: Props) {
 
         {/* Add entry */}
         <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "1rem 1.25rem", marginBottom: "1rem" }}>
-          <h3 style={{ fontFamily: "'Caveat',cursive", fontSize: "1rem", color: "var(--muted)", margin: "0 0 10px" }}>
+          <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1rem", color: "var(--muted)", margin: "0 0 10px" }}>
             Додати запис
           </h3>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -186,7 +186,7 @@ export default function BudgetPage({ params }: Props) {
                   background: newType === t ? (t === "income" ? "#4ade8033" : "#f8717133") : "var(--surface2)",
                   color: newType === t ? (t === "income" ? "#4ade80" : "#f87171") : "var(--muted)",
                   fontSize: "0.82rem", fontWeight: newType === t ? 600 : 400,
-                  fontFamily: "'Lora',Georgia,serif",
+                  fontFamily: "var(--font-body)",
                 }}>
                   {t === "income" ? "Дохід" : "Витрата"}
                 </button>
@@ -196,7 +196,7 @@ export default function BudgetPage({ params }: Props) {
             <select value={newCat} onChange={e => setNewCat(e.target.value)} style={{
               padding: "7px 10px", borderRadius: 8, border: "1px solid var(--border)",
               background: "var(--surface2)", color: "var(--text)", fontSize: "0.85rem",
-              cursor: "pointer", fontFamily: "'Lora',Georgia,serif",
+              cursor: "pointer", fontFamily: "var(--font-body)",
             }}>
               {(newType === "expense" ? EXPENSE_CATS : INCOME_CATS).map(c => (
                 <option key={c} value={c}>{c}</option>
@@ -207,7 +207,7 @@ export default function BudgetPage({ params }: Props) {
               placeholder="Сума" style={{
                 width: 100, padding: "7px 10px", borderRadius: 8,
                 border: "1px solid var(--border)", background: "var(--surface2)",
-                fontSize: "0.85rem", color: "var(--text)", fontFamily: "'Lora',Georgia,serif",
+                fontSize: "0.85rem", color: "var(--text)", fontFamily: "var(--font-body)",
               }}
             />
             <input type="text" value={newDesc} onChange={e => setNewDesc(e.target.value)}
@@ -215,7 +215,7 @@ export default function BudgetPage({ params }: Props) {
               placeholder="Опис (необов'язково)" style={{
                 flex: 1, minWidth: 140, padding: "7px 10px", borderRadius: 8,
                 border: "1px solid var(--border)", background: "var(--surface2)",
-                fontSize: "0.85rem", color: "var(--text)", fontFamily: "'Lora',Georgia,serif",
+                fontSize: "0.85rem", color: "var(--text)", fontFamily: "var(--font-body)",
               }}
             />
             <button onClick={addEntry} style={{
@@ -224,7 +224,7 @@ export default function BudgetPage({ params }: Props) {
               background: newType === "income" ? "#4ade8022" : "#f8717122",
               color: newType === "income" ? "#4ade80" : "#f87171",
               cursor: "pointer", fontSize: "0.85rem", fontWeight: 600,
-              fontFamily: "'Lora',Georgia,serif",
+              fontFamily: "var(--font-body)",
             }}>
               + Додати
             </button>
@@ -235,11 +235,11 @@ export default function BudgetPage({ params }: Props) {
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: "1rem" }}>
           {/* Incomes */}
           <div style={{ background: "var(--surface)", border: "1px solid #4ade8033", borderRadius: 12, padding: "1rem 1.25rem" }}>
-            <h3 style={{ fontFamily: "'Caveat',cursive", fontSize: "1.1rem", color: "#4ade80", margin: "0 0 10px" }}>
+            <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1.1rem", color: "#4ade80", margin: "0 0 10px" }}>
               Доходи
             </h3>
             {incomeEntries.length === 0 && (
-              <p style={{ color: "var(--muted)", fontSize: "0.82rem", fontFamily: "'Lora',Georgia,serif", fontStyle: "italic", margin: 0 }}>
+              <p style={{ color: "var(--muted)", fontSize: "0.82rem", fontFamily: "var(--font-body)", fontStyle: "italic", margin: 0 }}>
                 Немає записів
               </p>
             )}
@@ -251,11 +251,11 @@ export default function BudgetPage({ params }: Props) {
                   background: "#4ade8012", border: "1px solid #4ade8022",
                 }}>
                   <div>
-                    <div style={{ fontSize: "0.78rem", color: "#4ade80", fontFamily: "'Lora',Georgia,serif", fontWeight: 600 }}>{e.category}</div>
-                    {e.description && <div style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "'Lora',Georgia,serif" }}>{e.description}</div>}
+                    <div style={{ fontSize: "0.78rem", color: "#4ade80", fontFamily: "var(--font-body)", fontWeight: 600 }}>{e.category}</div>
+                    {e.description && <div style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{e.description}</div>}
                   </div>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <span style={{ fontFamily: "'Caveat',cursive", fontSize: "1rem", color: "#4ade80", fontWeight: 700 }}>
+                    <span style={{ fontFamily: "var(--font-heading)", fontSize: "1rem", color: "#4ade80", fontWeight: 700 }}>
                       +{e.amount.toLocaleString("uk-UA")}
                     </span>
                     <button onClick={() => deleteEntry(e.id)} style={{ color: "var(--muted)", background: "none", border: "none", cursor: "pointer", fontSize: "0.9rem", padding: 0 }}>×</button>
@@ -267,11 +267,11 @@ export default function BudgetPage({ params }: Props) {
 
           {/* Expenses */}
           <div style={{ background: "var(--surface)", border: "1px solid #f8717133", borderRadius: 12, padding: "1rem 1.25rem" }}>
-            <h3 style={{ fontFamily: "'Caveat',cursive", fontSize: "1.1rem", color: "#f87171", margin: "0 0 10px" }}>
+            <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1.1rem", color: "#f87171", margin: "0 0 10px" }}>
               Витрати
             </h3>
             {expenseEntries.length === 0 && (
-              <p style={{ color: "var(--muted)", fontSize: "0.82rem", fontFamily: "'Lora',Georgia,serif", fontStyle: "italic", margin: 0 }}>
+              <p style={{ color: "var(--muted)", fontSize: "0.82rem", fontFamily: "var(--font-body)", fontStyle: "italic", margin: 0 }}>
                 Немає записів
               </p>
             )}
@@ -283,11 +283,11 @@ export default function BudgetPage({ params }: Props) {
                   background: "#f8717112", border: "1px solid #f8717122",
                 }}>
                   <div>
-                    <div style={{ fontSize: "0.78rem", color: "#f87171", fontFamily: "'Lora',Georgia,serif", fontWeight: 600 }}>{e.category}</div>
-                    {e.description && <div style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "'Lora',Georgia,serif" }}>{e.description}</div>}
+                    <div style={{ fontSize: "0.78rem", color: "#f87171", fontFamily: "var(--font-body)", fontWeight: 600 }}>{e.category}</div>
+                    {e.description && <div style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{e.description}</div>}
                   </div>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <span style={{ fontFamily: "'Caveat',cursive", fontSize: "1rem", color: "#f87171", fontWeight: 700 }}>
+                    <span style={{ fontFamily: "var(--font-heading)", fontSize: "1rem", color: "#f87171", fontWeight: 700 }}>
                       -{e.amount.toLocaleString("uk-UA")}
                     </span>
                     <button onClick={() => deleteEntry(e.id)} style={{ color: "var(--muted)", background: "none", border: "none", cursor: "pointer", fontSize: "0.9rem", padding: 0 }}>×</button>
@@ -301,7 +301,7 @@ export default function BudgetPage({ params }: Props) {
         {/* Expense breakdown chart */}
         {cats.length > 0 && (
           <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "1rem 1.25rem", marginBottom: "1rem" }}>
-            <h3 style={{ fontFamily: "'Caveat',cursive", fontSize: "1rem", color: "var(--muted)", margin: "0 0 12px" }}>
+            <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1rem", color: "var(--muted)", margin: "0 0 12px" }}>
               Розподіл витрат
             </h3>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -310,8 +310,8 @@ export default function BudgetPage({ params }: Props) {
                 return (
                   <div key={cat}>
                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
-                      <span style={{ fontSize: "0.8rem", color: "var(--text)", fontFamily: "'Lora',Georgia,serif" }}>{cat}</span>
-                      <span style={{ fontSize: "0.8rem", color: "var(--muted)", fontFamily: "'Lora',Georgia,serif" }}>
+                      <span style={{ fontSize: "0.8rem", color: "var(--text)", fontFamily: "var(--font-body)" }}>{cat}</span>
+                      <span style={{ fontSize: "0.8rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>
                         {amt.toLocaleString("uk-UA")} · {pct}%
                       </span>
                     </div>
@@ -328,7 +328,7 @@ export default function BudgetPage({ params }: Props) {
         {/* Tips for next month + financial goal */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
           <div style={{ background: "var(--surface)", border: `1px solid ${color}33`, borderRadius: 12, padding: "1rem 1.25rem" }}>
-            <h3 style={{ fontFamily: "'Caveat',cursive", fontSize: "1.1rem", color, margin: "0 0 10px" }}>
+            <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1.1rem", color, margin: "0 0 10px" }}>
               Поради на наступний місяць
             </h3>
             <textarea
@@ -338,13 +338,13 @@ export default function BudgetPage({ params }: Props) {
               style={{
                 width: "100%", minHeight: 120, padding: "4px 10px", borderRadius: 8,
                 border: "1px solid var(--border)", background: "var(--surface2)",
-                fontSize: "0.85rem", color: "var(--text)", fontFamily: "'Lora',Georgia,serif", resize: "vertical",
+                fontSize: "0.85rem", color: "var(--text)", fontFamily: "var(--font-body)", resize: "vertical",
               }}
             />
           </div>
 
           <div style={{ background: "var(--surface)", border: "1px solid #f6c54733", borderRadius: 12, padding: "1rem 1.25rem" }}>
-            <h3 style={{ fontFamily: "'Caveat',cursive", fontSize: "1.1rem", color: "#f6c547", margin: "0 0 10px" }}>
+            <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1.1rem", color: "#f6c547", margin: "0 0 10px" }}>
               Фінансовий план
             </h3>
             <textarea
@@ -354,7 +354,7 @@ export default function BudgetPage({ params }: Props) {
               style={{
                 width: "100%", minHeight: 120, padding: "4px 10px", borderRadius: 8,
                 border: "1px solid var(--border)", background: "var(--surface2)",
-                fontSize: "0.85rem", color: "var(--text)", fontFamily: "'Lora',Georgia,serif", resize: "vertical",
+                fontSize: "0.85rem", color: "var(--text)", fontFamily: "var(--font-body)", resize: "vertical",
               }}
             />
           </div>

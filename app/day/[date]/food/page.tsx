@@ -90,7 +90,7 @@ export default function FoodPage({ params }: Props) {
       <div style={{ maxWidth: 720, margin: "0 auto", padding: "2rem 1.5rem" }}>
 
         {/* Breadcrumb */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "1.25rem", fontSize: "0.82rem", color: "var(--muted)", fontFamily: "'Lora',Georgia,serif" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "1.25rem", fontSize: "0.82rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>
           <Link href="/" style={{ color: "var(--muted)", textDecoration: "none" }}>Щоденник</Link>
           <span>›</span>
           <Link href={`/month/${year}/${monthStr}`} style={{ color: "var(--muted)", textDecoration: "none" }}>{monthStr}/{year}</Link>
@@ -109,21 +109,21 @@ export default function FoodPage({ params }: Props) {
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 4, background: "linear-gradient(to right,#f6c547,#fb923c)" }} />
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginTop: 6, flexWrap: "wrap", gap: 12 }}>
             <div>
-              <div style={{ fontSize: "0.7rem", color: "var(--muted)", fontFamily: "'Lora',Georgia,serif", letterSpacing: "0.1em", marginBottom: 4 }}>
+              <div style={{ fontSize: "0.7rem", color: "var(--muted)", fontFamily: "var(--font-body)", letterSpacing: "0.1em", marginBottom: 4 }}>
                 {formatDate(date)}
               </div>
-              <h1 style={{ fontFamily: "'Caveat',cursive", fontSize: "2.4rem", fontWeight: 700, color: "#f6c547", margin: 0, lineHeight: 1 }}>
+              <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "2.4rem", fontWeight: 700, color: "#f6c547", margin: 0, lineHeight: 1 }}>
                 Харчування
               </h1>
               <div style={{ display: "flex", gap: 12, marginTop: 6, flexWrap: "wrap" }}>
                 {totalItems > 0 && (
-                  <span style={{ fontFamily: "'Lora',Georgia,serif", fontStyle: "italic", color: "var(--muted)", fontSize: "0.82rem" }}>
+                  <span style={{ fontFamily: "var(--font-body)", fontStyle: "italic", color: "var(--muted)", fontSize: "0.82rem" }}>
                     {totalItems} страв
                   </span>
                 )}
                 {hasCal && totalCal > 0 && (
                   <span style={{
-                    fontFamily: "'Caveat',cursive", fontSize: "1.1rem", fontWeight: 700,
+                    fontFamily: "var(--font-heading)", fontSize: "1.1rem", fontWeight: 700,
                     color: "#fb923c",
                     background: "#fb923c15", border: "1px solid #fb923c33",
                     padding: "0 10px", borderRadius: 8,
@@ -136,7 +136,7 @@ export default function FoodPage({ params }: Props) {
 
             {/* Water tracker */}
             <div style={{ textAlign: "right" }}>
-              <div style={{ fontSize: "0.7rem", color: "var(--muted)", fontFamily: "'Lora',Georgia,serif", marginBottom: 6 }}>
+              <div style={{ fontSize: "0.7rem", color: "var(--muted)", fontFamily: "var(--font-body)", marginBottom: 6 }}>
                 Вода (склянки)
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -157,7 +157,7 @@ export default function FoodPage({ params }: Props) {
                   width: 28, height: 28, borderRadius: 7, border: "1px solid var(--border)",
                   background: "var(--surface2)", color: "var(--muted)", cursor: "pointer", fontSize: "1rem",
                 }}>+</button>
-                <span style={{ fontFamily: "'Caveat',cursive", fontSize: "1.2rem", color: "#60a5fa", minWidth: 24 }}>
+                <span style={{ fontFamily: "var(--font-heading)", fontSize: "1.2rem", color: "#60a5fa", minWidth: 24 }}>
                   {data.water}
                 </span>
               </div>
@@ -176,16 +176,16 @@ export default function FoodPage({ params }: Props) {
               }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
                   <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-                    <h3 style={{ fontFamily: "'Caveat',cursive", fontSize: "1.15rem", fontWeight: 700, color, margin: 0 }}>
+                    <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1.15rem", fontWeight: 700, color, margin: 0 }}>
                       {label}
                     </h3>
                     {mealCal > 0 && (
-                      <span style={{ fontSize: "0.72rem", color, opacity: 0.8, fontFamily: "'Lora',Georgia,serif" }}>
+                      <span style={{ fontSize: "0.72rem", color, opacity: 0.8, fontFamily: "var(--font-body)" }}>
                         {mealCal} ккал
                       </span>
                     )}
                   </div>
-                  <span style={{ fontSize: "0.68rem", color: "var(--muted)", fontFamily: "'Lora',Georgia,serif" }}>{time}</span>
+                  <span style={{ fontSize: "0.68rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{time}</span>
                 </div>
 
                 {/* Items */}
@@ -197,7 +197,7 @@ export default function FoodPage({ params }: Props) {
                       background: `${color}10`, border: `1px solid ${color}22`,
                     }}>
                       <div style={{ width: 5, height: 5, borderRadius: "50%", background: color, flexShrink: 0 }} />
-                      <span style={{ flex: 1, fontSize: "0.85rem", color: "var(--text)", fontFamily: "'Lora',Georgia,serif" }}>
+                      <span style={{ flex: 1, fontSize: "0.85rem", color: "var(--text)", fontFamily: "var(--font-body)" }}>
                         {item.name}
                       </span>
                       {item.calories && (
@@ -205,7 +205,7 @@ export default function FoodPage({ params }: Props) {
                           fontSize: "0.72rem", color,
                           background: `${color}18`, border: `1px solid ${color}33`,
                           padding: "1px 6px", borderRadius: 5,
-                          fontFamily: "'Lora',Georgia,serif", flexShrink: 0,
+                          fontFamily: "var(--font-body)", flexShrink: 0,
                         }}>
                           {item.calories} ккал
                         </span>
@@ -217,7 +217,7 @@ export default function FoodPage({ params }: Props) {
                     </div>
                   ))}
                   {data[key].length === 0 && (
-                    <p style={{ color: "var(--muted)", fontSize: "0.78rem", fontFamily: "'Lora',Georgia,serif", fontStyle: "italic", margin: "0 0 2px" }}>
+                    <p style={{ color: "var(--muted)", fontSize: "0.78rem", fontFamily: "var(--font-body)", fontStyle: "italic", margin: "0 0 2px" }}>
                       Нічого не додано
                     </p>
                   )}
@@ -233,7 +233,7 @@ export default function FoodPage({ params }: Props) {
                     style={{
                       flex: 1, padding: "5px 9px", borderRadius: 7,
                       border: `1px solid ${color}44`, background: "var(--surface2)",
-                      fontSize: "0.8rem", color: "var(--text)", fontFamily: "'Lora',Georgia,serif",
+                      fontSize: "0.8rem", color: "var(--text)", fontFamily: "var(--font-body)",
                       minWidth: 0,
                     }}
                   />
@@ -246,14 +246,14 @@ export default function FoodPage({ params }: Props) {
                     style={{
                       width: 62, padding: "5px 7px", borderRadius: 7,
                       border: `1px solid ${color}44`, background: "var(--surface2)",
-                      fontSize: "0.8rem", color: "var(--text)", fontFamily: "'Lora',Georgia,serif",
+                      fontSize: "0.8rem", color: "var(--text)", fontFamily: "var(--font-body)",
                     }}
                   />
                   <button onClick={() => addItem(key)} style={{
                     padding: "5px 10px", borderRadius: 7,
                     border: `1px solid ${color}88`, background: `${color}22`,
                     color, cursor: "pointer", fontSize: "0.8rem", fontWeight: 600,
-                    fontFamily: "'Lora',Georgia,serif",
+                    fontFamily: "var(--font-body)",
                   }}>+</button>
                 </div>
               </div>
@@ -263,7 +263,7 @@ export default function FoodPage({ params }: Props) {
 
         {/* Notes */}
         <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "1rem 1.25rem", marginBottom: "1rem" }}>
-          <h3 style={{ fontFamily: "'Caveat',cursive", fontSize: "1rem", color: "var(--muted)", margin: "0 0 10px" }}>
+          <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1rem", color: "var(--muted)", margin: "0 0 10px" }}>
             Нотатки про харчування
           </h3>
           <textarea
@@ -273,7 +273,7 @@ export default function FoodPage({ params }: Props) {
             style={{
               width: "100%", minHeight: 80, padding: "4px 12px", borderRadius: 8,
               border: "1px solid var(--border)", background: "var(--surface2)",
-              fontSize: "0.85rem", color: "var(--text)", fontFamily: "'Lora',Georgia,serif", resize: "vertical",
+              fontSize: "0.85rem", color: "var(--text)", fontFamily: "var(--font-body)", resize: "vertical",
             }}
           />
         </div>
@@ -283,7 +283,7 @@ export default function FoodPage({ params }: Props) {
           <Link href={`/day/${date}`} style={{
             padding: "8px 20px", borderRadius: 8, border: "1px solid var(--border)",
             background: "var(--surface)", color: "var(--muted)",
-            fontSize: "0.85rem", textDecoration: "none", fontFamily: "'Lora',Georgia,serif",
+            fontSize: "0.85rem", textDecoration: "none", fontFamily: "var(--font-body)",
           }}>
             ← Назад до дня
           </Link>

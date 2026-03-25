@@ -123,7 +123,7 @@ export default function MonthPage({ params }: Props) {
       <div style={{ maxWidth: 720, margin: "0 auto", padding: "2rem 1.5rem" }}>
 
         {/* Breadcrumb */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "1.25rem", fontSize: "0.82rem", color: "var(--muted)", fontFamily: "'Lora',Georgia,serif" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "1.25rem", fontSize: "0.82rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>
           <Link href="/" style={{ color: "var(--muted)", textDecoration: "none" }}>Щоденник</Link>
           <span>›</span>
           <span style={{ color: "var(--accent2)" }}>{MONTHS_UA[monthIdx]} {year}</span>
@@ -138,13 +138,13 @@ export default function MonthPage({ params }: Props) {
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 4, background: `linear-gradient(to right,${color},${color}88)` }} />
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginTop: 6, flexWrap: "wrap", gap: 12 }}>
             <div>
-              <div style={{ fontSize: "0.7rem", color: "var(--muted)", fontFamily: "'Lora',Georgia,serif", letterSpacing: "0.1em", marginBottom: 4 }}>
+              <div style={{ fontSize: "0.7rem", color: "var(--muted)", fontFamily: "var(--font-body)", letterSpacing: "0.1em", marginBottom: 4 }}>
                 {String(month).padStart(2,"0")} · {year}
               </div>
-              <h1 style={{ fontFamily: "'Caveat',cursive", fontSize: "2.4rem", fontWeight: 700, color, margin: 0, lineHeight: 1 }}>
+              <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "2.4rem", fontWeight: 700, color, margin: 0, lineHeight: 1 }}>
                 {MONTHS_UA[monthIdx]}
               </h1>
-              <p style={{ fontFamily: "'Lora',Georgia,serif", fontStyle: "italic", color: "var(--muted)", fontSize: "0.82rem", margin: "6px 0 0" }}>
+              <p style={{ fontFamily: "var(--font-body)", fontStyle: "italic", color: "var(--muted)", fontSize: "0.82rem", margin: "6px 0 0" }}>
                 {daysCount} днів
                 {importantDays.size > 0 && ` · ${importantDays.size} важл.`}
                 {specialDays.size > 0  && ` · ${specialDays.size} особл.`}
@@ -159,8 +159,8 @@ export default function MonthPage({ params }: Props) {
                     padding: "6px 12px", borderRadius: 8, background: `${color}18`,
                     border: `1px solid ${color}55`, cursor: "pointer",
                   }}>
-                    <div style={{ fontFamily: "'Caveat',cursive", fontSize: "1.1rem", fontWeight: 700, color }}>{goalsPct}%</div>
-                    <div style={{ fontSize: "0.65rem", color: "var(--muted)", fontFamily: "'Lora',Georgia,serif" }}>цілі</div>
+                    <div style={{ fontFamily: "var(--font-heading)", fontSize: "1.1rem", fontWeight: 700, color }}>{goalsPct}%</div>
+                    <div style={{ fontSize: "0.65rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>цілі</div>
                   </div>
                 </Link>
               )}
@@ -170,8 +170,8 @@ export default function MonthPage({ params }: Props) {
                     padding: "6px 12px", borderRadius: 8, background: "#4ade8018",
                     border: "1px solid #4ade8055", cursor: "pointer",
                   }}>
-                    <div style={{ fontFamily: "'Caveat',cursive", fontSize: "1.1rem", fontWeight: 700, color: "#4ade80" }}>грн</div>
-                    <div style={{ fontSize: "0.65rem", color: "var(--muted)", fontFamily: "'Lora',Georgia,serif" }}>бюджет</div>
+                    <div style={{ fontFamily: "var(--font-heading)", fontSize: "1.1rem", fontWeight: 700, color: "#4ade80" }}>грн</div>
+                    <div style={{ fontSize: "0.65rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>бюджет</div>
                   </div>
                 </Link>
               )}
@@ -187,7 +187,7 @@ export default function MonthPage({ params }: Props) {
               <Link key={n.label} href={n.href(yearStr, monthStr)} style={{ textDecoration: "none" }}>
                 <span style={{
                   display: "inline-block", padding: "5px 14px", borderRadius: 8,
-                  fontSize: "0.8rem", fontFamily: "'Lora',Georgia,serif",
+                  fontSize: "0.8rem", fontFamily: "var(--font-body)",
                   background: active ? `${color}22` : "var(--surface)",
                   color: active ? color : "var(--muted)",
                   border: `1px solid ${active ? color+"66" : "var(--border)"}`,
@@ -206,7 +206,7 @@ export default function MonthPage({ params }: Props) {
           marginBottom: "0.75rem", padding: "8px 12px",
           background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 10,
         }}>
-          <span style={{ fontSize: "0.75rem", color: "var(--muted)", fontFamily: "'Lora',Georgia,serif", fontStyle: "italic", marginRight: 4 }}>
+          <span style={{ fontSize: "0.75rem", color: "var(--muted)", fontFamily: "var(--font-body)", fontStyle: "italic", marginRight: 4 }}>
             Позначити день:
           </span>
           {[
@@ -221,14 +221,14 @@ export default function MonthPage({ params }: Props) {
                 background: on ? activeBg : "var(--surface2)",
                 color: on ? activeColor : "var(--muted)",
                 cursor: "pointer", fontSize: "0.78rem", fontWeight: on ? 600 : 400,
-                fontFamily: "'Lora',Georgia,serif",
+                fontFamily: "var(--font-body)",
               }}>
                 {label}
               </button>
             );
           })}
           {markMode && (
-            <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "'Lora',Georgia,serif", fontStyle: "italic" }}>
+            <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)", fontStyle: "italic" }}>
               — клікніть на день у календарі
             </span>
           )}
@@ -237,7 +237,7 @@ export default function MonthPage({ params }: Props) {
               marginLeft: "auto", padding: "3px 8px", borderRadius: 6,
               border: "1px solid var(--border)", background: "none",
               color: "var(--muted)", cursor: "pointer", fontSize: "0.72rem",
-              fontFamily: "'Lora',Georgia,serif",
+              fontFamily: "var(--font-body)",
             }}>
               Скасувати
             </button>
@@ -250,7 +250,7 @@ export default function MonthPage({ params }: Props) {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: 4, marginBottom: 8 }}>
             {DAYS_UA.map((d, i) => (
               <div key={i} style={{
-                textAlign: "center", fontFamily: "'Lora',Georgia,serif",
+                textAlign: "center", fontFamily: "var(--font-body)",
                 fontSize: "0.72rem", fontWeight: 600,
                 color: i >= 5 ? "#f87171" : "var(--muted)",
                 padding: "4px 0", letterSpacing: "0.05em",
@@ -293,7 +293,7 @@ export default function MonthPage({ params }: Props) {
                         alignItems: "center", justifyContent: "center",
                         cursor: "pointer",
                         fontSize: "0.9rem", fontWeight: isToday ? 700 : 400,
-                        fontFamily: "'Lora',Georgia,serif",
+                        fontFamily: "var(--font-body)",
                         background: cellBg, color: cellColor,
                         border: `1px solid ${cellBorder}`,
                         outline: `2px solid ${markMode === "important" ? "#f6c54788" : "#f472b688"}`,
@@ -311,7 +311,7 @@ export default function MonthPage({ params }: Props) {
                           alignItems: "center", justifyContent: "center",
                           cursor: "pointer",
                           fontSize: "0.9rem", fontWeight: isToday ? 700 : 400,
-                          fontFamily: "'Lora',Georgia,serif",
+                          fontFamily: "var(--font-body)",
                           background: cellBg, color: cellColor,
                           border: `1px solid ${cellBorder}`,
                           transition: "background 0.1s, border-color 0.1s",
@@ -355,13 +355,13 @@ export default function MonthPage({ params }: Props) {
           <div style={{ display: "grid", gridTemplateColumns: specialDays.size > 0 && importantDays.size > 0 ? "1fr 1fr" : "1fr", gap: 10, marginBottom: "1rem" }}>
             {importantDays.size > 0 && (
               <div style={{ background: "#f6c54710", border: "1px solid #f6c54733", borderRadius: 12, padding: "0.9rem 1.1rem" }}>
-                <h3 style={{ fontFamily: "'Caveat',cursive", fontSize: "1rem", color: "#f6c547", margin: "0 0 8px" }}>Важливі дати ★</h3>
+                <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1rem", color: "#f6c547", margin: "0 0 8px" }}>Важливі дати ★</h3>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
                   {[...importantDays].sort((a,b)=>a-b).map(day => {
                     const ds = `${year}-${String(month).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
                     return (
                       <Link key={day} href={`/day/${ds}`} style={{ textDecoration: "none" }}>
-                        <span style={{ display:"inline-block", padding:"3px 8px", borderRadius:6, fontSize:"0.78rem", background:"#f6c54720", color:"#f6c547", border:"1px solid #f6c54744", fontFamily:"'Lora',Georgia,serif", cursor:"pointer" }}>
+                        <span style={{ display:"inline-block", padding:"3px 8px", borderRadius:6, fontSize:"0.78rem", background:"#f6c54720", color:"#f6c547", border:"1px solid #f6c54744", fontFamily:"var(--font-body)", cursor:"pointer" }}>
                           {day}
                         </span>
                       </Link>
@@ -372,13 +372,13 @@ export default function MonthPage({ params }: Props) {
             )}
             {specialDays.size > 0 && (
               <div style={{ background: "#f472b610", border: "1px solid #f472b633", borderRadius: 12, padding: "0.9rem 1.1rem" }}>
-                <h3 style={{ fontFamily: "'Caveat',cursive", fontSize: "1rem", color: "#f472b6", margin: "0 0 8px" }}>Особливі дні ♥</h3>
+                <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1rem", color: "#f472b6", margin: "0 0 8px" }}>Особливі дні ♥</h3>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
                   {[...specialDays].sort((a,b)=>a-b).map(day => {
                     const ds = `${year}-${String(month).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
                     return (
                       <Link key={day} href={`/day/${ds}`} style={{ textDecoration: "none" }}>
-                        <span style={{ display:"inline-block", padding:"3px 8px", borderRadius:6, fontSize:"0.78rem", background:"#f472b620", color:"#f472b6", border:"1px solid #f472b644", fontFamily:"'Lora',Georgia,serif", cursor:"pointer" }}>
+                        <span style={{ display:"inline-block", padding:"3px 8px", borderRadius:6, fontSize:"0.78rem", background:"#f472b620", color:"#f472b6", border:"1px solid #f472b644", fontFamily:"var(--font-body)", cursor:"pointer" }}>
                           {day}
                         </span>
                       </Link>
@@ -392,7 +392,7 @@ export default function MonthPage({ params }: Props) {
 
         {/* Quick nav */}
         <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 14, padding: "1.1rem 1.25rem" }}>
-          <h2 style={{ fontFamily: "'Caveat',cursive", fontSize: "1.1rem", fontWeight: 600, color: "var(--muted)", margin: "0 0 10px" }}>
+          <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "1.1rem", fontWeight: 600, color: "var(--muted)", margin: "0 0 10px" }}>
             Швидкий перехід
           </h2>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
@@ -407,7 +407,7 @@ export default function MonthPage({ params }: Props) {
                   <span style={{
                     display: "inline-flex", alignItems: "center", gap: 2,
                     padding: "4px 9px", borderRadius: 7, fontSize: "0.8rem",
-                    fontFamily: "'Lora',Georgia,serif", fontWeight: isToday ? 700 : 400,
+                    fontFamily: "var(--font-body)", fontWeight: isToday ? 700 : 400,
                     background: isToday ? color : isSpecial ? "#f472b620" : isImportant ? "#f6c54720" : isFilled ? `${color}18` : "var(--surface2)",
                     color: isToday ? "#051208" : isSpecial ? "#f472b6" : isImportant ? "#f6c547" : isFilled ? color : "var(--muted)",
                     border: `1px solid ${isToday ? color : isSpecial ? "#f472b644" : isImportant ? "#f6c54744" : isFilled ? `${color}44` : "transparent"}`,

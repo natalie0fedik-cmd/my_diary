@@ -1,21 +1,30 @@
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@500;600;700&family=Poppins:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap');
 @import "tailwindcss";
 
 :root {
-  --bg: #080f08;
-  --surface: #0f1a0f;
-  --surface2: #172217;
-  --border: #2d4d2d;
-  --accent: #4ade80;
-  --accent2: #a7f3c8;
-  --text: #d8f0d8;
-  --muted: #8ec898;
+  --bg: #0f1117;
+  --surface: #1a1d24;
+  --surface2: #22262f;
+  --border: #2e3340;
+  --accent: #6c8ef7;
+  --accent2: #4468e8;
+  --text: #eef0f5;
+  --muted: #8892a8;
   --success: #4ade80;
   --warning: #f6c547;
   --important: #f6c547;
-  --spine: #2d6e38;
-  --font-body: 'Lora', Georgia, 'Times New Roman', serif;
-  --font-heading: 'Caveat', cursive;
+  --spine: #4468e8;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-heading: 'Montserrat', system-ui, sans-serif;
+}
+
+/* Apply font variables everywhere — overrides hardcoded inline families */
+*, *::before, *::after {
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
 }
 
 /* Responsive day page grid */
@@ -38,17 +47,13 @@ body {
   min-height: 100vh;
 }
 
-.caveat {
-  font-family: var(--font-heading);
-}
-
 textarea,
 input[type="text"],
 input[type="number"] {
   background: transparent;
   color: var(--text);
   outline: none;
-  font-family: 'Lora', Georgia, serif;
+  font-family: var(--font-body);
 }
 
 .lined-paper {
@@ -64,7 +69,6 @@ input[type="number"] {
 textarea::placeholder,
 input::placeholder {
   color: var(--muted);
-  font-style: italic;
 }
 
 ::-webkit-scrollbar {

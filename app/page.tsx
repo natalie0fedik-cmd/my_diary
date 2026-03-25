@@ -103,7 +103,7 @@ export default function Home() {
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
             <div>
               <div style={{
-                fontFamily: "'Lora', Georgia, serif",
+                fontFamily: "var(--font-body)",
                 fontSize: "0.72rem",
                 color: "var(--text)",
                 letterSpacing: "0.18em",
@@ -114,7 +114,7 @@ export default function Home() {
                 Особистий щоденник
               </div>
               <h1 style={{
-                fontFamily: "'Caveat', cursive",
+                fontFamily: "var(--font-heading)",
                 fontSize: "3rem",
                 fontWeight: 700,
                 color: "var(--accent2)",
@@ -125,7 +125,7 @@ export default function Home() {
                 Мій Щоденник
               </h1>
               <div style={{
-                fontFamily: "'Lora', Georgia, serif",
+                fontFamily: "var(--font-body)",
                 fontStyle: "italic",
                 fontSize: "0.85rem",
                 color: "var(--text)",
@@ -140,7 +140,7 @@ export default function Home() {
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={session.user.image} alt="" style={{ width: 22, height: 22, borderRadius: "50%", border: "1px solid var(--border)" }} />
                   )}
-                  <span style={{ fontSize: "0.75rem", color: "var(--muted)", fontFamily: "'Lora', Georgia, serif" }}>
+                  <span style={{ fontSize: "0.75rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>
                     {session.user.email}
                   </span>
                   <button
@@ -149,7 +149,7 @@ export default function Home() {
                       padding: "2px 10px", borderRadius: 6,
                       border: "1px solid var(--border)", background: "var(--surface2)",
                       color: "var(--muted)", cursor: "pointer",
-                      fontSize: "0.72rem", fontFamily: "'Lora', Georgia, serif",
+                      fontSize: "0.72rem", fontFamily: "var(--font-body)",
                     }}
                   >
                     Вийти
@@ -169,11 +169,11 @@ export default function Home() {
                     border: "1px solid var(--border)",
                     background: "var(--surface2)",
                     color: "var(--text)", cursor: "pointer",
-                    fontSize: "1.1rem", fontFamily: "'Caveat', cursive",
+                    fontSize: "1.1rem", fontFamily: "var(--font-heading)",
                   }}
                 >‹</button>
                 <span style={{
-                  fontFamily: "'Caveat', cursive",
+                  fontFamily: "var(--font-heading)",
                   fontSize: "1.6rem", fontWeight: 700,
                   minWidth: 54, textAlign: "center", color: "var(--accent2)",
                 }}>
@@ -186,7 +186,7 @@ export default function Home() {
                     border: "1px solid var(--border)",
                     background: "var(--surface2)",
                     color: "var(--text)", cursor: "pointer",
-                    fontSize: "1.1rem", fontFamily: "'Caveat', cursive",
+                    fontSize: "1.1rem", fontFamily: "var(--font-heading)",
                   }}
                 >›</button>
               </div>
@@ -204,7 +204,7 @@ export default function Home() {
                     color: "var(--muted)",
                     cursor: "pointer",
                     fontSize: "0.78rem",
-                    fontFamily: "'Lora', Georgia, serif",
+                    fontFamily: "var(--font-body)",
                     display: "flex", alignItems: "center", gap: 5,
                   }}
                 >
@@ -221,7 +221,7 @@ export default function Home() {
                     color: "var(--muted)",
                     cursor: "pointer",
                     fontSize: "0.78rem",
-                    fontFamily: "'Lora', Georgia, serif",
+                    fontFamily: "var(--font-body)",
                     display: "flex", alignItems: "center", gap: 5,
                   }}
                 >
@@ -239,7 +239,7 @@ export default function Home() {
                     color: "var(--muted)",
                     cursor: uploading ? "default" : "pointer",
                     fontSize: "0.78rem",
-                    fontFamily: "'Lora', Georgia, serif",
+                    fontFamily: "var(--font-body)",
                     display: "flex", alignItems: "center", gap: 5,
                     opacity: uploading ? 0.6 : 1,
                   }}
@@ -258,7 +258,7 @@ export default function Home() {
                     color: "var(--muted)",
                     cursor: downloading ? "default" : "pointer",
                     fontSize: "0.78rem",
-                    fontFamily: "'Lora', Georgia, serif",
+                    fontFamily: "var(--font-body)",
                     display: "flex", alignItems: "center", gap: 5,
                     opacity: downloading ? 0.6 : 1,
                   }}
@@ -346,12 +346,12 @@ export default function Home() {
                         <div style={{
                           fontSize: "0.68rem", color: "var(--muted)",
                           marginBottom: 4, letterSpacing: "0.05em",
-                          fontFamily: "'Lora', Georgia, serif",
+                          fontFamily: "var(--font-body)",
                         }}>
                           {monthStr} · {year}
                         </div>
                         <div style={{
-                          fontFamily: "'Caveat', cursive",
+                          fontFamily: "var(--font-heading)",
                           fontSize: "1.4rem", fontWeight: 700,
                           color: isCurrentMonth ? color : "var(--accent2)",
                           lineHeight: 1,
@@ -364,7 +364,7 @@ export default function Home() {
                           fontSize: "0.6rem", background: color, color: "#051208",
                           borderRadius: 5, padding: "2px 6px", fontWeight: 700,
                           whiteSpace: "nowrap", marginTop: 2,
-                          fontFamily: "'Lora', Georgia, serif",
+                          fontFamily: "var(--font-body)",
                         }}>
                           зараз
                         </span>
@@ -382,7 +382,7 @@ export default function Home() {
                           background: "var(--surface2)",
                           borderRadius: 4,
                           padding: "2px 6px",
-                          fontFamily: "'Lora', Georgia, serif",
+                          fontFamily: "var(--font-body)",
                         }}>
                           {label}
                         </span>
