@@ -109,3 +109,47 @@ export async function syncFromCloud(): Promise<number> {
 export function isFirstSync(email: string): boolean {
   return !localStorage.getItem(`diary_synced_${email}`);
 }
+
+// ── Upload all local data to cloud ────────────────────────────────────────────
+
+/**
+ * Reads ALL diary entries from localStorage and sends them to Firestore.
+ * Use this once to push existing local data to the cloud.
+ */
+export async function uploadAllToCloud(): Promise<number> {
+  const email = localStorage.getItem("diary_current_user");
+  if (!email) return 0;
+
+  const prefix = `u:${email}:`;
+  const entries: Record<string, unknown> = {};
+
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key?.startsWith(prefix + "diary_")) {
+      const relativeKey = key.slice(prefix.length);
+      const raw = localStorage.getItem(key);
+      if (raw) {
+        try { entries[relativeKey] = JSON.parse(raw); }
+        catch { entries[relativeKey] = raw; }
+      }
+    }
+  }
+
+  const count = Object.keys(entries).length;
+  if (count === 0) return 0;
+
+  setStatus("syncing");
+  try {
+    const res = await fetch("/api/sync/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ entries }),
+    });
+    if (!res.ok) throw new Error("upload failed");
+    setStatus("idle");
+    return count;
+  } catch {
+    setStatus("error");
+    return 0;
+  }
+}
