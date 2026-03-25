@@ -1,52 +1,69 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@500;600;700&family=Poppins:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700&family=Poppins:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap');
 @import "tailwindcss";
 
+/* ── Default theme (Молочний) ─────────────────────────────────────────────── */
 :root {
-  --bg: #0f1117;
-  --surface: #1a1d24;
-  --surface2: #22262f;
-  --border: #2e3340;
-  --accent: #6c8ef7;
-  --accent2: #4468e8;
-  --text: #eef0f5;
-  --muted: #8892a8;
-  --success: #4ade80;
-  --warning: #f6c547;
-  --important: #f6c547;
-  --spine: #4468e8;
-  --font-body: 'Inter', system-ui, sans-serif;
-  --font-heading: 'Montserrat', system-ui, sans-serif;
+  --bg:           #F8F9FB;
+  --surface:      #FFFFFF;
+  --surface2:     #EEF0F4;
+  --border:       #E3E6EA;
+  --accent:       #4C6FFF;
+  --accent2:      #3B5BDB;
+  --accent-hover: #3B5BDB;
+  --accent-glow:  rgba(76, 111, 255, 0.15);
+  --text:         #1F2933;
+  --muted:        #6B7280;
+  --spine:        #4C6FFF;
+  --important:    #E8507A;
+  --font-body:    'Inter', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Montserrat', system-ui, -apple-system, sans-serif;
+
+  /* ── Spacing system ──────────────────────────────── */
+  --sp-sm:  16px;
+  --sp-md:  24px;
+  --sp-lg:  32px;
+
+  /* ── Radius system ───────────────────────────────── */
+  --r-sm:   8px;
+  --r-md:   12px;
+  --r-card: 14px;
+
+  /* ── Shadows ─────────────────────────────────────── */
+  --shadow-sm:   0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-card: 0 4px 16px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+  --shadow-dark: 0 4px 24px rgba(0,0,0,0.45);
 }
 
-/* Apply font variables everywhere — overrides hardcoded inline families */
+/* ── Apply font variables everywhere ─────────────────────────────────────── */
 *, *::before, *::after {
   font-family: var(--font-body);
+  box-sizing: border-box;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
-}
-
-/* Responsive day page grid */
-.day-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-}
-
-@media (max-width: 680px) {
-  .day-grid {
-    grid-template-columns: 1fr;
-  }
+  font-weight: 700;
 }
 
 body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* ── Buttons: smooth transitions ─────────────────────────────────────────── */
+button {
+  transition: background-color 0.15s ease, border-color 0.15s ease,
+              color 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  cursor: pointer;
+}
+
+/* ── Inputs & textareas ───────────────────────────────────────────────────── */
 textarea,
 input[type="text"],
 input[type="number"] {
@@ -54,8 +71,17 @@ input[type="number"] {
   color: var(--text);
   outline: none;
   font-family: var(--font-body);
+  font-size: 14px;
+  transition: border-color 0.15s ease;
 }
 
+textarea::placeholder,
+input::placeholder {
+  color: var(--muted);
+  opacity: 0.7;
+}
+
+/* ── Lined paper texture ──────────────────────────────────────────────────── */
 .lined-paper {
   background-image: repeating-linear-gradient(
     transparent,
@@ -66,21 +92,24 @@ input[type="number"] {
   line-height: 28px !important;
 }
 
-textarea::placeholder,
-input::placeholder {
-  color: var(--muted);
+/* ── Responsive day page grid ─────────────────────────────────────────────── */
+.day-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-sm);
 }
 
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+@media (max-width: 680px) {
+  .day-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
-::-webkit-scrollbar-track {
-  background: var(--surface);
-}
+/* ── Scrollbar ────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar        { width: 5px; height: 5px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
 
-::-webkit-scrollbar-thumb {
-  background: var(--spine);
-  border-radius: 3px;
-}
+/* ── Links ────────────────────────────────────────────────────────────────── */
+a { color: inherit; text-decoration: none; }

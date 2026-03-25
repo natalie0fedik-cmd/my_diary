@@ -8,28 +8,27 @@ import {
   DEFAULT_CUSTOM_VARS,
 } from "@/lib/themes";
 
-const CATEGORIES = ["всі", "темна", "світла", "кольорова", "своя"] as const;
+const CATEGORIES = ["всі", "темна", "світла", "своя"] as const;
 type Category = (typeof CATEGORIES)[number];
 
 const FONT_OPTIONS = [
-  { value: "'Inter', system-ui, sans-serif",            label: "Inter (сучасний)" },
-  { value: "'Montserrat', system-ui, sans-serif",       label: "Montserrat (геометричний)" },
-  { value: "'Poppins', system-ui, sans-serif",          label: "Poppins (м'який)" },
-  { value: "'Playfair Display', Georgia, serif",        label: "Playfair (елегантний)" },
-  { value: "system-ui, sans-serif",                     label: "System (системний)" },
-  { value: "'Courier New', Courier, monospace",         label: "Courier (монопросторовий)" },
+  { value: "'Inter', system-ui, -apple-system, sans-serif",     label: "Inter (рекомендований)" },
+  { value: "'Montserrat', system-ui, -apple-system, sans-serif", label: "Montserrat (заголовковий)" },
+  { value: "'Poppins', system-ui, sans-serif",                   label: "Poppins (м'який)" },
+  { value: "'Playfair Display', Georgia, serif",                 label: "Playfair (елегантний)" },
+  { value: "system-ui, sans-serif",                              label: "System" },
 ];
 
 const COLOR_FIELDS: { key: string; label: string }[] = [
   { key: "--bg",       label: "Фон" },
   { key: "--surface",  label: "Картка" },
-  { key: "--surface2", label: "Картка 2" },
+  { key: "--surface2", label: "Hover/Фон 2" },
   { key: "--border",   label: "Рамка" },
-  { key: "--spine",    label: "Корінець" },
   { key: "--accent",   label: "Акцент" },
-  { key: "--accent2",  label: "Акцент 2" },
+  { key: "--accent2",  label: "Акцент темний" },
   { key: "--text",     label: "Текст" },
-  { key: "--muted",    label: "Другор. текст" },
+  { key: "--muted",    label: "Вторинний" },
+  { key: "--spine",    label: "Корінець" },
 ];
 
 interface Props { onClose: () => void }
@@ -224,7 +223,7 @@ function CustomEditor({ currentId, onActivate }: { currentId: string; onActivate
 // ── Main ThemePicker ──────────────────────────────────────────────────────────
 
 export default function ThemePicker({ onClose }: Props) {
-  const [current, setCurrent] = useState("night");
+  const [current, setCurrent] = useState("milk");
   const [category, setCategory] = useState<Category>("всі");
 
   useEffect(() => {

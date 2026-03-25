@@ -11,13 +11,14 @@ export const metadata: Metadata = {
 
 // Compact bg map for FOUC prevention — injected as inline script
 const BG_MAP: Record<string, string> = {
-  night: "#0f1117", forest: "#0c1410", coffee: "#120e0a", space: "#080810",
-  milk: "#fafafa", sky: "#f5f7fa", peach: "#fdf6f0", spring: "#f5fbf7",
-  sunset: "#1a0f08", lavender: "#f3f0ff", rose: "#fff4f7", shore: "#f7f4ef",
+  ocean: "#06141B",
+  anime: "#0A0A1A",
+  milk:  "#F8F9FB",
+  sakura:"#FFF5F7",
 };
 
 const foucScript = `(function(){try{
-  var t=localStorage.getItem('diary_theme')||'night';
+  var t=localStorage.getItem('diary_theme')||'milk';
   if(t==='custom'){
     var c=JSON.parse(localStorage.getItem('diary_custom_theme')||'{}');
     if(c['--bg'])document.documentElement.style.setProperty('--bg',c['--bg']);
