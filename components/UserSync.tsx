@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { syncFromCloud, isFirstSync, onSyncStatus, SyncStatus } from "@/lib/cloudSync";
+import { syncFromCloud, onSyncStatus, SyncStatus } from "@/lib/cloudSync";
 
 export default function UserSync() {
   const { data: session } = useSession();
@@ -20,15 +20,12 @@ export default function UserSync() {
     // Save email so storage.ts can namespace keys per user
     localStorage.setItem("diary_current_user", email);
 
-    // On first visit from this device — download all data from cloud and reload
-    if (isFirstSync(email)) {
-      syncFromCloud().then((count) => {
-        if (count > 0) {
-          // Reload so all page components pick up the newly populated localStorage
-          window.location.reload();
-        }
-      });
-    }
+    // Always sync from cloud on login so all devices stay up to date
+    syncFromCloud().then((count) => {
+      if (count > 0) {
+        window.location.reload();
+      }
+    });
   }, [session]);
 
   if (status === "idle") return null;
