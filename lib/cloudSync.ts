@@ -110,6 +110,14 @@ export function isFirstSync(email: string): boolean {
   return !localStorage.getItem(`diary_synced_${email}`);
 }
 
+/** Force re-download from cloud (clears the "already synced" flag first). */
+export async function forceDownloadFromCloud(): Promise<number> {
+  const email = localStorage.getItem("diary_current_user");
+  if (!email) return 0;
+  localStorage.removeItem(`diary_synced_${email}`);
+  return syncFromCloud();
+}
+
 // ── Upload all local data to cloud ────────────────────────────────────────────
 
 /**

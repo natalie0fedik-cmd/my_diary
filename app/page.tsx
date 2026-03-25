@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { exportAllData, importAllData } from "@/lib/storage";
-import { uploadAllToCloud } from "@/lib/cloudSync";
+import { uploadAllToCloud, forceDownloadFromCloud } from "@/lib/cloudSync";
 import dynamic from "next/dynamic";
 
 const ThemePicker = dynamic(() => import("@/components/ThemePicker"), { ssr: false });
@@ -26,6 +26,7 @@ export default function Home() {
   const [year, setYear] = useState(now.getFullYear());
   const [showThemePicker, setShowThemePicker] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { data: session } = useSession();
 
@@ -48,6 +49,18 @@ export default function Home() {
     const count = await uploadAllToCloud();
     setUploading(false);
     alert(count > 0 ? `Завантажено ${count} записів у хмару ✓` : "Немає даних для завантаження");
+  }
+
+  async function handleDownloadFromCloud() {
+    setDownloading(true);
+    const count = await forceDownloadFromCloud();
+    setDownloading(false);
+    if (count > 0) {
+      alert(`Отримано ${count} записів з хмари ✓`);
+      window.location.reload();
+    } else {
+      alert("Хмара порожня або помилка");
+    }
   }
 
   function handleImport(e: React.ChangeEvent<HTMLInputElement>) {
@@ -230,6 +243,25 @@ export default function Home() {
                   }}
                 >
                   ☁ {uploading ? "..." : "Синх"}
+                </button>
+                <button
+                  onClick={handleDownloadFromCloud}
+                  disabled={downloading}
+                  title="Завантажити дані з хмари на цей пристрій"
+                  style={{
+                    padding: "6px 14px",
+                    borderRadius: 8,
+                    border: "1px solid var(--border)",
+                    background: "var(--surface2)",
+                    color: "var(--muted)",
+                    cursor: downloading ? "default" : "pointer",
+                    fontSize: "0.78rem",
+                    fontFamily: "'Lora', Georgia, serif",
+                    display: "flex", alignItems: "center", gap: 5,
+                    opacity: downloading ? 0.6 : 1,
+                  }}
+                >
+                  ☁ {downloading ? "..." : "↓ Хмара"}
                 </button>
                 <input
                   ref={fileInputRef}
