@@ -1,18 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getToken } from "next-auth/jwt";
 import { initFirebase } from "@/lib/firebaseAdmin";
 
 export async function POST(req: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) {
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  if (!token?.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const body = await req.json() as { entries: Record<string, unknown> };
   const { entries } = body;
   const db = initFirebase();
-  const email = session.user.email;
+  const email = token.email as string;
 
   const batch = db.batch();
   for (const [key, value] of Object.entries(entries)) {
