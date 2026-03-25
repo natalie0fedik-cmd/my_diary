@@ -14,7 +14,7 @@ export const THEMES: DiaryTheme[] = [
     vars: {
       "--bg": "#091408", "--surface": "#0e1c0f", "--surface2": "#132815",
       "--border": "#1c3520", "--accent": "#4ec564", "--accent2": "#86efac",
-      "--text": "#b8d9b8", "--muted": "#5f8566", "--spine": "#265430",
+      "--text": "#c8e8c8", "--muted": "#8ab895", "--spine": "#265430",
       "--important": "#f6c547",
       "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
     },
@@ -24,7 +24,7 @@ export const THEMES: DiaryTheme[] = [
     vars: {
       "--bg": "#160810", "--surface": "#221018", "--surface2": "#2d1522",
       "--border": "#4a1f33", "--accent": "#f9a8d4", "--accent2": "#fce7f3",
-      "--text": "#fce7f3", "--muted": "#c084a0", "--spine": "#8b3a5e",
+      "--text": "#fce7f3", "--muted": "#d8a8c0", "--spine": "#8b3a5e",
       "--important": "#fbbf24",
       "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
     },
@@ -35,7 +35,7 @@ export const THEMES: DiaryTheme[] = [
     vars: {
       "--bg": "#0d0b1a", "--surface": "#16132a", "--surface2": "#1e1a36",
       "--border": "#342d5a", "--accent": "#a78bfa", "--accent2": "#ddd6fe",
-      "--text": "#e9e3ff", "--muted": "#7c6faa", "--spine": "#4c3899",
+      "--text": "#e9e3ff", "--muted": "#a898d8", "--spine": "#4c3899",
       "--important": "#f9a8d4",
       "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
     },
@@ -45,7 +45,7 @@ export const THEMES: DiaryTheme[] = [
     vars: {
       "--bg": "#020d18", "--surface": "#071a28", "--surface2": "#0c2336",
       "--border": "#1a3d5c", "--accent": "#22d3ee", "--accent2": "#a5f3fc",
-      "--text": "#e0f7ff", "--muted": "#4a9ab5", "--spine": "#0e5272",
+      "--text": "#e0f7ff", "--muted": "#72c0d8", "--spine": "#0e5272",
       "--important": "#f6c547",
       "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
     },
@@ -56,7 +56,7 @@ export const THEMES: DiaryTheme[] = [
     vars: {
       "--bg": "#120908", "--surface": "#1e1008", "--surface2": "#2a1a0d",
       "--border": "#4a2e16", "--accent": "#fb923c", "--accent2": "#fed7aa",
-      "--text": "#fef3c7", "--muted": "#9a6840", "--spine": "#7c3d18",
+      "--text": "#fef3c7", "--muted": "#c89060", "--spine": "#7c3d18",
       "--important": "#f6c547",
       "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
     },
@@ -66,7 +66,7 @@ export const THEMES: DiaryTheme[] = [
     vars: {
       "--bg": "#140609", "--surface": "#200c12", "--surface2": "#2c111a",
       "--border": "#501c28", "--accent": "#fb7185", "--accent2": "#fecdd3",
-      "--text": "#fff1f2", "--muted": "#a8606e", "--spine": "#8b1c30",
+      "--text": "#fff1f2", "--muted": "#d08898", "--spine": "#8b1c30",
       "--important": "#fbbf24",
       "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
     },
@@ -150,7 +150,7 @@ export const THEMES: DiaryTheme[] = [
     vars: {
       "--bg": "#0f0618", "--surface": "#180c28", "--surface2": "#21123a",
       "--border": "#3d2060", "--accent": "#e879f9", "--accent2": "#f5d0fe",
-      "--text": "#fdf4ff", "--muted": "#a855c8", "--spine": "#7e22ce",
+      "--text": "#fdf4ff", "--muted": "#c880e8", "--spine": "#7e22ce",
       "--important": "#f9a8d4",
       "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
     },
@@ -161,7 +161,7 @@ export const THEMES: DiaryTheme[] = [
     vars: {
       "--bg": "#050514", "--surface": "#0c0c24", "--surface2": "#131338",
       "--border": "#2a2a60", "--accent": "#818cf8", "--accent2": "#c7d2fe",
-      "--text": "#e0e7ff", "--muted": "#5b5fa8", "--spine": "#3730a3",
+      "--text": "#e0e7ff", "--muted": "#8888d0", "--spine": "#3730a3",
       "--important": "#34d399",
       "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
     },
@@ -172,7 +172,7 @@ export const THEMES: DiaryTheme[] = [
     vars: {
       "--bg": "#0d1508", "--surface": "#172010", "--surface2": "#1f2d16",
       "--border": "#364e26", "--accent": "#84cc16", "--accent2": "#d9f99d",
-      "--text": "#f7fee7", "--muted": "#6a8f40", "--spine": "#3f6212",
+      "--text": "#f7fee7", "--muted": "#96b860", "--spine": "#3f6212",
       "--important": "#f6c547",
       "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
     },
@@ -182,7 +182,7 @@ export const THEMES: DiaryTheme[] = [
     vars: {
       "--bg": "#170d14", "--surface": "#231220", "--surface2": "#2e182b",
       "--border": "#53284e", "--accent": "#f472b6", "--accent2": "#fce7f3",
-      "--text": "#fdf2f8", "--muted": "#c47da8", "--spine": "#9d174d",
+      "--text": "#fdf2f8", "--muted": "#dda0c8", "--spine": "#9d174d",
       "--important": "#fbbf24",
       "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
     },
@@ -195,7 +195,7 @@ export const THEMES: DiaryTheme[] = [
     vars: {
       "--bg": "#0a0505", "--surface": "#160c0c", "--surface2": "#1f1010",
       "--border": "#4a2020", "--accent": "#d4a017", "--accent2": "#fde68a",
-      "--text": "#f5e6d3", "--muted": "#9a7a5a", "--spine": "#8b0000",
+      "--text": "#f5e6d3", "--muted": "#c8a07a", "--spine": "#8b0000",
       "--important": "#d4a017",
       "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
     },
@@ -206,7 +206,7 @@ export const THEMES: DiaryTheme[] = [
     vars: {
       "--bg": "#020510", "--surface": "#060c1e", "--surface2": "#0c1630",
       "--border": "#1c2d50", "--accent": "#60a5fa", "--accent2": "#bfdbfe",
-      "--text": "#e0f0ff", "--muted": "#4872a8", "--spine": "#1e3a6e",
+      "--text": "#e0f0ff", "--muted": "#7aa0d0", "--spine": "#1e3a6e",
       "--important": "#f6c547",
       "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
     },
@@ -217,7 +217,7 @@ export const THEMES: DiaryTheme[] = [
     vars: {
       "--bg": "#000a00", "--surface": "#001200", "--surface2": "#001a00",
       "--border": "#003300", "--accent": "#00cc33", "--accent2": "#66ff77",
-      "--text": "#00ff41", "--muted": "#007722", "--spine": "#005500",
+      "--text": "#00ff41", "--muted": "#00bb44", "--spine": "#005500",
       "--important": "#00ff41",
       "--font-body": "'Courier New', Courier, monospace",
       "--font-heading": "'Courier New', Courier, monospace",
@@ -228,7 +228,7 @@ export const THEMES: DiaryTheme[] = [
     vars: {
       "--bg": "#100c06", "--surface": "#1c1508", "--surface2": "#261d0d",
       "--border": "#4a3820", "--accent": "#c8a94a", "--accent2": "#f0d888",
-      "--text": "#f5e6c8", "--muted": "#8c7040", "--spine": "#6b4c20",
+      "--text": "#f5e6c8", "--muted": "#b89860", "--spine": "#6b4c20",
       "--important": "#c8a94a",
       "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
     },
@@ -240,7 +240,7 @@ export const THEMES: DiaryTheme[] = [
     vars: {
       "--bg": "#08080f", "--surface": "#10101c", "--surface2": "#18182a",
       "--border": "#26263a", "--accent": "#8b5cf6", "--accent2": "#c4b5fd",
-      "--text": "#e2e0ff", "--muted": "#585880", "--spine": "#3a2870",
+      "--text": "#e2e0ff", "--muted": "#8888b8", "--spine": "#3a2870",
       "--important": "#f6c547",
       "--font-body": "'Lora', Georgia, serif", "--font-heading": "'Caveat', cursive",
     },
@@ -250,7 +250,7 @@ export const THEMES: DiaryTheme[] = [
     vars: {
       "--bg": "#050508", "--surface": "#0c0c14", "--surface2": "#121220",
       "--border": "#202038", "--accent": "#06b6d4", "--accent2": "#67e8f9",
-      "--text": "#e0f7fa", "--muted": "#2d7a8a", "--spine": "#0e5c6e",
+      "--text": "#e0f7fa", "--muted": "#58a8b8", "--spine": "#0e5c6e",
       "--important": "#f6c547",
       "--font-body": "system-ui, sans-serif", "--font-heading": "'Caveat', cursive",
     },

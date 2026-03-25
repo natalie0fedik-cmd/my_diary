@@ -103,12 +103,13 @@ export default function Home() {
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
             <div>
               <div style={{
-                fontFamily: "'Caveat', cursive",
-                fontSize: "0.75rem",
-                color: "var(--muted)",
-                letterSpacing: "0.2em",
+                fontFamily: "'Lora', Georgia, serif",
+                fontSize: "0.72rem",
+                color: "var(--text)",
+                letterSpacing: "0.18em",
                 textTransform: "uppercase",
                 marginBottom: 6,
+                opacity: 0.7,
               }}>
                 Особистий щоденник
               </div>
@@ -127,8 +128,9 @@ export default function Home() {
                 fontFamily: "'Lora', Georgia, serif",
                 fontStyle: "italic",
                 fontSize: "0.85rem",
-                color: "var(--muted)",
+                color: "var(--text)",
                 marginTop: 8,
+                opacity: 0.75,
               }}>
                 Планувальник · Розклад · Нотатки · KPI
               </div>

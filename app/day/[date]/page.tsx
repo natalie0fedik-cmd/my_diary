@@ -115,7 +115,7 @@ export default function DayPage({ params }: Props) {
   const totalTasks = data.tasks.length;
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)", paddingLeft: 28 }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <div style={{ padding: "2rem 1.5rem" }}>
       <div style={{ maxWidth: 860, margin: "0 auto" }}>
         {/* Breadcrumb */}
@@ -230,7 +230,7 @@ export default function DayPage({ params }: Props) {
           </div>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+        <div className="day-grid">
           {/* Left column: Schedule */}
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <div style={{
