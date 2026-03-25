@@ -11,10 +11,11 @@ export const metadata: Metadata = {
 
 // Compact bg map for FOUC prevention — injected as inline script
 const BG_MAP: Record<string, string> = {
-  ocean: "#06141B",
-  anime: "#0A0A1A",
-  milk:  "#F8F9FB",
-  sakura:"#FFF5F7",
+  ocean: "#06141B", anime: "#0A0A1A", milk: "#F8F9FB", sakura: "#FFF5F7",
+  dark_forest: "#0B1A13", coal: "#121212", space: "#05070D",
+  cold: "#0F172A", bordeaux: "#1A0F14",
+  mint: "#F1FBF7", cloudy: "#F4F6F8", peach: "#FFF4F0",
+  lemon: "#FFFBEA", teal: "#F0FDFA",
 };
 
 const foucScript = `(function(){try{
