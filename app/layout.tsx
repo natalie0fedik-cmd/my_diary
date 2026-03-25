@@ -11,12 +11,12 @@ export const metadata: Metadata = {
 
 // Compact bg map for FOUC prevention — injected as inline script
 const BG_MAP: Record<string, string> = {
-  forest: "#091408", sakura: "#160810", lavender: "#0d0b1a",
-  ocean: "#020d18", autumn: "#120908", rose: "#140609",
-  magical: "#0f0618", animenight: "#050514", ghibli: "#0d1508",
-  kawaii: "#170d14", hogwarts: "#0a0505", starwars: "#020510",
-  matrix: "#000a00", lotr: "#100c06", midnight: "#08080f",
-  cyberpunk: "#050508", paper: "#f5f0e8",
+  forest: "#080f08", sakura: "#0e0608", lavender: "#09081a",
+  ocean: "#010c18", autumn: "#0e0806", rose: "#0e0507",
+  magical: "#0a0418", animenight: "#040412", ghibli: "#0a1208",
+  kawaii: "#120c10", hogwarts: "#090404", starwars: "#020408",
+  matrix: "#000800", lotr: "#0e0a04", midnight: "#06060e",
+  cyberpunk: "#040408", paper: "#f5f0e8",
   pastel_milk: "#faf8f5", pastel_peach: "#fdf5ef", pastel_mint: "#f0faf5",
   pastel_lilac: "#f8f5ff", pastel_pink: "#fff5f8",
   pastel_sky: "#f0f7ff", pastel_lemon: "#fffdf0",
