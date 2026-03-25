@@ -14,12 +14,6 @@ const MONTHS_UA = [
 const DAYS_UA = ["Нд","Пн","Вт","Ср","Чт","Пт","Сб"];
 const DAYS_UA_FULL = ["Неділя","Понеділок","Вівторок","Середа","Четвер","П'ятниця","Субота"];
 
-const MONTH_COLORS = [
-  "#4ade80","#22c55e","#86efac","#34d399",
-  "#10b981","#059669","#4ec564","#84cc16",
-  "#a3e635","#52c46a","#16a34a","#34d399",
-];
-
 const NAV = [
   { label: "Календар",    href: (y: string, m: string) => `/month/${y}/${m}` },
   { label: "Цілі",        href: (y: string, m: string) => `/month/${y}/${m}/goals` },
@@ -57,7 +51,6 @@ export default function MonthFoodPage({ params }: Props) {
   const year  = parseInt(yearStr);
   const month = parseInt(monthStr);
   const monthIdx = month - 1;
-  const color = MONTH_COLORS[monthIdx];
   const days  = daysInMonth(year, month);
 
   const [rows, setRows]   = useState<DayRow[]>([]);
@@ -130,7 +123,7 @@ export default function MonthFoodPage({ params }: Props) {
         {/* Header */}
         <div style={{
           background: "linear-gradient(135deg,var(--surface) 0%,var(--surface2) 100%)",
-          border: `1px solid ${color}55`, borderRadius: 14, padding: "1.5rem",
+          border: "1px solid color-mix(in srgb, var(--accent) 33%, transparent)", borderRadius: 14, padding: "1.5rem",
           marginBottom: "1rem", position: "relative", overflow: "hidden",
         }}>
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 4, background: `linear-gradient(to right,#f6c547,#fb923c)` }} />
@@ -165,8 +158,8 @@ export default function MonthFoodPage({ params }: Props) {
                 onClick={downloadXLSX}
                 style={{
                   padding: "7px 18px", borderRadius: 8,
-                  border: "1px solid #4ade80", background: "#4ade8022",
-                  color: "#4ade80", cursor: "pointer", fontSize: "0.85rem",
+                  border: "1px solid color-mix(in srgb, var(--accent) 40%, transparent)", background: "color-mix(in srgb, var(--accent) 13%, transparent)",
+                  color: "var(--accent)", cursor: "pointer", fontSize: "0.85rem",
                   fontWeight: 700, fontFamily: "var(--font-body)",
                   display: "flex", alignItems: "center", gap: 6,
                 }}

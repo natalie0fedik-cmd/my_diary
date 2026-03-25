@@ -11,12 +11,6 @@ const MONTHS_UA = [
   "Вересень", "Жовтень", "Листопад", "Грудень",
 ];
 
-const MONTH_COLORS = [
-  "#4ade80", "#22c55e", "#86efac", "#34d399",
-  "#10b981", "#059669", "#4ec564", "#84cc16",
-  "#a3e635", "#52c46a", "#16a34a", "#34d399",
-];
-
 const CATEGORIES: { key: GoalCategory; label: string; color: string }[] = [
   { key: "personal", label: "Особисті", color: "#4ade80" },
   { key: "work",     label: "Робота",   color: "#60a5fa" },
@@ -40,7 +34,6 @@ export default function GoalsPage({ params }: Props) {
   const { year, month } = use(params);
   const monthKey = `${year}-${month}`;
   const monthIdx = parseInt(month) - 1;
-  const color = MONTH_COLORS[monthIdx];
 
   const [data, setData] = useState<MonthGoals | null>(null);
   const [newText, setNewText] = useState("");
@@ -100,29 +93,29 @@ export default function GoalsPage({ params }: Props) {
         {/* Header */}
         <div style={{
           background: "linear-gradient(135deg,var(--surface) 0%,var(--surface2) 100%)",
-          border: `1px solid ${color}55`, borderRadius: 14, padding: "1.5rem",
+          border: "1px solid color-mix(in srgb, var(--accent) 33%, transparent)", borderRadius: 14, padding: "1.5rem",
           marginBottom: "1rem", position: "relative", overflow: "hidden",
         }}>
-          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 4, background: `linear-gradient(to right,${color},${color}88)` }} />
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 4, background: "linear-gradient(to right, var(--accent), color-mix(in srgb, var(--accent) 53%, transparent))" }} />
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginTop: 6, flexWrap: "wrap", gap: 12 }}>
             <div>
               <div style={{ fontSize: "0.7rem", color: "var(--muted)", fontFamily: "var(--font-body)", letterSpacing: "0.1em", marginBottom: 4 }}>
                 {String(parseInt(month)).padStart(2,"0")} · {year}
               </div>
-              <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "2.4rem", fontWeight: 700, color, margin: 0, lineHeight: 1 }}>
+              <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "2.4rem", fontWeight: 700, color: "var(--accent)", margin: 0, lineHeight: 1 }}>
                 Цілі місяця
               </h1>
             </div>
             {total > 0 && (
               <div style={{ textAlign: "right" }}>
-                <div style={{ fontFamily: "var(--font-heading)", fontSize: "1.8rem", fontWeight: 700, color }}>{pct}%</div>
+                <div style={{ fontFamily: "var(--font-heading)", fontSize: "1.8rem", fontWeight: 700, color: "var(--accent)" }}>{pct}%</div>
                 <div style={{ fontSize: "0.75rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{done}/{total} виконано</div>
               </div>
             )}
           </div>
           {total > 0 && (
             <div style={{ marginTop: 12, height: 6, background: "var(--border)", borderRadius: 3, overflow: "hidden" }}>
-              <div style={{ height: "100%", width: `${pct}%`, background: color, borderRadius: 3, transition: "width 0.3s" }} />
+              <div style={{ height: "100%", width: `${pct}%`, background: "var(--accent)", borderRadius: 3, transition: "width 0.3s" }} />
             </div>
           )}
         </div>
@@ -136,9 +129,9 @@ export default function GoalsPage({ params }: Props) {
                 <span style={{
                   display: "inline-block", padding: "5px 14px", borderRadius: 8,
                   fontSize: "0.8rem", fontFamily: "var(--font-body)",
-                  background: active ? `${color}22` : "var(--surface)",
-                  color: active ? color : "var(--muted)",
-                  border: `1px solid ${active ? color+"66" : "var(--border)"}`,
+                  background: active ? "color-mix(in srgb, var(--accent) 13%, transparent)" : "var(--surface)",
+                  color: active ? "var(--accent)" : "var(--muted)",
+                  border: `1px solid ${active ? "color-mix(in srgb, var(--accent) 40%, transparent)" : "var(--border)"}`,
                   fontWeight: active ? 600 : 400,
                 }}>
                   {n.label}
@@ -232,8 +225,8 @@ export default function GoalsPage({ params }: Props) {
             </select>
             <button onClick={addGoal} style={{
               padding: "8px 18px", borderRadius: 8,
-              border: `1px solid ${color}`, background: `${color}22`,
-              color, cursor: "pointer", fontSize: "0.88rem", fontWeight: 600,
+              border: "1px solid color-mix(in srgb, var(--accent) 40%, transparent)", background: "color-mix(in srgb, var(--accent) 13%, transparent)",
+              color: "var(--accent)", cursor: "pointer", fontSize: "0.88rem", fontWeight: 600,
               fontFamily: "var(--font-body)",
             }}>
               + Додати

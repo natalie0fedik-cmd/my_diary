@@ -11,12 +11,6 @@ const MONTHS_UA = [
   "Вересень", "Жовтень", "Листопад", "Грудень",
 ];
 
-const MONTH_COLORS = [
-  "#4ade80", "#22c55e", "#86efac", "#34d399",
-  "#10b981", "#059669", "#4ec564", "#84cc16",
-  "#a3e635", "#52c46a", "#16a34a", "#34d399",
-];
-
 const NAV = [
   { label: "Календар",   href: (y: string, m: string) => `/month/${y}/${m}` },
   { label: "Цілі",       href: (y: string, m: string) => `/month/${y}/${m}/goals` },
@@ -35,7 +29,6 @@ export default function BudgetPage({ params }: Props) {
   const { year, month } = use(params);
   const monthKey = `${year}-${month}`;
   const monthIdx = parseInt(month) - 1;
-  const color = MONTH_COLORS[monthIdx];
 
   const [data, setData] = useState<BudgetPlan | null>(null);
   const [newType,   setNewType]   = useState<"income"|"expense">("expense");
@@ -105,16 +98,16 @@ export default function BudgetPage({ params }: Props) {
         {/* Header + balance */}
         <div style={{
           background: "linear-gradient(135deg,var(--surface) 0%,var(--surface2) 100%)",
-          border: `1px solid ${color}55`, borderRadius: 14, padding: "1.5rem",
+          border: "1px solid color-mix(in srgb, var(--accent) 33%, transparent)", borderRadius: 14, padding: "1.5rem",
           marginBottom: "1rem", position: "relative", overflow: "hidden",
         }}>
-          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 4, background: `linear-gradient(to right,${color},${color}88)` }} />
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 4, background: "linear-gradient(to right, var(--accent), color-mix(in srgb, var(--accent) 53%, transparent))" }} />
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginTop: 6, flexWrap: "wrap", gap: 16 }}>
             <div>
               <div style={{ fontSize: "0.7rem", color: "var(--muted)", fontFamily: "var(--font-body)", letterSpacing: "0.1em", marginBottom: 4 }}>
                 {String(parseInt(month)).padStart(2,"0")} · {year}
               </div>
-              <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "2.4rem", fontWeight: 700, color, margin: 0, lineHeight: 1 }}>
+              <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "2.4rem", fontWeight: 700, color: "var(--accent)", margin: 0, lineHeight: 1 }}>
                 Бюджет
               </h1>
             </div>
@@ -157,9 +150,9 @@ export default function BudgetPage({ params }: Props) {
                 <span style={{
                   display: "inline-block", padding: "5px 14px", borderRadius: 8,
                   fontSize: "0.8rem", fontFamily: "var(--font-body)",
-                  background: active ? `${color}22` : "var(--surface)",
-                  color: active ? color : "var(--muted)",
-                  border: `1px solid ${active ? color+"66" : "var(--border)"}`,
+                  background: active ? "color-mix(in srgb, var(--accent) 13%, transparent)" : "var(--surface)",
+                  color: active ? "var(--accent)" : "var(--muted)",
+                  border: `1px solid ${active ? "color-mix(in srgb, var(--accent) 40%, transparent)" : "var(--border)"}`,
                   fontWeight: active ? 600 : 400,
                 }}>
                   {n.label}
@@ -327,8 +320,8 @@ export default function BudgetPage({ params }: Props) {
 
         {/* Tips for next month + financial goal */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-          <div style={{ background: "var(--surface)", border: `1px solid ${color}33`, borderRadius: 12, padding: "1rem 1.25rem" }}>
-            <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1.1rem", color, margin: "0 0 10px" }}>
+          <div style={{ background: "var(--surface)", border: "1px solid color-mix(in srgb, var(--accent) 20%, transparent)", borderRadius: 12, padding: "1rem 1.25rem" }}>
+            <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1.1rem", color: "var(--accent)", margin: "0 0 10px" }}>
               Поради на наступний місяць
             </h3>
             <textarea

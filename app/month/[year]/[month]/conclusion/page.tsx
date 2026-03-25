@@ -11,12 +11,6 @@ const MONTHS_UA = [
   "Вересень", "Жовтень", "Листопад", "Грудень",
 ];
 
-const MONTH_COLORS = [
-  "#4ade80", "#22c55e", "#86efac", "#34d399",
-  "#10b981", "#059669", "#4ec564", "#84cc16",
-  "#a3e635", "#52c46a", "#16a34a", "#34d399",
-];
-
 interface Props {
   params: Promise<{ year: string; month: string }>;
 }
@@ -25,7 +19,6 @@ export default function ConclusionPage({ params }: Props) {
   const { year, month } = use(params);
   const monthKey = `${year}-${month}`;
   const monthIdx = parseInt(month) - 1;
-  const color = MONTH_COLORS[monthIdx];
 
   const [data, setData] = useState<MonthConclusion | null>(null);
   const [saving, setSaving] = useState(false);
@@ -121,9 +114,9 @@ export default function ConclusionPage({ params }: Props) {
                     <span style={{
                       display: "inline-block", padding: "5px 14px", borderRadius: 8,
                       fontSize: "0.8rem", fontFamily: "var(--font-body)",
-                      background: active ? `${color}22` : "var(--surface)",
-                      color: active ? color : "var(--muted)",
-                      border: `1px solid ${active ? color+"66" : "var(--border)"}`,
+                      background: active ? "color-mix(in srgb, var(--accent) 13%, transparent)" : "var(--surface)",
+                      color: active ? "var(--accent)" : "var(--muted)",
+                      border: `1px solid ${active ? "color-mix(in srgb, var(--accent) 40%, transparent)" : "var(--border)"}`,
                       fontWeight: active ? 600 : 400,
                     }}>
                       {n.label}
@@ -138,20 +131,20 @@ export default function ConclusionPage({ params }: Props) {
         {/* Header */}
         <div style={{
           background: "var(--surface)",
-          border: `1px solid ${color}`,
+          border: "1px solid var(--accent)",
           borderRadius: 14,
           padding: "1.5rem",
           marginBottom: "1.5rem",
           position: "relative",
           overflow: "hidden",
         }}>
-          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 4, background: color }} />
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 4, background: "var(--accent)" }} />
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 4 }}>
             <div>
               <div style={{ fontSize: "0.75rem", color: "var(--muted)", marginBottom: 4 }}>
                 {month} / {year}
               </div>
-              <h1 style={{ fontSize: "1.6rem", fontWeight: 700, color: color, margin: 0 }}>
+              <h1 style={{ fontSize: "1.6rem", fontWeight: 700, color: "var(--accent)", margin: 0 }}>
                 Висновки — {MONTHS_UA[monthIdx]}
               </h1>
             </div>
@@ -278,13 +271,13 @@ export default function ConclusionPage({ params }: Props) {
         {/* KPI Section */}
         <div style={{
           background: "var(--surface)",
-          border: `1px solid ${color}44`,
+          border: "1px solid color-mix(in srgb, var(--accent) 27%, transparent)",
           borderRadius: 14,
           padding: "1.25rem",
         }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
             <div>
-              <h2 style={{ fontSize: "0.85rem", fontWeight: 700, color: color, margin: 0, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+              <h2 style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--accent)", margin: 0, textTransform: "uppercase", letterSpacing: "0.05em" }}>
                 KPI Місяця
               </h2>
               <p style={{ fontSize: "0.75rem", color: "var(--muted)", margin: "4px 0 0" }}>
@@ -432,7 +425,7 @@ export default function ConclusionPage({ params }: Props) {
                 flex: 1,
                 padding: "8px 12px",
                 borderRadius: 8,
-                border: `1px solid ${color}44`,
+                border: "1px solid color-mix(in srgb, var(--accent) 27%, transparent)",
                 background: "var(--surface2)",
                 fontSize: "0.85rem",
                 color: "var(--text)",
@@ -444,9 +437,9 @@ export default function ConclusionPage({ params }: Props) {
               style={{
                 padding: "8px 18px",
                 borderRadius: 8,
-                border: `1px solid ${color}`,
-                background: `${color}22`,
-                color: color,
+                border: "1px solid var(--accent)",
+                background: "color-mix(in srgb, var(--accent) 13%, transparent)",
+                color: "var(--accent)",
                 cursor: "pointer",
                 fontSize: "0.88rem",
                 fontWeight: 600,

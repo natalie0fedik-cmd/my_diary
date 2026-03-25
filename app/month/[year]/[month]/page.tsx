@@ -12,12 +12,6 @@ const MONTHS_UA = [
 
 const DAYS_UA = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"];
 
-const MONTH_COLORS = [
-  "#4ade80", "#22c55e", "#86efac", "#34d399",
-  "#10b981", "#059669", "#4ec564", "#84cc16",
-  "#a3e635", "#52c46a", "#16a34a", "#34d399",
-];
-
 const NAV = [
   { label: "Календар",   href: (y: string, m: string) => `/month/${y}/${m}` },
   { label: "Цілі",       href: (y: string, m: string) => `/month/${y}/${m}/goals` },
@@ -45,7 +39,6 @@ export default function MonthPage({ params }: Props) {
   const year = parseInt(yearStr);
   const month = parseInt(monthStr);
   const monthIdx = month - 1;
-  const color = MONTH_COLORS[monthIdx];
   const monthKey = `${yearStr}-${monthStr}`;
 
   const daysCount = getDaysInMonth(year, month);
@@ -132,16 +125,16 @@ export default function MonthPage({ params }: Props) {
         {/* Month header */}
         <div style={{
           background: "linear-gradient(135deg,var(--surface) 0%,var(--surface2) 100%)",
-          border: `1px solid ${color}55`, borderRadius: 14, padding: "1.5rem",
+          border: "1px solid color-mix(in srgb, var(--accent) 33%, transparent)", borderRadius: 14, padding: "1.5rem",
           marginBottom: "1rem", position: "relative", overflow: "hidden",
         }}>
-          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 4, background: `linear-gradient(to right,${color},${color}88)` }} />
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 4, background: "linear-gradient(to right, var(--accent), color-mix(in srgb, var(--accent) 53%, transparent))" }} />
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginTop: 6, flexWrap: "wrap", gap: 12 }}>
             <div>
               <div style={{ fontSize: "0.7rem", color: "var(--muted)", fontFamily: "var(--font-body)", letterSpacing: "0.1em", marginBottom: 4 }}>
                 {String(month).padStart(2,"0")} · {year}
               </div>
-              <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "2.4rem", fontWeight: 700, color, margin: 0, lineHeight: 1 }}>
+              <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "2.4rem", fontWeight: 700, color: "var(--accent)", margin: 0, lineHeight: 1 }}>
                 {MONTHS_UA[monthIdx]}
               </h1>
               <p style={{ fontFamily: "var(--font-body)", fontStyle: "italic", color: "var(--muted)", fontSize: "0.82rem", margin: "6px 0 0" }}>
@@ -156,10 +149,10 @@ export default function MonthPage({ params }: Props) {
               {goalsPct !== null && (
                 <Link href={`/month/${yearStr}/${monthStr}/goals`} style={{ textDecoration: "none" }}>
                   <div style={{
-                    padding: "6px 12px", borderRadius: 8, background: `${color}18`,
-                    border: `1px solid ${color}55`, cursor: "pointer",
+                    padding: "6px 12px", borderRadius: 8, background: "color-mix(in srgb, var(--accent) 10%, transparent)",
+                    border: "1px solid color-mix(in srgb, var(--accent) 33%, transparent)", cursor: "pointer",
                   }}>
-                    <div style={{ fontFamily: "var(--font-heading)", fontSize: "1.1rem", fontWeight: 700, color }}>{goalsPct}%</div>
+                    <div style={{ fontFamily: "var(--font-heading)", fontSize: "1.1rem", fontWeight: 700, color: "var(--accent)" }}>{goalsPct}%</div>
                     <div style={{ fontSize: "0.65rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>цілі</div>
                   </div>
                 </Link>
@@ -167,10 +160,10 @@ export default function MonthPage({ params }: Props) {
               {hasBudget && (
                 <Link href={`/month/${yearStr}/${monthStr}/budget`} style={{ textDecoration: "none" }}>
                   <div style={{
-                    padding: "6px 12px", borderRadius: 8, background: "#4ade8018",
-                    border: "1px solid #4ade8055", cursor: "pointer",
+                    padding: "6px 12px", borderRadius: 8, background: "color-mix(in srgb, var(--accent) 10%, transparent)",
+                    border: "1px solid color-mix(in srgb, var(--accent) 33%, transparent)", cursor: "pointer",
                   }}>
-                    <div style={{ fontFamily: "var(--font-heading)", fontSize: "1.1rem", fontWeight: 700, color: "#4ade80" }}>грн</div>
+                    <div style={{ fontFamily: "var(--font-heading)", fontSize: "1.1rem", fontWeight: 700, color: "var(--accent)" }}>грн</div>
                     <div style={{ fontSize: "0.65rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>бюджет</div>
                   </div>
                 </Link>
@@ -188,9 +181,9 @@ export default function MonthPage({ params }: Props) {
                 <span style={{
                   display: "inline-block", padding: "5px 14px", borderRadius: 8,
                   fontSize: "0.8rem", fontFamily: "var(--font-body)",
-                  background: active ? `${color}22` : "var(--surface)",
-                  color: active ? color : "var(--muted)",
-                  border: `1px solid ${active ? color+"66" : "var(--border)"}`,
+                  background: active ? "color-mix(in srgb, var(--accent) 13%, transparent)" : "var(--surface)",
+                  color: active ? "var(--accent)" : "var(--muted)",
+                  border: `1px solid ${active ? "color-mix(in srgb, var(--accent) 40%, transparent)" : "var(--border)"}`,
                   fontWeight: active ? 600 : 400,
                 }}>
                   {n.label}
@@ -275,10 +268,10 @@ export default function MonthPage({ params }: Props) {
               let cellColor = isWeekend ? "#f87171" : "var(--text)";
               let cellBorder= "transparent";
 
-              if (isToday)      { cellBg = color; cellColor = "#051208"; cellBorder = color; }
+              if (isToday)      { cellBg = "var(--accent)"; cellColor = "var(--bg)"; cellBorder = "var(--accent)"; }
               else if (isSpecial)  { cellBg = "#f472b622"; cellColor = "#f472b6"; cellBorder = "#f472b666"; }
               else if (isImportant){ cellBg = "#f6c54722"; cellColor = "#f6c547"; cellBorder = "#f6c54766"; }
-              else if (isFilled)   { cellBg = `${color}18`; cellBorder = `${color}55`; }
+              else if (isFilled)   { cellBg = "color-mix(in srgb, var(--accent) 10%, transparent)"; cellBorder = "color-mix(in srgb, var(--accent) 33%, transparent)"; }
 
               const clickable = markMode !== null;
 
@@ -318,8 +311,8 @@ export default function MonthPage({ params }: Props) {
                         }}
                         onMouseEnter={e => {
                           if (!isToday) {
-                            (e.currentTarget as HTMLDivElement).style.background = `${color}28`;
-                            (e.currentTarget as HTMLDivElement).style.borderColor = `${color}88`;
+                            (e.currentTarget as HTMLDivElement).style.background = "color-mix(in srgb, var(--accent) 17%, transparent)";
+                            (e.currentTarget as HTMLDivElement).style.borderColor = "color-mix(in srgb, var(--accent) 53%, transparent)";
                           }
                         }}
                         onMouseLeave={e => {
@@ -331,7 +324,7 @@ export default function MonthPage({ params }: Props) {
                       >
                         {day}
                         {isFilled && !isToday && !isImportant && !isSpecial && (
-                          <div style={{ position: "absolute", bottom: 4, width: 4, height: 4, borderRadius: "50%", background: color, opacity: 0.8 }} />
+                          <div style={{ position: "absolute", bottom: 4, width: 4, height: 4, borderRadius: "50%", background: "var(--accent)", opacity: 0.8 }} />
                         )}
                       </div>
                     </Link>
@@ -408,9 +401,9 @@ export default function MonthPage({ params }: Props) {
                     display: "inline-flex", alignItems: "center", gap: 2,
                     padding: "4px 9px", borderRadius: 7, fontSize: "0.8rem",
                     fontFamily: "var(--font-body)", fontWeight: isToday ? 700 : 400,
-                    background: isToday ? color : isSpecial ? "#f472b620" : isImportant ? "#f6c54720" : isFilled ? `${color}18` : "var(--surface2)",
-                    color: isToday ? "#051208" : isSpecial ? "#f472b6" : isImportant ? "#f6c547" : isFilled ? color : "var(--muted)",
-                    border: `1px solid ${isToday ? color : isSpecial ? "#f472b644" : isImportant ? "#f6c54744" : isFilled ? `${color}44` : "transparent"}`,
+                    background: isToday ? "var(--accent)" : isSpecial ? "#f472b620" : isImportant ? "#f6c54720" : isFilled ? "color-mix(in srgb, var(--accent) 10%, transparent)" : "var(--surface2)",
+                    color: isToday ? "var(--bg)" : isSpecial ? "#f472b6" : isImportant ? "#f6c547" : isFilled ? "var(--accent)" : "var(--muted)",
+                    border: `1px solid ${isToday ? "var(--accent)" : isSpecial ? "#f472b644" : isImportant ? "#f6c54744" : isFilled ? "color-mix(in srgb, var(--accent) 27%, transparent)" : "transparent"}`,
                     cursor: "pointer",
                   }}>
                     {isImportant && <span style={{ fontSize: "0.5rem" }}>★</span>}
