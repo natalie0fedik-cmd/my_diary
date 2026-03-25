@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { exportAllData, importAllData } from "@/lib/storage";
+import { uploadAllToCloud } from "@/lib/cloudSync";
 import dynamic from "next/dynamic";
 
 const ThemePicker = dynamic(() => import("@/components/ThemePicker"), { ssr: false });
@@ -24,6 +25,7 @@ export default function Home() {
   const now = new Date();
   const [year, setYear] = useState(now.getFullYear());
   const [showThemePicker, setShowThemePicker] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { data: session } = useSession();
 
@@ -39,6 +41,13 @@ export default function Home() {
     a.download = `diary-${new Date().toISOString().split("T")[0]}.json`;
     a.click();
     URL.revokeObjectURL(url);
+  }
+
+  async function handleUploadToCloud() {
+    setUploading(true);
+    const count = await uploadAllToCloud();
+    setUploading(false);
+    alert(count > 0 ? `Завантажено ${count} записів у хмару ✓` : "Немає даних для завантаження");
   }
 
   function handleImport(e: React.ChangeEvent<HTMLInputElement>) {
@@ -202,6 +211,25 @@ export default function Home() {
                   }}
                 >
                   <span>&#8593;</span> Завантажити
+                </button>
+                <button
+                  onClick={handleUploadToCloud}
+                  disabled={uploading}
+                  title="Завантажити всі дані з цього пристрою в хмару"
+                  style={{
+                    padding: "6px 14px",
+                    borderRadius: 8,
+                    border: "1px solid var(--border)",
+                    background: "var(--surface2)",
+                    color: "var(--muted)",
+                    cursor: uploading ? "default" : "pointer",
+                    fontSize: "0.78rem",
+                    fontFamily: "'Lora', Georgia, serif",
+                    display: "flex", alignItems: "center", gap: 5,
+                    opacity: uploading ? 0.6 : 1,
+                  }}
+                >
+                  ☁ {uploading ? "..." : "Синх"}
                 </button>
                 <input
                   ref={fileInputRef}
