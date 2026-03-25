@@ -15,11 +15,6 @@ const MONTHS_UA = [
   "Вересень", "Жовтень", "Листопад", "Грудень",
 ];
 
-const MONTH_COLORS = [
-  "#4ade80", "#22c55e", "#86efac", "#34d399",
-  "#10b981", "#059669", "#4ec564", "#84cc16",
-  "#a3e635", "#52c46a", "#16a34a", "#34d399",
-];
 
 export default function Home() {
   const now = new Date();
@@ -304,16 +299,15 @@ export default function Home() {
           {MONTHS_UA.map((name, idx) => {
             const isCurrentMonth = idx === currentMonth && year === currentYear;
             const isPast = year < currentYear || (year === currentYear && idx < currentMonth);
-            const color = MONTH_COLORS[idx];
             const monthStr = String(idx + 1).padStart(2, "0");
 
             return (
               <Link key={idx} href={`/month/${year}/${monthStr}`} style={{ textDecoration: "none" }}>
                 <div
                   style={{
-                    background: isCurrentMonth ? `${color}15` : "var(--surface)",
-                    border: `1px solid ${isCurrentMonth ? color : "var(--border)"}`,
-                    borderRadius: 12,
+                    background: isCurrentMonth ? "var(--accent-glow)" : "var(--surface)",
+                    border: `1px solid ${isCurrentMonth ? "var(--accent)" : "var(--border)"}`,
+                    borderRadius: 14,
                     padding: "1.1rem 1.1rem 1rem",
                     cursor: "pointer",
                     position: "relative",
@@ -322,22 +316,20 @@ export default function Home() {
                   }}
                   onMouseEnter={e => {
                     const el = e.currentTarget as HTMLDivElement;
-                    el.style.borderColor = color;
-                    el.style.background = `${color}18`;
+                    el.style.borderColor = "var(--accent)";
                     el.style.transform = "translateY(-2px)";
                   }}
                   onMouseLeave={e => {
                     const el = e.currentTarget as HTMLDivElement;
-                    el.style.borderColor = isCurrentMonth ? color : "var(--border)";
-                    el.style.background = isCurrentMonth ? `${color}15` : "var(--surface)";
+                    el.style.borderColor = isCurrentMonth ? "var(--accent)" : "var(--border)";
                     el.style.transform = "translateY(0)";
                   }}
                 >
-                  {/* Top color strip */}
+                  {/* Top accent strip */}
                   <div style={{
                     position: "absolute", top: 0, left: 0, right: 0,
-                    height: 3, background: color,
-                    opacity: isCurrentMonth ? 1 : 0.4,
+                    height: 3, background: "var(--accent)",
+                    opacity: isCurrentMonth ? 1 : 0.25,
                   }} />
 
                   <div style={{ marginTop: 6 }}>
@@ -346,14 +338,13 @@ export default function Home() {
                         <div style={{
                           fontSize: "0.68rem", color: "var(--muted)",
                           marginBottom: 4, letterSpacing: "0.05em",
-                          fontFamily: "var(--font-body)",
                         }}>
                           {monthStr} · {year}
                         </div>
                         <div style={{
                           fontFamily: "var(--font-heading)",
-                          fontSize: "1.4rem", fontWeight: 700,
-                          color: isCurrentMonth ? color : "var(--accent2)",
+                          fontSize: "1.35rem", fontWeight: 700,
+                          color: "var(--accent)",
                           lineHeight: 1,
                         }}>
                           {name}
@@ -361,10 +352,10 @@ export default function Home() {
                       </div>
                       {isCurrentMonth && (
                         <span style={{
-                          fontSize: "0.6rem", background: color, color: "#051208",
-                          borderRadius: 5, padding: "2px 6px", fontWeight: 700,
+                          fontSize: "0.6rem",
+                          background: "var(--accent)", color: "var(--bg)",
+                          borderRadius: 5, padding: "2px 6px", fontWeight: 600,
                           whiteSpace: "nowrap", marginTop: 2,
-                          fontFamily: "var(--font-body)",
                         }}>
                           зараз
                         </span>
