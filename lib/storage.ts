@@ -5,6 +5,7 @@ import {
   DayFood, FoodItem, MealType,
   DayActivity, ActivityEntry, ActivityType,
 } from "./types";
+import { markDirty } from "./cloudSync";
 
 // suppress unused import warnings
 void (null as unknown as Task | KpiItem | Goal | GoalCategory | BudgetEntry | FoodItem | MealType | ActivityEntry | ActivityType);
@@ -32,6 +33,7 @@ export function getDayData(date: string): DayData {
 export function saveDayData(data: DayData): void {
   if (!isClient()) return;
   localStorage.setItem(up() + "diary_day_" + data.date, JSON.stringify(data));
+  markDirty("diary_day_" + data.date);
 }
 
 function makeEmptyDay(date: string): DayData {
@@ -51,6 +53,7 @@ export function getMonthConclusion(monthKey: string): MonthConclusion {
 export function saveMonthConclusion(data: MonthConclusion): void {
   if (!isClient()) return;
   localStorage.setItem(up() + "diary_month_" + data.monthKey, JSON.stringify(data));
+  markDirty("diary_month_" + data.monthKey);
 }
 
 function makeEmptyConclusion(monthKey: string): MonthConclusion {
@@ -71,6 +74,7 @@ export function toggleImportantDate(monthKey: string, day: number): void {
   if (dates.has(day)) dates.delete(day);
   else dates.add(day);
   localStorage.setItem(up() + "diary_important_" + monthKey, JSON.stringify([...dates]));
+  markDirty("diary_important_" + monthKey);
 }
 
 // ── Goals ─────────────────────────────────────────────────────────────────────
@@ -85,6 +89,7 @@ export function getMonthGoals(monthKey: string): MonthGoals {
 export function saveMonthGoals(data: MonthGoals): void {
   if (!isClient()) return;
   localStorage.setItem(up() + "diary_goals_" + data.monthKey, JSON.stringify(data));
+  markDirty("diary_goals_" + data.monthKey);
 }
 
 // ── Budget ────────────────────────────────────────────────────────────────────
@@ -99,6 +104,7 @@ export function getBudgetPlan(monthKey: string): BudgetPlan {
 export function saveBudgetPlan(data: BudgetPlan): void {
   if (!isClient()) return;
   localStorage.setItem(up() + "diary_budget_" + data.monthKey, JSON.stringify(data));
+  markDirty("diary_budget_" + data.monthKey);
 }
 
 // ── Food diary ────────────────────────────────────────────────────────────────
@@ -113,6 +119,7 @@ export function getDayFood(date: string): DayFood {
 export function saveDayFood(data: DayFood): void {
   if (!isClient()) return;
   localStorage.setItem(up() + "diary_food_" + data.date, JSON.stringify(data));
+  markDirty("diary_food_" + data.date);
 }
 
 function makeEmptyFood(date: string): DayFood {
@@ -131,6 +138,7 @@ export function getDayActivity(date: string): DayActivity {
 export function saveDayActivity(data: DayActivity): void {
   if (!isClient()) return;
   localStorage.setItem(up() + "diary_activity_" + data.date, JSON.stringify(data));
+  markDirty("diary_activity_" + data.date);
 }
 
 function makeEmptyActivity(date: string): DayActivity {
