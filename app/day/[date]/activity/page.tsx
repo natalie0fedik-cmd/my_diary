@@ -317,7 +317,7 @@ export default function ActivityPage({ params }: Props) {
     .reduce((s, e) => s + (parseInt(e.value) || 0), 0);
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)", paddingLeft: 28 }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       {confirmTarget && (
         <ConfirmDialog
           message={

@@ -81,7 +81,7 @@ export default function ConclusionPage({ params }: Props) {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)", paddingLeft: 28 }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <div style={{ padding: "2rem 1.5rem" }}>
       <div style={{ maxWidth: 860, margin: "0 auto" }}>
         {/* Breadcrumb */}

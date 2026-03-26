@@ -108,7 +108,7 @@ export default function MonthFoodPage({ params }: Props) {
   const avgCalories   = daysWithData > 0 ? Math.round(totalCalories / daysWithData) : 0;
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)", paddingLeft: 28 }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <div style={{ maxWidth: 900, margin: "0 auto", padding: "2rem 1.5rem" }}>
 
         {/* Breadcrumb */}
@@ -247,14 +247,14 @@ export default function MonthFoodPage({ params }: Props) {
           </div>
         ) : (
           <div style={{ overflowX: "auto", borderRadius: 14, border: "1px solid var(--border)" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "var(--font-body)", tableLayout: "fixed" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "var(--font-body)", minWidth: 680 }}>
               <colgroup>
                 <col style={{ width: 52 }} />
                 <col style={{ width: 34 }} />
-                <col />
-                <col />
-                <col />
-                <col />
+                <col style={{ minWidth: 100 }} />
+                <col style={{ minWidth: 100 }} />
+                <col style={{ minWidth: 100 }} />
+                <col style={{ minWidth: 100 }} />
                 <col style={{ width: 58 }} />
                 <col style={{ width: 70 }} />
               </colgroup>

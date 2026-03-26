@@ -74,7 +74,7 @@ export default function Home() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)", paddingLeft: 28 }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <div style={{ maxWidth: 920, margin: "0 auto", padding: "2.5rem 1.5rem" }}>
 
         {/* Diary Cover Header */}

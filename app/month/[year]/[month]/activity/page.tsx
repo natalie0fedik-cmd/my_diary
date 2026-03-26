@@ -124,7 +124,7 @@ export default function MonthActivityPage({ params }: Props) {
   const grandMinutes  = rows.reduce((s, r) => s + r.totalMinutes, 0);
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)", paddingLeft: 28 }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <div style={{ maxWidth: 1000, margin: "0 auto", padding: "2rem 1.5rem" }}>
 
         {/* Breadcrumb */}

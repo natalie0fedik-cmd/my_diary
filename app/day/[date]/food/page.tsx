@@ -86,7 +86,7 @@ export default function FoodPage({ params }: Props) {
   const hasCal = MEALS.some(m => data[m.key].some(i => i.calories));
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)", paddingLeft: 28 }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <div style={{ maxWidth: 720, margin: "0 auto", padding: "2rem 1.5rem" }}>
 
         {/* Breadcrumb */}
@@ -166,7 +166,7 @@ export default function FoodPage({ params }: Props) {
         </div>
 
         {/* Meal sections */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: "1rem" }}>
+        <div className="day-grid" style={{ marginBottom: "1rem" }}>
           {MEALS.map(({ key, label, time, color }) => {
             const mealCal = mealCalories(data[key]);
             return (

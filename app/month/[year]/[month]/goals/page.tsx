@@ -78,7 +78,7 @@ export default function GoalsPage({ params }: Props) {
   const pct = total > 0 ? Math.round((done / total) * 100) : 0;
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)", paddingLeft: 28 }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <div style={{ maxWidth: 720, margin: "0 auto", padding: "2rem 1.5rem" }}>
 
         {/* Breadcrumb */}

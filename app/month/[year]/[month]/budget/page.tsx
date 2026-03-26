@@ -83,7 +83,7 @@ export default function BudgetPage({ params }: Props) {
   const cats = Object.entries(expByCat).sort((a, b) => b[1] - a[1]);
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)", paddingLeft: 28 }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <div style={{ maxWidth: 800, margin: "0 auto", padding: "2rem 1.5rem" }}>
 
         {/* Breadcrumb */}
