@@ -1,9 +1,10 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
-import { exportAllData, importAllData } from "@/lib/storage";
+import { exportAllData, importAllData, computeDiaryStreak } from "@/lib/storage";
 import { uploadAllToCloud, forceDownloadFromCloud } from "@/lib/cloudSync";
 import dynamic from "next/dynamic";
 
@@ -22,8 +23,15 @@ export default function Home() {
   const [showThemePicker, setShowThemePicker] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [streak, setStreak] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { data: session } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    setStreak(computeDiaryStreak());
+  }, []);
 
   const currentMonth = now.getMonth();
   const currentYear = now.getFullYear();
@@ -288,6 +296,55 @@ export default function Home() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Search + quick links bar */}
+        <div style={{ display: "flex", gap: 10, marginBottom: "1.25rem", flexWrap: "wrap", alignItems: "center" }}>
+          <form
+            onSubmit={e => { e.preventDefault(); if (searchQuery.trim()) router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`); }}
+            style={{ flex: 1, minWidth: 200 }}
+          >
+            <input
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              placeholder="Пошук по записах, їжі, нотатках..."
+              style={{
+                width: "100%",
+                background: "var(--surface)",
+                border: "1px solid var(--border)",
+                borderRadius: 8,
+                padding: "9px 14px",
+                color: "var(--text)",
+                fontSize: 14,
+                fontFamily: "var(--font-body)",
+                outline: "none",
+                boxSizing: "border-box",
+              }}
+              onFocus={e => (e.target.style.borderColor = "var(--accent)")}
+              onBlur={e => (e.target.style.borderColor = "var(--border)")}
+            />
+          </form>
+          <Link href="/compare" style={{ textDecoration: "none" }}>
+            <span style={{
+              display: "inline-block", padding: "8px 14px", borderRadius: 8,
+              border: "1px solid var(--border)", background: "var(--surface)",
+              color: "var(--muted)", fontSize: 13, fontFamily: "var(--font-body)",
+              cursor: "pointer", whiteSpace: "nowrap",
+            }}>
+              ⇄ Порівняти місяці
+            </span>
+          </Link>
+          {streak >= 2 && (
+            <div style={{
+              padding: "8px 14px", borderRadius: 8,
+              background: "color-mix(in srgb, #fb923c 15%, transparent)",
+              border: "1px solid color-mix(in srgb, #fb923c 40%, transparent)",
+              color: "#fb923c", fontSize: 13, fontFamily: "var(--font-body)",
+              fontWeight: 600, whiteSpace: "nowrap",
+            }}>
+              🔥 {streak} днів поспіль
+            </div>
+          )}
         </div>
 
         {/* Months grid */}

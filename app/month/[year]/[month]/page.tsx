@@ -35,6 +35,88 @@ type DayMark = "important" | "special" | null;
 const MOOD_COLORS = ["", "#f87171", "#fb923c", "#fbbf24", "#4ade80", "#22c55e"];
 const MOOD_LABELS = ["", "Погано", "Нижче норми", "Нормально", "Добре", "Відмінно"];
 
+function WeeklySummary({
+  moodData, filledDays, firstWeekday, year, month, daysCount,
+}: {
+  moodData: Record<number, number>;
+  filledDays: Set<number>;
+  firstWeekday: number;
+  year: number;
+  month: number;
+  daysCount: number;
+}) {
+  const weeks: (number | null)[][] = [];
+  let week: (number | null)[] = Array(firstWeekday).fill(null);
+  for (let d = 1; d <= daysCount; d++) {
+    week.push(d);
+    if (week.length === 7) { weeks.push(week); week = []; }
+  }
+  if (week.length > 0) { while (week.length < 7) week.push(null); weeks.push(week); }
+
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
+  const MOOD_COLORS_W = ["", "#f87171", "#fb923c", "#fbbf24", "#4ade80", "#22c55e"];
+
+  return (
+    <div style={{ marginBottom: "1rem" }}>
+      <h3 style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--muted)", margin: "0 0 8px", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+        Підсумок по тижнях
+      </h3>
+      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+        {weeks.map((w, wi) => {
+          const days = w.filter((d): d is number => d !== null);
+          if (days.length === 0) return null;
+          const filled = days.filter(d => filledDays.has(d));
+          const moods = days.map(d => moodData[d]).filter(Boolean) as number[];
+          const avgMood = moods.length > 0 ? (moods.reduce((a, b) => a + b, 0) / moods.length) : null;
+          const weekStart = days[0];
+          const weekEnd = days[days.length - 1];
+          const weekEndStr = `${year}-${String(month).padStart(2,"0")}-${String(weekEnd).padStart(2,"0")}`;
+          const isPast = weekEndStr < todayStr;
+          const isCurrent = !isPast && days.some(d => {
+            const ds = `${year}-${String(month).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+            return ds === todayStr;
+          });
+
+          return (
+            <div key={wi} style={{
+              display: "flex", alignItems: "center", gap: 10,
+              background: isCurrent ? "color-mix(in srgb, var(--accent) 7%, transparent)" : "var(--surface)",
+              border: `1px solid ${isCurrent ? "color-mix(in srgb, var(--accent) 30%, transparent)" : "var(--border)"}`,
+              borderRadius: 10, padding: "8px 14px",
+            }}>
+              <div style={{ fontSize: 13, color: "var(--muted)", minWidth: 80, fontFamily: "var(--font-body)" }}>
+                {weekStart}–{weekEnd}{isCurrent && <span style={{ color: "var(--accent)", fontWeight: 600 }}> ← зараз</span>}
+              </div>
+              <div style={{ flex: 1, display: "flex", gap: 3 }}>
+                {w.map((d, i) => {
+                  if (d === null) return <div key={i} style={{ width: 18, height: 18 }} />;
+                  const f = filledDays.has(d);
+                  const m = moodData[d];
+                  return (
+                    <div key={d} style={{
+                      width: 18, height: 18, borderRadius: 4,
+                      background: m ? MOOD_COLORS_W[m] + "88" : f ? "color-mix(in srgb, var(--accent) 25%, transparent)" : "var(--surface2)",
+                      border: `1px solid ${m ? MOOD_COLORS_W[m] + "aa" : f ? "color-mix(in srgb, var(--accent) 40%, transparent)" : "transparent"}`,
+                    }} title={`${d}${m ? " настрій "+m : ""}`} />
+                  );
+                })}
+              </div>
+              <div style={{ fontSize: 13, color: "var(--muted)", fontFamily: "var(--font-body)", minWidth: 80, textAlign: "right" }}>
+                {filled.length}/{days.length} днів
+                {avgMood !== null && <span style={{ color: "var(--accent)", marginLeft: 6 }}>⬤ {avgMood.toFixed(1)}</span>}
+              </div>
+              {isPast && filled.length === days.length && (
+                <div style={{ fontSize: 16, marginLeft: 2 }} title="Всі дні заповнені">✓</div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function MoodChart({ moodData, daysCount }: { moodData: Record<number, number>; daysCount: number }) {
   const days = Array.from({ length: daysCount }, (_, i) => i + 1);
   const filled = days.filter(d => moodData[d]);
@@ -402,6 +484,16 @@ export default function MonthPage({ params }: Props) {
             })}
           </div>
         </div>
+
+        {/* Weekly summary */}
+        <WeeklySummary
+          moodData={moodData}
+          filledDays={filledDays}
+          firstWeekday={firstWeekday}
+          year={year}
+          month={month}
+          daysCount={daysCount}
+        />
 
         {/* Mood chart */}
         <MoodChart moodData={moodData} daysCount={daysCount} />
