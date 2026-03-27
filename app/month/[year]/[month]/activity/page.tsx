@@ -53,6 +53,60 @@ interface DayRow {
 
 interface Props { params: Promise<{ year: string; month: string }> }
 
+const STEPS_NORM = 8000;
+
+function StepsChart({ rows }: { rows: DayRow[] }) {
+  const hasSteps = rows.some(r => r.totalSteps > 0);
+  if (!hasSteps) return null;
+  const maxSteps = Math.max(...rows.map(r => r.totalSteps), STEPS_NORM * 1.1);
+  const maxDay = rows.reduce((best, r) => r.totalSteps > best.totalSteps ? r : best, rows[0]);
+  const W = 520, H = 90, PAD = 18;
+  const slotW = W / rows.length;
+  const barW = Math.max(4, slotW - 3);
+  const normY = PAD + (H - PAD) * (1 - STEPS_NORM / maxSteps);
+  return (
+    <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "1rem 1.25rem", marginBottom: "1rem" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+        <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1rem", color: "var(--muted)", margin: 0 }}>Кроки по днях</h3>
+        <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>норма {STEPS_NORM.toLocaleString()}/день</span>
+      </div>
+      <svg width="100%" viewBox={`0 0 ${W} ${H + PAD}`} style={{ display: "block", overflow: "visible" }}>
+        {/* Norm line */}
+        <line x1={0} y1={normY} x2={W} y2={normY} stroke="var(--border)" strokeWidth={1} strokeDasharray="5 3" />
+        <text x={W - 2} y={normY - 3} textAnchor="end" fontSize={8} fill="var(--muted)" fontFamily="inherit">8k</text>
+        {/* Bars */}
+        {rows.map((row, i) => {
+          if (!row.totalSteps) return null;
+          const barH = ((row.totalSteps / maxSteps) * (H - PAD));
+          const x = i * slotW + (slotW - barW) / 2;
+          const y = PAD + (H - PAD) - barH;
+          const isRecord = row.totalSteps === maxDay.totalSteps && row.totalSteps > 0;
+          const metNorm = row.totalSteps >= STEPS_NORM;
+          return (
+            <g key={row.day}>
+              <rect x={x} y={y} width={barW} height={barH}
+                fill={isRecord ? "var(--important)" : metNorm ? "var(--accent)" : "color-mix(in srgb, var(--accent) 45%, transparent)"}
+                rx={2} />
+              {isRecord && (
+                <text x={x + barW / 2} y={y - 3} textAnchor="middle" fontSize={8} fill="var(--important)" fontFamily="inherit">★</text>
+              )}
+            </g>
+          );
+        })}
+        {/* Day labels every 7 days */}
+        {rows.filter((_, i) => i % 7 === 0 || i === rows.length - 1).map(row => {
+          const i = row.day - 1;
+          return (
+            <text key={row.day} x={i * slotW + slotW / 2} y={H + PAD} textAnchor="middle" fontSize={8} fill="var(--muted)" fontFamily="inherit">
+              {row.day}
+            </text>
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+
 export default function MonthActivityPage({ params }: Props) {
   const { year: yearStr, month: monthStr } = use(params);
   const year = parseInt(yearStr);
@@ -205,6 +259,9 @@ export default function MonthActivityPage({ params }: Props) {
             );
           })}
         </div>
+
+        {/* Steps chart */}
+        <StepsChart rows={rows} />
 
         {/* Stats cards */}
         {daysWithData > 0 && (

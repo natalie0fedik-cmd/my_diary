@@ -23,6 +23,42 @@ const NAV = [
 const EXPENSE_CATS = ["Їжа", "Транспорт", "Розваги", "Здоров'я", "Одяг", "Комунальні", "Освіта", "Краса", "Подорожі", "Інше"];
 const INCOME_CATS  = ["Зарплата", "Фріланс", "Подарунок", "Інше"];
 
+const PIE_COLORS = ["#f87171","#fb923c","#fbbf24","#4ade80","#60a5fa","#a78bfa","#f472b6","#34d399","#38bdf8","#e879f9"];
+
+function ExpensePie({ cats, total }: { cats: [string, number][], total: number }) {
+  const cx = 80, cy = 80, R = 68, r = 38;
+  let angle = -Math.PI / 2;
+  const slices = cats.map(([cat, amt], i) => {
+    const sweep = (amt / total) * 2 * Math.PI;
+    const x1 = cx + R * Math.cos(angle), y1 = cy + R * Math.sin(angle);
+    angle += sweep;
+    const x2 = cx + R * Math.cos(angle), y2 = cy + R * Math.sin(angle);
+    const xi1 = cx + r * Math.cos(angle - sweep), yi1 = cy + r * Math.sin(angle - sweep);
+    const xi2 = cx + r * Math.cos(angle), yi2 = cy + r * Math.sin(angle);
+    const large = sweep > Math.PI ? 1 : 0;
+    const d = `M ${x1} ${y1} A ${R} ${R} 0 ${large} 1 ${x2} ${y2} L ${xi2} ${yi2} A ${r} ${r} 0 ${large} 0 ${xi1} ${yi1} Z`;
+    return { cat, pct: Math.round((amt / total) * 100), d, color: PIE_COLORS[i % PIE_COLORS.length] };
+  });
+  return (
+    <div style={{ display: "flex", gap: 24, alignItems: "center", flexWrap: "wrap" }}>
+      <svg width={160} height={160} viewBox="0 0 160 160" style={{ flexShrink: 0 }}>
+        {slices.map(s => <path key={s.cat} d={s.d} fill={s.color} opacity={0.88} />)}
+        <text x={80} y={76} textAnchor="middle" fontSize={10} fill="var(--muted)" fontFamily="inherit">Витрати</text>
+        <text x={80} y={93} textAnchor="middle" fontSize={14} fontWeight={700} fill="var(--text)" fontFamily="inherit">{total.toLocaleString("uk-UA")}</text>
+      </svg>
+      <div style={{ display: "flex", flexDirection: "column", gap: 5, flex: 1 }}>
+        {slices.map(s => (
+          <div key={s.cat} style={{ display: "flex", alignItems: "center", gap: 7 }}>
+            <div style={{ width: 10, height: 10, borderRadius: 3, background: s.color, flexShrink: 0 }} />
+            <span style={{ fontSize: "0.8rem", color: "var(--text)", fontFamily: "var(--font-body)", flex: 1 }}>{s.cat}</span>
+            <span style={{ fontSize: "0.75rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{s.pct}%</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 interface Props { params: Promise<{ year: string; month: string }> }
 
 export default function BudgetPage({ params }: Props) {
@@ -225,7 +261,7 @@ export default function BudgetPage({ params }: Props) {
         </div>
 
         {/* Income / Expense columns */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: "1rem" }}>
+        <div className="day-grid" style={{ marginBottom: "1rem" }}>
           {/* Incomes */}
           <div style={{ background: "var(--surface)", border: "1px solid #4ade8033", borderRadius: 12, padding: "1rem 1.25rem" }}>
             <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1.1rem", color: "#4ade80", margin: "0 0 10px" }}>
@@ -291,15 +327,19 @@ export default function BudgetPage({ params }: Props) {
           </div>
         </div>
 
-        {/* Expense breakdown chart */}
+        {/* Expense breakdown — pie + bars */}
         {cats.length > 0 && (
           <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "1rem 1.25rem", marginBottom: "1rem" }}>
-            <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1rem", color: "var(--muted)", margin: "0 0 12px" }}>
+            <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1rem", color: "var(--muted)", margin: "0 0 14px" }}>
               Розподіл витрат
             </h3>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {cats.map(([cat, amt]) => {
+            {/* Pie chart */}
+            <ExpensePie cats={cats} total={totalExpense} />
+            {/* Bar breakdown */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 7, marginTop: 14 }}>
+              {cats.map(([cat, amt], i) => {
                 const pct = totalExpense > 0 ? Math.round((amt / totalExpense) * 100) : 0;
+                const c = PIE_COLORS[i % PIE_COLORS.length];
                 return (
                   <div key={cat}>
                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
@@ -309,7 +349,7 @@ export default function BudgetPage({ params }: Props) {
                       </span>
                     </div>
                     <div style={{ height: 5, background: "var(--border)", borderRadius: 3, overflow: "hidden" }}>
-                      <div style={{ height: "100%", width: `${pct}%`, background: "#f87171", borderRadius: 3 }} />
+                      <div style={{ height: "100%", width: `${pct}%`, background: c, borderRadius: 3 }} />
                     </div>
                   </div>
                 );
@@ -319,7 +359,7 @@ export default function BudgetPage({ params }: Props) {
         )}
 
         {/* Tips for next month + financial goal */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+        <div className="day-grid">
           <div style={{ background: "var(--surface)", border: "1px solid color-mix(in srgb, var(--accent) 20%, transparent)", borderRadius: 12, padding: "1rem 1.25rem" }}>
             <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1.1rem", color: "var(--accent)", margin: "0 0 10px" }}>
               Поради на наступний місяць

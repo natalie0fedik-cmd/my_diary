@@ -39,6 +39,7 @@ export default function DayPage({ params }: Props) {
   const [newTask, setNewTask] = useState("");
   const [saving, setSaving] = useState(false);
   const [isImportant, setIsImportant] = useState(false);
+  const [showAllHours, setShowAllHours] = useState(false);
 
   useEffect(() => {
     setData(getDayData(date));
@@ -240,11 +241,19 @@ export default function DayPage({ params }: Props) {
               padding: "1.25rem",
               flex: 1,
             }}>
-              <h2 style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--muted)", margin: "0 0 14px", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                Розклад по годинах
-              </h2>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+                <h2 style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--muted)", margin: 0, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                  Розклад по годинах
+                </h2>
+                <button onClick={() => setShowAllHours(v => !v)} style={{
+                  fontSize: "0.72rem", color: "var(--muted)", background: "none", border: "1px solid var(--border)",
+                  borderRadius: 6, padding: "2px 8px", cursor: "pointer", fontFamily: "var(--font-body)",
+                }}>
+                  {showAllHours ? "06–22" : "00–23"}
+                </button>
+              </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                {data.schedule.map(entry => (
+                {data.schedule.filter(e => showAllHours || (e.hour >= 6 && e.hour <= 22) || e.text.trim()).map(entry => (
                   <div
                     key={entry.hour}
                     style={{

@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { hasDayData, getImportantDates, toggleImportantDate, getMonthGoals, getBudgetPlan } from "@/lib/storage";
+import { hasDayData, getImportantDates, toggleImportantDate, getMonthGoals, getBudgetPlan, getDayData } from "@/lib/storage";
 
 const MONTHS_UA = [
   "Січень", "Лютий", "Березень", "Квітень",
@@ -32,6 +32,57 @@ function getFirstDayWeekday(year: number, month: number) {
 // Day type picker state — per-day marker type
 type DayMark = "important" | "special" | null;
 
+const MOOD_COLORS = ["", "#f87171", "#fb923c", "#fbbf24", "#4ade80", "#22c55e"];
+const MOOD_LABELS = ["", "Погано", "Нижче норми", "Нормально", "Добре", "Відмінно"];
+
+function MoodChart({ moodData, daysCount }: { moodData: Record<number, number>; daysCount: number }) {
+  const days = Array.from({ length: daysCount }, (_, i) => i + 1);
+  const filled = days.filter(d => moodData[d]);
+  if (filled.length < 2) return null;
+  const W = 520, H = 70, PAD = 12;
+  const slotW = W / daysCount;
+  // Line chart points
+  const pts = days.map(d => ({
+    d, mood: moodData[d] ?? null,
+    x: (d - 1) * slotW + slotW / 2,
+    y: moodData[d] ? PAD + (H - PAD) * (1 - (moodData[d] - 1) / 4) : null,
+  })).filter(p => p.y !== null) as { d: number; mood: number; x: number; y: number }[];
+  const polyline = pts.map(p => `${p.x},${p.y}`).join(" ");
+  return (
+    <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "1rem 1.25rem", marginBottom: "1rem" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+        <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1rem", color: "var(--muted)", margin: 0 }}>Настрій місяця</h3>
+        <div style={{ display: "flex", gap: 6 }}>
+          {[1,2,3,4,5].map(v => (
+            <span key={v} style={{ fontSize: "0.65rem", color: MOOD_COLORS[v], fontFamily: "var(--font-body)" }}>{v}–{MOOD_LABELS[v].split(" ")[0]}</span>
+          ))}
+        </div>
+      </div>
+      <svg width="100%" viewBox={`0 0 ${W} ${H + PAD}`} style={{ display: "block", overflow: "visible" }}>
+        {/* Grid lines */}
+        {[1,2,3,4,5].map(v => {
+          const y = PAD + (H - PAD) * (1 - (v - 1) / 4);
+          return <line key={v} x1={0} y1={y} x2={W} y2={y} stroke="var(--border)" strokeWidth={0.5} strokeDasharray={v === 3 ? "none" : "3 3"} />;
+        })}
+        {/* Line */}
+        <polyline points={polyline} fill="none" stroke="var(--accent)" strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
+        {/* Dots */}
+        {pts.map(p => (
+          <circle key={p.d} cx={p.x} cy={p.y} r={3.5} fill={MOOD_COLORS[p.mood]} stroke="var(--surface)" strokeWidth={1.5} />
+        ))}
+        {/* Week separators */}
+        {Array.from({ length: Math.ceil(daysCount / 7) }, (_, i) => (i + 1) * 7).filter(d => d < daysCount).map(d => (
+          <line key={d} x1={d * slotW} y1={PAD} x2={d * slotW} y2={H} stroke="var(--border)" strokeWidth={0.5} />
+        ))}
+        {/* Day labels every 7 days */}
+        {[1, 8, 15, 22, 29].filter(d => d <= daysCount).map(d => (
+          <text key={d} x={(d - 1) * slotW + slotW / 2} y={H + PAD} textAnchor="middle" fontSize={8} fill="var(--muted)" fontFamily="inherit">{d}</text>
+        ))}
+      </svg>
+    </div>
+  );
+}
+
 interface Props { params: Promise<{ year: string; month: string }> }
 
 export default function MonthPage({ params }: Props) {
@@ -54,6 +105,7 @@ export default function MonthPage({ params }: Props) {
   const [specialDays, setSpecialDays] = useState<Set<number>>(new Set());
   const [goalsPct, setGoalsPct] = useState<number | null>(null);
   const [hasBudget, setHasBudget] = useState(false);
+  const [moodData, setMoodData] = useState<Record<number, number>>({});
 
   // which mark mode is active for marking
   const [markMode, setMarkMode] = useState<"important" | "special" | null>(null);
@@ -79,6 +131,14 @@ export default function MonthPage({ params }: Props) {
     // budget
     const budget = getBudgetPlan(monthKey);
     setHasBudget(budget.entries.length > 0);
+    // mood
+    const mood: Record<number, number> = {};
+    for (let d = 1; d <= daysCount; d++) {
+      const dateStr = `${year}-${String(month).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+      const dayData = getDayData(dateStr);
+      if (dayData.mood) mood[d] = dayData.mood;
+    }
+    setMoodData(mood);
   }, [year, month, daysCount, monthKey]);
 
   const handleToggleImportant = useCallback((e: React.MouseEvent, day: number) => {
@@ -342,6 +402,9 @@ export default function MonthPage({ params }: Props) {
             })}
           </div>
         </div>
+
+        {/* Mood chart */}
+        <MoodChart moodData={moodData} daysCount={daysCount} />
 
         {/* Marked days summary */}
         {(importantDays.size > 0 || specialDays.size > 0) && (

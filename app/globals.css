@@ -92,6 +92,17 @@ input::placeholder {
   line-height: 28px !important;
 }
 
+/* ── Page content wrapper ──────────────────────────────────────────────────── */
+.page-inner {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem;
+}
+
+@media (max-width: 680px) {
+  .page-inner { padding: 1.25rem 1rem; }
+}
+
 /* ── Responsive day page grid ─────────────────────────────────────────────── */
 .day-grid {
   display: grid;
