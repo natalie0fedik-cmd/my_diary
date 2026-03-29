@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { getDayData, saveDayData, generateId, getImportantDates, toggleImportantDate } from "@/lib/storage";
+import { getDayData, saveDayData, generateId, getImportantDates, toggleImportantDate, getHabitTracker, saveHabitTracker, HabitTracker } from "@/lib/storage";
 import { DayData, Task } from "@/lib/types";
 
 const MONTHS_UA = [
@@ -40,11 +40,22 @@ export default function DayPage({ params }: Props) {
   const [saving, setSaving] = useState(false);
   const [isImportant, setIsImportant] = useState(false);
   const [showAllHours, setShowAllHours] = useState(false);
+  const [habitTracker, setHabitTracker] = useState<HabitTracker>({ habits: [], checks: {} });
 
   useEffect(() => {
     setData(getDayData(date));
     setIsImportant(getImportantDates(monthKey).has(dayNum));
+    setHabitTracker(getHabitTracker(monthKey));
   }, [date, monthKey, dayNum]);
+
+  const toggleHabit = (habitId: string) => {
+    const checks = { ...habitTracker.checks };
+    if (!checks[habitId]) checks[habitId] = {};
+    checks[habitId] = { ...checks[habitId], [dayNum]: !checks[habitId][dayNum] };
+    const updated = { ...habitTracker, checks };
+    setHabitTracker(updated);
+    saveHabitTracker(monthKey, updated);
+  };
 
   const save = useCallback((updated: DayData) => {
     saveDayData(updated);
@@ -448,6 +459,53 @@ export default function DayPage({ params }: Props) {
             </div>
           </div>
         </div>
+
+        {/* Habits */}
+        {habitTracker.habits.length > 0 && (
+          <div style={{
+            background: "var(--surface)", border: "1px solid var(--border)",
+            borderRadius: 14, padding: "1.25rem", marginTop: 14,
+          }}>
+            <h2 style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--muted)", margin: "0 0 12px", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+              Звички дня
+            </h2>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              {habitTracker.habits.map(habit => {
+                const checked = habitTracker.checks[habit.id]?.[dayNum] ?? false;
+                return (
+                  <button
+                    key={habit.id}
+                    onClick={() => toggleHabit(habit.id)}
+                    style={{
+                      display: "flex", alignItems: "center", gap: 8,
+                      padding: "7px 14px", borderRadius: 10, cursor: "pointer",
+                      border: `1px solid ${checked ? habit.color : "var(--border)"}`,
+                      background: checked ? habit.color + "22" : "var(--surface2)",
+                      color: checked ? habit.color : "var(--muted)",
+                      fontSize: "0.88rem", fontFamily: "inherit",
+                      fontWeight: checked ? 600 : 400,
+                      transition: "all 0.15s",
+                    }}
+                  >
+                    <div style={{
+                      width: 16, height: 16, borderRadius: 4, flexShrink: 0,
+                      border: `2px solid ${checked ? habit.color : "var(--border)"}`,
+                      background: checked ? habit.color : "transparent",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                    }}>
+                      {checked && (
+                        <svg width="9" height="9" viewBox="0 0 9 9" fill="none">
+                          <path d="M1 4.5L3.5 7L8 1.5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      )}
+                    </div>
+                    {habit.name}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Navigation */}
         <div style={{ marginTop: 14, display: "flex", justifyContent: "center" }}>
