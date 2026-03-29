@@ -175,7 +175,6 @@ export default function HabitsPage({ params }: Props) {
                     fontWeight: 600, borderBottom: "1px solid var(--border)",
                     borderLeft: "1px solid var(--border)", minWidth: 50, textAlign: "center",
                   }}>✓</th>
-                  <th style={{ borderBottom: "1px solid var(--border)", width: 32 }} />
                 </tr>
               </thead>
               <tbody>
@@ -224,10 +223,21 @@ export default function HabitsPage({ params }: Props) {
                             <div style={{ width: 10, height: 10, borderRadius: 2, background: habit.color, flexShrink: 0 }} />
                             <span
                               onClick={() => setEditingId(habit.id)}
-                              style={{ fontSize: 13, color: "var(--text)", cursor: "pointer", userSelect: "none" }}
+                              style={{ flex: 1, fontSize: 13, color: "var(--text)", cursor: "pointer", userSelect: "none" }}
                             >
                               {habit.name}
                             </span>
+                            <button
+                              onClick={() => deleteHabit(habit.id)}
+                              title="Видалити"
+                              style={{
+                                background: "none", border: "none", cursor: "pointer",
+                                color: "#f87171", fontSize: 15, lineHeight: 1,
+                                padding: "0 2px", opacity: 0.7, flexShrink: 0,
+                              }}
+                            >
+                              ×
+                            </button>
                           </div>
                         )}
                       </td>
@@ -275,23 +285,6 @@ export default function HabitsPage({ params }: Props) {
                         <div style={{ fontSize: 10, color: "var(--muted)" }}>{pct}%</div>
                       </td>
 
-                      {/* Delete */}
-                      <td style={{
-                        textAlign: "center",
-                        borderBottom: "1px solid color-mix(in srgb, var(--border) 60%, transparent)",
-                      }}>
-                        <button
-                          onClick={() => deleteHabit(habit.id)}
-                          style={{
-                            background: "none", border: "none", cursor: "pointer",
-                            color: "var(--muted)", fontSize: 16, lineHeight: 1,
-                            padding: "0 6px", opacity: 0.5,
-                          }}
-                          title="Видалити"
-                        >
-                          ×
-                        </button>
-                      </td>
                     </tr>
                   );
                 })}
