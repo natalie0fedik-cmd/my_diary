@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { getDayData, saveDayData, generateId, getImportantDates, toggleImportantDate, getTemplates, saveTemplate, deleteTemplate, DayTemplate } from "@/lib/storage";
+import { getDayData, saveDayData, generateId, getImportantDates, toggleImportantDate } from "@/lib/storage";
 import { DayData, Task } from "@/lib/types";
 
 const MONTHS_UA = [
@@ -40,15 +40,10 @@ export default function DayPage({ params }: Props) {
   const [saving, setSaving] = useState(false);
   const [isImportant, setIsImportant] = useState(false);
   const [showAllHours, setShowAllHours] = useState(false);
-  const [showTemplates, setShowTemplates] = useState(false);
-  const [templates, setTemplates] = useState<DayTemplate[]>([]);
-  const [saveTemplateName, setSaveTemplateName] = useState("");
-  const [showSaveTemplate, setShowSaveTemplate] = useState(false);
 
   useEffect(() => {
     setData(getDayData(date));
     setIsImportant(getImportantDates(monthKey).has(dayNum));
-    setTemplates(getTemplates());
   }, [date, monthKey, dayNum]);
 
   const save = useCallback((updated: DayData) => {
@@ -107,41 +102,6 @@ export default function DayPage({ params }: Props) {
   const toggleImportant = () => {
     toggleImportantDate(monthKey, dayNum);
     setIsImportant(v => !v);
-  };
-
-  const applyTemplate = (t: DayTemplate) => {
-    if (!data) return;
-    const newSchedule = data.schedule.map(h => {
-      const slot = t.scheduleSlots.find(s => s.hour === h.hour);
-      return slot && slot.text ? { ...h, text: slot.text } : h;
-    });
-    const newTasks = [
-      ...data.tasks,
-      ...t.tasks.map(tt => ({ id: generateId(), text: tt.text, done: false })),
-    ];
-    const updated = { ...data, schedule: newSchedule, tasks: newTasks };
-    setData(updated);
-    save(updated);
-    setShowTemplates(false);
-  };
-
-  const handleSaveTemplate = () => {
-    if (!data || !saveTemplateName.trim()) return;
-    const t: DayTemplate = {
-      id: generateId(),
-      name: saveTemplateName.trim(),
-      scheduleSlots: data.schedule.filter(h => h.text.trim()).map(h => ({ hour: h.hour, text: h.text })),
-      tasks: data.tasks.map(tt => ({ text: tt.text })),
-    };
-    saveTemplate(t);
-    setTemplates(getTemplates());
-    setSaveTemplateName("");
-    setShowSaveTemplate(false);
-  };
-
-  const handleDeleteTemplate = (id: string) => {
-    deleteTemplate(id);
-    setTemplates(getTemplates());
   };
 
   if (!data) {
@@ -268,111 +228,8 @@ export default function DayPage({ params }: Props) {
                 Активність
               </span>
             </Link>
-            {/* Templates button */}
-            <button
-              onClick={() => setShowTemplates(v => !v)}
-              style={{
-                padding: "5px 12px", borderRadius: 8, cursor: "pointer",
-                border: "1px solid color-mix(in srgb, var(--accent) 40%, transparent)",
-                background: showTemplates ? "color-mix(in srgb, var(--accent) 15%, transparent)" : "var(--surface2)",
-                color: "var(--accent)", fontSize: "0.8rem", fontFamily: "var(--font-body)",
-              }}
-            >
-              ☰ Шаблони
-            </button>
           </div>
         </div>
-
-        {/* Templates panel */}
-        {showTemplates && (
-          <div style={{
-            background: "var(--surface)",
-            border: "1px solid color-mix(in srgb, var(--accent) 35%, transparent)",
-            borderRadius: 12,
-            padding: "1rem 1.25rem",
-            marginBottom: "1rem",
-          }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-              <span style={{ fontWeight: 700, color: "var(--accent)", fontSize: 14 }}>Шаблони дня</span>
-              <button
-                onClick={() => setShowSaveTemplate(v => !v)}
-                style={{
-                  fontSize: 13, padding: "4px 12px", borderRadius: 7, cursor: "pointer",
-                  border: "1px solid var(--accent)", background: "var(--surface2)", color: "var(--accent)",
-                  fontFamily: "var(--font-body)",
-                }}
-              >
-                + Зберегти поточний день
-              </button>
-            </div>
-            {showSaveTemplate && (
-              <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-                <input
-                  autoFocus
-                  value={saveTemplateName}
-                  onChange={e => setSaveTemplateName(e.target.value)}
-                  onKeyDown={e => e.key === "Enter" && handleSaveTemplate()}
-                  placeholder="Назва шаблону..."
-                  style={{
-                    flex: 1, padding: "6px 12px", borderRadius: 7,
-                    border: "1px solid var(--border)", background: "var(--surface2)",
-                    color: "var(--text)", fontSize: 14, fontFamily: "inherit",
-                  }}
-                />
-                <button
-                  onClick={handleSaveTemplate}
-                  style={{
-                    padding: "6px 14px", borderRadius: 7, cursor: "pointer",
-                    border: "none", background: "var(--accent)", color: "#000",
-                    fontWeight: 700, fontSize: 13,
-                  }}
-                >
-                  Зберегти
-                </button>
-              </div>
-            )}
-            {templates.length === 0 ? (
-              <div style={{ color: "color-mix(in srgb, var(--text) 50%, transparent)", fontSize: 14 }}>
-                Немає збережених шаблонів
-              </div>
-            ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                {templates.map(t => (
-                  <div key={t.id} style={{
-                    display: "flex", alignItems: "center", gap: 10,
-                    background: "var(--surface2)", borderRadius: 8, padding: "8px 12px",
-                  }}>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 600, fontSize: 14, color: "var(--text)" }}>{t.name}</div>
-                      <div style={{ fontSize: 12, color: "color-mix(in srgb, var(--text) 55%, transparent)" }}>
-                        {t.scheduleSlots.length} годин · {t.tasks.length} задач
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => applyTemplate(t)}
-                      style={{
-                        padding: "5px 12px", borderRadius: 7, cursor: "pointer",
-                        border: "1px solid var(--accent)", background: "var(--surface)",
-                        color: "var(--accent)", fontSize: 13, fontFamily: "var(--font-body)",
-                      }}
-                    >
-                      Застосувати
-                    </button>
-                    <button
-                      onClick={() => handleDeleteTemplate(t.id)}
-                      style={{
-                        color: "var(--muted)", background: "none", border: "none",
-                        cursor: "pointer", fontSize: 18, lineHeight: 1, padding: 0,
-                      }}
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
 
         <div className="day-grid">
           {/* Left column: Schedule */}
