@@ -4,11 +4,12 @@ import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
-import { exportAllData, importAllData, computeDiaryStreak } from "@/lib/storage";
+import { exportAllData, importAllData, computeDiaryStreak, hasSeenOnboarding } from "@/lib/storage";
 import { uploadAllToCloud, forceDownloadFromCloud } from "@/lib/cloudSync";
 import dynamic from "next/dynamic";
 
 const ThemePicker = dynamic(() => import("@/components/ThemePicker"), { ssr: false });
+const WelcomeModal = dynamic(() => import("@/components/WelcomeModal"), { ssr: false });
 
 const MONTHS_UA = [
   "Січень", "Лютий", "Березень", "Квітень",
@@ -25,12 +26,14 @@ export default function Home() {
   const [downloading, setDownloading] = useState(false);
   const [streak, setStreak] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showWelcome, setShowWelcome] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { data: session } = useSession();
   const router = useRouter();
 
   useEffect(() => {
     setStreak(computeDiaryStreak());
+    if (!hasSeenOnboarding()) setShowWelcome(true);
   }, []);
 
   const currentMonth = now.getMonth();
@@ -455,6 +458,9 @@ export default function Home() {
 
       {showThemePicker && (
         <ThemePicker onClose={() => setShowThemePicker(false)} />
+      )}
+      {showWelcome && (
+        <WelcomeModal onClose={() => setShowWelcome(false)} />
       )}
     </div>
   );

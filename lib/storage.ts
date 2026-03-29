@@ -179,6 +179,16 @@ export function generateId(): string {
   return Math.random().toString(36).slice(2, 9);
 }
 
+export function hasSeenOnboarding(): boolean {
+  if (!isClient()) return true;
+  return localStorage.getItem(up() + "diary_onboarding_seen") === "1";
+}
+
+export function markOnboardingSeen(): void {
+  if (!isClient()) return;
+  localStorage.setItem(up() + "diary_onboarding_seen", "1");
+}
+
 export function hasDayData(date: string): boolean {
   if (!isClient()) return false;
   const raw = localStorage.getItem(up() + "diary_day_" + date);
