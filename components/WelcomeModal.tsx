@@ -5,35 +5,67 @@ import { markOnboardingSeen } from "@/lib/storage";
 const STEPS = [
   {
     icon: "📅",
-    title: "Місяць → День",
-    desc: "Вибери місяць на головній, потім натисни на будь-який день щоб відкрити його.",
+    title: "Вибір місяця і дня",
+    desc: "Натисни на місяць, потім на будь-який день в календарі.",
+    path: ["Головна", "Місяць", "День"],
   },
   {
     icon: "✍️",
-    title: "Нотатки і задачі",
-    desc: "Записуй думки, ставь задачі, планують розклад по годинах.",
+    title: "Нотатки, задачі, розклад",
+    desc: "Записуй думки, ставь галочки задачам, плануй по годинах.",
+    path: ["День", "вкладка Нотатки"],
   },
   {
     icon: "😊",
     title: "Настрій",
-    desc: "Оціни день від 1 до 5 — графік настрою будується автоматично.",
+    desc: "Оціни день від 1 до 5 — графік будується автоматично в підсумках місяця.",
+    path: ["День", "блок Настрій"],
   },
   {
     icon: "🏃",
-    title: "Активність і їжа",
-    desc: "Кроки, вода, харчування — окремі вкладки в кожному місяці і дні.",
+    title: "Активність і харчування",
+    desc: "Кроки, вода, їжа — в окремих вкладках дня і місяця.",
+    path: ["День", "вкладки Активність / Їжа"],
   },
   {
     icon: "💰",
     title: "Бюджет і цілі",
-    desc: "Доходи, витрати по категоріях, місячні цілі з прогресом.",
+    desc: "Доходи, витрати по категоріях, місячні цілі з прогрес-баром.",
+    path: ["Місяць", "вкладки Бюджет / Цілі"],
   },
   {
     icon: "✅",
     title: "Трекер звичок",
-    desc: "Додай звички у вкладці «Трекер» місяця — і відмічай їх щодня.",
+    desc: "Додай звички — і відмічай їх щодня прямо в картці дня.",
+    path: ["Місяць", "вкладка Трекер"],
   },
 ];
+
+function PathBreadcrumb({ steps }: { steps: string[] }) {
+  return (
+    <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 3, marginTop: 5 }}>
+      {steps.map((step, i) => (
+        <span key={i} style={{ display: "flex", alignItems: "center", gap: 3 }}>
+          <span style={{
+            fontSize: 11,
+            color: "var(--accent)",
+            background: "color-mix(in srgb, var(--accent) 12%, transparent)",
+            border: "1px solid color-mix(in srgb, var(--accent) 30%, transparent)",
+            borderRadius: 5,
+            padding: "1px 7px",
+            fontWeight: 600,
+            whiteSpace: "nowrap",
+          }}>
+            {step}
+          </span>
+          {i < steps.length - 1 && (
+            <span style={{ fontSize: 10, color: "var(--muted)", opacity: 0.7 }}>›</span>
+          )}
+        </span>
+      ))}
+    </div>
+  );
+}
 
 export default function WelcomeModal({ onClose }: { onClose: () => void }) {
   function handleClose() {
@@ -58,8 +90,10 @@ export default function WelcomeModal({ onClose }: { onClose: () => void }) {
           border: "1px solid color-mix(in srgb, var(--accent) 35%, transparent)",
           borderRadius: 18,
           padding: "2rem",
-          maxWidth: 520,
+          maxWidth: 540,
           width: "100%",
+          maxHeight: "90vh",
+          overflowY: "auto",
           position: "relative",
           boxShadow: "0 24px 60px rgba(0,0,0,0.4)",
         }}
@@ -81,7 +115,7 @@ export default function WelcomeModal({ onClose }: { onClose: () => void }) {
             Ласкаво просимо
           </h2>
           <p style={{ fontSize: 14, color: "var(--muted)", margin: 0 }}>
-            Особистий щоденник-трекер. Веди як хочеш — нічого не обов'язково.
+            Ось де знаходяться основні функції щоденника:
           </p>
         </div>
 
@@ -90,16 +124,17 @@ export default function WelcomeModal({ onClose }: { onClose: () => void }) {
           {STEPS.map((s, i) => (
             <div key={i} style={{
               display: "flex", gap: 12, alignItems: "flex-start",
-              background: "var(--surface2)", borderRadius: 10, padding: "10px 14px",
+              background: "var(--surface2)", borderRadius: 10, padding: "12px 14px",
             }}>
-              <span style={{ fontSize: 20, flexShrink: 0, lineHeight: 1.4 }}>{s.icon}</span>
-              <div>
+              <span style={{ fontSize: 20, flexShrink: 0, lineHeight: 1.4, marginTop: 1 }}>{s.icon}</span>
+              <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontWeight: 600, fontSize: 13, color: "var(--text)", marginBottom: 2 }}>
                   {s.title}
                 </div>
-                <div style={{ fontSize: 12, color: "var(--muted)", lineHeight: 1.5 }}>
+                <div style={{ fontSize: 12, color: "var(--muted)", lineHeight: 1.5, marginBottom: 4 }}>
                   {s.desc}
                 </div>
+                <PathBreadcrumb steps={s.path} />
               </div>
             </div>
           ))}
