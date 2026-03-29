@@ -191,6 +191,40 @@ export function hasDayData(date: string): boolean {
   );
 }
 
+// ── Habit Tracker ─────────────────────────────────────────────────────────────
+
+export interface Habit {
+  id: string;
+  name: string;
+  color: string;
+}
+
+export interface HabitTracker {
+  habits: Habit[];
+  checks: Record<string, Record<number, boolean>>; // habitId → day → checked
+}
+
+const DEFAULT_HABITS: Habit[] = [
+  { id: "water",     name: "💧 Вода 8 склянок", color: "#60a5fa" },
+  { id: "sport",     name: "🏃 Спорт",          color: "#4ade80" },
+  { id: "reading",   name: "📚 Читання",         color: "#fbbf24" },
+  { id: "vitamins",  name: "💊 Вітаміни",        color: "#f472b6" },
+  { id: "skincare",  name: "✨ Догляд за собою", color: "#a78bfa" },
+  { id: "sleep",     name: "😴 Сон до 23:00",    color: "#38bdf8" },
+];
+
+export function getHabitTracker(monthKey: string): HabitTracker {
+  if (!isClient()) return { habits: DEFAULT_HABITS, checks: {} };
+  const raw = localStorage.getItem(up() + "diary_habits_" + monthKey);
+  if (!raw) return { habits: [...DEFAULT_HABITS], checks: {} };
+  return JSON.parse(raw) as HabitTracker;
+}
+
+export function saveHabitTracker(monthKey: string, data: HabitTracker): void {
+  if (!isClient()) return;
+  localStorage.setItem(up() + "diary_habits_" + monthKey, JSON.stringify(data));
+}
+
 // ── Templates ─────────────────────────────────────────────────────────────────
 
 export interface DayTemplate {
