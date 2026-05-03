@@ -115,6 +115,15 @@ export default function DayPage({ params }: Props) {
     setIsImportant(v => !v);
   };
 
+  const openInGoogleCalendar = (hour: number, text: string) => {
+    const [y, m, d] = date.split("-");
+    const pad = (n: number) => String(n).padStart(2, "0");
+    const start = `${y}${m}${d}T${pad(hour)}0000`;
+    const end = `${y}${m}${d}T${pad(hour + 1 === 24 ? 23 : hour + 1)}${hour + 1 === 24 ? "5959" : "0000"}`;
+    const url = `https://calendar.google.com/calendar/r/eventedit?text=${encodeURIComponent(text)}&dates=${start}/${end}`;
+    window.open(url, "_blank");
+  };
+
   if (!data) {
     return (
       <div style={{ minHeight: "100vh", background: "var(--bg)", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -309,6 +318,31 @@ export default function DayPage({ params }: Props) {
                         el.style.height = el.scrollHeight + "px";
                       }}
                     />
+                    {entry.text.trim() && (
+                      <button
+                        onClick={() => openInGoogleCalendar(entry.hour, entry.text.trim())}
+                        title="Додати в Google Calendar"
+                        style={{
+                          flexShrink: 0,
+                          width: 22,
+                          height: 22,
+                          borderRadius: 5,
+                          border: "1px solid #4285f433",
+                          background: "#4285f411",
+                          color: "#4285f4",
+                          cursor: "pointer",
+                          fontSize: "0.7rem",
+                          fontWeight: 700,
+                          lineHeight: 1,
+                          padding: 0,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        +
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>
