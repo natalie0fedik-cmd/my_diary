@@ -324,23 +324,22 @@ export default function DayPage({ params }: Props) {
                         title="Додати в Google Calendar"
                         style={{
                           flexShrink: 0,
-                          width: 22,
-                          height: 22,
-                          borderRadius: 5,
-                          border: "1px solid #4285f433",
-                          background: "#4285f411",
-                          color: "#4285f4",
+                          borderRadius: 6,
+                          border: "1px solid #4285f4",
+                          background: "#4285f4",
+                          color: "#fff",
                           cursor: "pointer",
-                          fontSize: "0.7rem",
-                          fontWeight: 700,
+                          fontSize: "0.68rem",
+                          fontWeight: 600,
                           lineHeight: 1,
-                          padding: 0,
+                          padding: "3px 7px",
                           display: "flex",
                           alignItems: "center",
-                          justifyContent: "center",
+                          gap: 4,
+                          whiteSpace: "nowrap",
                         }}
                       >
-                        +
+                        📅 GCal
                       </button>
                     )}
                   </div>
