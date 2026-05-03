@@ -119,9 +119,38 @@ export default function DayPage({ params }: Props) {
     const [y, m, d] = date.split("-");
     const pad = (n: number) => String(n).padStart(2, "0");
     const start = `${y}${m}${d}T${pad(hour)}0000`;
-    const end = `${y}${m}${d}T${pad(hour + 1 === 24 ? 23 : hour + 1)}${hour + 1 === 24 ? "5959" : "0000"}`;
+    const endHour = hour + 1 >= 24 ? 23 : hour + 1;
+    const endMin = hour + 1 >= 24 ? "5959" : "0000";
+    const end = `${y}${m}${d}T${pad(endHour)}${endMin}`;
     const url = `https://calendar.google.com/calendar/r/eventedit?text=${encodeURIComponent(text)}&dates=${start}/${end}`;
     window.open(url, "_blank");
+  };
+
+  const exportDayToICS = () => {
+    if (!data) return;
+    const filled = data.schedule.filter(e => e.text.trim());
+    if (!filled.length) return;
+    const [y, m, d] = date.split("-");
+    const pad = (n: number) => String(n).padStart(2, "0");
+    const events = filled.map(e => {
+      const endHour = e.hour + 1 >= 24 ? 23 : e.hour + 1;
+      const endMin = e.hour + 1 >= 24 ? "5959" : "0000";
+      return [
+        "BEGIN:VEVENT",
+        `DTSTART:${y}${m}${d}T${pad(e.hour)}0000`,
+        `DTEND:${y}${m}${d}T${pad(endHour)}${endMin}`,
+        `SUMMARY:${e.text.trim().replace(/\n/g, " ")}`,
+        "END:VEVENT",
+      ].join("\r\n");
+    });
+    const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//My Diary//EN", ...events, "END:VCALENDAR"].join("\r\n");
+    const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `diary-${date}.ics`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   if (!data) {
@@ -265,12 +294,28 @@ export default function DayPage({ params }: Props) {
                 <h2 style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--muted)", margin: 0, textTransform: "uppercase", letterSpacing: "0.05em" }}>
                   Розклад по годинах
                 </h2>
-                <button onClick={() => setShowAllHours(v => !v)} style={{
-                  fontSize: "0.72rem", color: "var(--muted)", background: "none", border: "1px solid var(--border)",
-                  borderRadius: 6, padding: "2px 8px", cursor: "pointer", fontFamily: "var(--font-body)",
-                }}>
-                  {showAllHours ? "06–22" : "00–23"}
-                </button>
+                <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                  <button onClick={() => setShowAllHours(v => !v)} style={{
+                    fontSize: "0.72rem", color: "var(--muted)", background: "none", border: "1px solid var(--border)",
+                    borderRadius: 6, padding: "2px 8px", cursor: "pointer", fontFamily: "var(--font-body)",
+                  }}>
+                    {showAllHours ? "06–22" : "00–23"}
+                  </button>
+                  <button
+                    onClick={exportDayToICS}
+                    title="Завантажити всі події дня як .ics і відкрити в Google Calendar"
+                    disabled={!data.schedule.some(e => e.text.trim())}
+                    style={{
+                      fontSize: "0.72rem", fontWeight: 600,
+                      background: data.schedule.some(e => e.text.trim()) ? "#4285f4" : "var(--surface2)",
+                      color: data.schedule.some(e => e.text.trim()) ? "#fff" : "var(--muted)",
+                      border: "none", borderRadius: 6, padding: "2px 10px", cursor: data.schedule.some(e => e.text.trim()) ? "pointer" : "default",
+                      fontFamily: "var(--font-body)",
+                    }}
+                  >
+                    📅 у GCal
+                  </button>
+                </div>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 {data.schedule.filter(e => showAllHours || (e.hour >= 6 && e.hour <= 22) || e.text.trim()).map(entry => (
@@ -318,33 +363,47 @@ export default function DayPage({ params }: Props) {
                         el.style.height = el.scrollHeight + "px";
                       }}
                     />
-                    {entry.text.trim() && (
-                      <button
-                        onClick={() => openInGoogleCalendar(entry.hour, entry.text.trim())}
-                        title="Додати в Google Calendar"
-                        style={{
-                          flexShrink: 0,
-                          borderRadius: 6,
-                          border: "1px solid #4285f4",
-                          background: "#4285f4",
-                          color: "#fff",
-                          cursor: "pointer",
-                          fontSize: "0.68rem",
-                          fontWeight: 600,
-                          lineHeight: 1,
-                          padding: "3px 7px",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 4,
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        📅 GCal
-                      </button>
-                    )}
                   </div>
                 ))}
               </div>
+
+              {/* Google Calendar export per entry */}
+              {data.schedule.some(e => e.text.trim()) && (
+                <div style={{ marginTop: 14, borderTop: "1px solid var(--border)", paddingTop: 12 }}>
+                  <div style={{ fontSize: "0.72rem", color: "var(--muted)", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                    Додати в Google Calendar
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+                    {data.schedule.filter(e => e.text.trim()).map(e => (
+                      <div key={e.hour} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <span style={{ fontSize: "0.78rem", color: "var(--accent)", fontWeight: 600, minWidth: 40 }}>
+                          {String(e.hour).padStart(2, "0")}:00
+                        </span>
+                        <span style={{ fontSize: "0.82rem", color: "var(--text)", flex: 1 }}>
+                          {e.text.trim()}
+                        </span>
+                        <button
+                          onClick={() => openInGoogleCalendar(e.hour, e.text.trim())}
+                          style={{
+                            flexShrink: 0,
+                            padding: "3px 10px",
+                            borderRadius: 6,
+                            border: "1px solid #4285f4",
+                            background: "#4285f4",
+                            color: "#fff",
+                            cursor: "pointer",
+                            fontSize: "0.72rem",
+                            fontWeight: 600,
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          📅 Додати
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
