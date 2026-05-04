@@ -23,7 +23,7 @@ export default function ConclusionPage({ params }: Props) {
   const [data, setData] = useState<MonthConclusion | null>(null);
   const [saving, setSaving] = useState(false);
   const [newKpiName, setNewKpiName] = useState("");
-  const [kpiCategory, setKpiCategory] = useState("all");
+  const [kpiCategory, setKpiCategory] = useState("work");
 
   useEffect(() => {
     setData(getMonthConclusion(monthKey));
@@ -515,8 +515,6 @@ export default function ConclusionPage({ params }: Props) {
                 color: "#a78bfa",
                 items: [
                   "🏠 Прибирань",
-                  "👨‍👩‍👧 Зустрічей з близькими",
-                  "🎨 Творчих проєктів",
                   "🌍 Нових місць відвідано",
                   "🎉 Приємних подій",
                   "📸 Фото / спогадів",
@@ -525,17 +523,53 @@ export default function ConclusionPage({ params }: Props) {
                   "✅ Звичок виконано (%)",
                   "🔋 Середня енергія (1–10)",
                   "😊 Днів гарного настрою",
+                  "🎨 Творчих сесій",
+                  "🧹 Генеральних прибирань",
+                  "🌿 Днів без алкоголю",
+                ],
+              },
+              {
+                id: "relations",
+                label: "💞 Стосунки",
+                color: "#f472b6",
+                items: [
+                  "👨‍👩‍👧 Зустрічей з близькими",
+                  "📞 Дзвінків рідним",
                   "💬 Нових знайомств",
+                  "❤️ Побачень / романтичних вечорів",
+                  "🤝 Нових корисних контактів",
+                  "🎁 Подарованих приємних моментів",
+                  "💌 Листів / повідомлень підтримки",
+                  "🫂 Годин якісного часу з партнером",
+                  "👫 Спільних активностей",
+                  "🙏 Конфліктів вирішено",
+                  "🌟 Компліментів зроблено",
+                  "🥂 Святкувань з друзями",
+                ],
+              },
+              {
+                id: "mind",
+                label: "🧠 Ментальне",
+                color: "#38bdf8",
+                items: [
+                  "🧘 Медитацій",
+                  "📔 Сторінок щоденника",
+                  "🛁 Годин для себе",
+                  "😌 Сеансів релаксації",
+                  "🧠 Сеансів терапії / коучингу",
+                  "🌅 Ранкових ритуалів",
+                  "🌙 Вечірніх ритуалів",
+                  "📵 Днів без соцмереж",
+                  "🎯 Днів з чітким фокусом",
+                  "💭 Афірмацій / практик вдячності",
+                  "🧩 Годин без телефону",
+                  "🌳 Прогулянок на природі",
                 ],
               },
             ];
 
-            const visibleItems = kpiCategory === "all"
-              ? KPI_CATEGORIES.flatMap(c => c.items.map(item => ({ item, color: c.color })))
-              : (KPI_CATEGORIES.find(c => c.id === kpiCategory)?.items ?? []).map(item => ({
-                  item,
-                  color: KPI_CATEGORIES.find(c => c.id === kpiCategory)!.color,
-                }));
+            const activeCat = KPI_CATEGORIES.find(c => c.id === kpiCategory) ?? KPI_CATEGORIES[0];
+            const visibleItems = activeCat.items.map(item => ({ item, color: activeCat.color }));
 
             return (
               <div style={{ marginTop: 14 }}>
@@ -545,26 +579,10 @@ export default function ConclusionPage({ params }: Props) {
 
                 {/* Category tabs */}
                 <div style={{ display: "flex", gap: 5, marginBottom: 10, flexWrap: "wrap" }}>
-                  <button
-                    onClick={() => setKpiCategory("all")}
-                    style={{
-                      padding: "3px 11px",
-                      borderRadius: 6,
-                      border: `1px solid ${kpiCategory === "all" ? "var(--accent)" : "var(--border)"}`,
-                      background: kpiCategory === "all" ? "color-mix(in srgb, var(--accent) 13%, transparent)" : "var(--surface2)",
-                      color: kpiCategory === "all" ? "var(--accent)" : "var(--muted)",
-                      cursor: "pointer",
-                      fontSize: "0.75rem",
-                      fontFamily: "inherit",
-                      fontWeight: kpiCategory === "all" ? 600 : 400,
-                    }}
-                  >
-                    Всі
-                  </button>
                   {KPI_CATEGORIES.map(cat => (
                     <button
                       key={cat.id}
-                      onClick={() => setKpiCategory(kpiCategory === cat.id ? "all" : cat.id)}
+                      onClick={() => setKpiCategory(cat.id)}
                       style={{
                         padding: "3px 11px",
                         borderRadius: 6,
