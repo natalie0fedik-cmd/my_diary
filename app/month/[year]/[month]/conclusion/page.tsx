@@ -449,6 +449,57 @@ export default function ConclusionPage({ params }: Props) {
               + Додати KPI
             </button>
           </div>
+
+          {/* KPI examples */}
+          <div style={{ marginTop: 10 }}>
+            <div style={{ fontSize: "0.72rem", color: "var(--muted)", marginBottom: 6, letterSpacing: "0.04em" }}>
+              Приклади KPI — клікни щоб додати:
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+              {[
+                "💰 Дохід",
+                "📈 Нові клієнти",
+                "🏃 Тренувань на місяць",
+                "📚 Книг прочитано",
+                "💧 Вода щодня (склянок)",
+                "😴 Середній сон (год)",
+                "🧘 Медитацій",
+                "💸 Заощаджено",
+                "📝 Статей написано",
+                "🎯 Задач виконано",
+                "📞 Дзвінків / зустрічей",
+                "🏠 Прибирань",
+                "🚶 Середній крок/день",
+                "🍎 Днів правильного харчування",
+              ].map(example => (
+                <button
+                  key={example}
+                  onClick={() => { setNewKpiName(example); }}
+                  style={{
+                    padding: "3px 10px",
+                    borderRadius: 6,
+                    border: "1px solid var(--border)",
+                    background: "var(--surface2)",
+                    color: "var(--muted)",
+                    cursor: "pointer",
+                    fontSize: "0.75rem",
+                    fontFamily: "inherit",
+                    transition: "all 0.12s",
+                  }}
+                  onMouseEnter={e => {
+                    (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--accent)";
+                    (e.currentTarget as HTMLButtonElement).style.color = "var(--accent)";
+                  }}
+                  onMouseLeave={e => {
+                    (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border)";
+                    (e.currentTarget as HTMLButtonElement).style.color = "var(--muted)";
+                  }}
+                >
+                  {example}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
       </div>
