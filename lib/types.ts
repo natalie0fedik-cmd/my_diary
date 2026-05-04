@@ -85,6 +85,20 @@ export interface DayActivity {
   generalNote: string;
 }
 
+// ── Monthly body snapshot ─────────────────────────────────────────────────────
+
+export interface MonthBodySnapshot {
+  monthKey: string;
+  weight?: number;
+  chest?: number;
+  underBust?: number;
+  waist?: number;
+  belly?: number;
+  hips?: number;
+  thigh?: number;
+  note?: string;
+}
+
 // ── Body profile ─────────────────────────────────────────────────────────────
 
 export type Gender = "female" | "male";

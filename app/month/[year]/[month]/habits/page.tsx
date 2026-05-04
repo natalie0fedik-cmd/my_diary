@@ -12,6 +12,7 @@ const NAV = [
   { label: "Харчування", href: (y: string, m: string) => `/month/${y}/${m}/food` },
   { label: "Активність", href: (y: string, m: string) => `/month/${y}/${m}/activity` },
   { label: "Трекер",     href: (y: string, m: string) => `/month/${y}/${m}/habits` },
+  { label: "Тіло",       href: (y: string, m: string) => `/month/${y}/${m}/body` },
   { label: "Підсумки",   href: (y: string, m: string) => `/month/${y}/${m}/conclusion` },
 ];
 

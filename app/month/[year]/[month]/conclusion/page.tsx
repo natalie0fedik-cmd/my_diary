@@ -104,6 +104,8 @@ export default function ConclusionPage({ params }: Props) {
             { label: "Бюджет",     href: `/month/${year}/${month}/budget` },
             { label: "Харчування", href: `/month/${year}/${month}/food` },
             { label: "Активність", href: `/month/${year}/${month}/activity` },
+            { label: "Трекер",     href: `/month/${year}/${month}/habits` },
+            { label: "Тіло",       href: `/month/${year}/${month}/body` },
             { label: "Підсумки",   href: `/month/${year}/${month}/conclusion` },
           ];
           return (

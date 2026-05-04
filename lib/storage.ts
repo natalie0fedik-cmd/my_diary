@@ -4,12 +4,12 @@ import {
   BudgetPlan, BudgetEntry,
   DayFood, FoodItem, MealType,
   DayActivity, ActivityEntry, ActivityType,
-  BodyProfile,
+  BodyProfile, MonthBodySnapshot,
 } from "./types";
 import { markDirty } from "./cloudSync";
 
 // suppress unused import warnings
-void (null as unknown as Task | KpiItem | Goal | GoalCategory | BudgetEntry | FoodItem | MealType | ActivityEntry | ActivityType | BodyProfile);
+void (null as unknown as Task | KpiItem | Goal | GoalCategory | BudgetEntry | FoodItem | MealType | ActivityEntry | ActivityType | BodyProfile | MonthBodySnapshot);
 
 function isClient() {
   return typeof window !== "undefined";
@@ -402,4 +402,19 @@ function makeEmptyBodyProfile(): BodyProfile {
     activityLevel: "moderate",
     caloriesMaintenance: 0, caloriesDeficit: 0, caloriesSurplus: 0,
   };
+}
+
+// ── Monthly body snapshot ─────────────────────────────────────────────────────
+
+export function getMonthBodySnapshot(monthKey: string): MonthBodySnapshot {
+  if (!isClient()) return { monthKey };
+  const raw = localStorage.getItem(up() + "diary_body_snap_" + monthKey);
+  if (!raw) return { monthKey };
+  return JSON.parse(raw) as MonthBodySnapshot;
+}
+
+export function saveMonthBodySnapshot(data: MonthBodySnapshot): void {
+  if (!isClient()) return;
+  localStorage.setItem(up() + "diary_body_snap_" + data.monthKey, JSON.stringify(data));
+  markDirty("diary_body_snap_" + data.monthKey);
 }
