@@ -134,6 +134,28 @@ export default function DayPage({ params }: Props) {
     save(updated);
   };
 
+  const setEnergy = (energy: number) => {
+    if (!data) return;
+    const updated = { ...data, energy: data.energy === energy ? undefined : energy };
+    setData(updated);
+    save(updated);
+  };
+
+  const setHunger = (hunger: boolean) => {
+    if (!data) return;
+    const updated = { ...data, hunger: data.hunger === hunger ? undefined : hunger };
+    setData(updated);
+    save(updated);
+  };
+
+  const setSleep = (sleep: number) => {
+    if (!data) return;
+    const clamped = Math.max(0, Math.min(24, sleep));
+    const updated = { ...data, sleep: clamped };
+    setData(updated);
+    save(updated);
+  };
+
   const toggleImportant = () => {
     toggleImportantDate(monthKey, dayNum);
     setIsImportant(v => !v);
@@ -301,6 +323,69 @@ export default function DayPage({ params }: Props) {
                 Активність
               </span>
             </Link>
+          </div>
+        </div>
+
+        {/* Wellbeing */}
+        <div style={{
+          background: "var(--surface)", border: "1px solid var(--border)",
+          borderRadius: 14, padding: "1rem 1.5rem", marginBottom: "1rem",
+          display: "flex", flexWrap: "wrap", gap: 20, alignItems: "center",
+        }}>
+          {/* Energy */}
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: "0.8rem", color: "var(--muted)", whiteSpace: "nowrap" }}>⚡ Енергія:</span>
+            <div style={{ display: "flex", gap: 3 }}>
+              {[1,2,3,4,5,6,7,8,9,10].map(v => {
+                const col = v <= 3 ? "#f87171" : v <= 6 ? "#fbbf24" : "#4ade80";
+                return (
+                  <button key={v} onClick={() => setEnergy(v)} title={String(v)} style={{
+                    width: 22, height: 22, borderRadius: 5, cursor: "pointer",
+                    border: `1px solid ${data.energy === v ? col : "var(--border)"}`,
+                    background: data.energy === v ? col + "44" : "var(--surface2)",
+                    color: data.energy === v ? col : "var(--muted)",
+                    fontSize: "0.7rem", fontWeight: 700,
+                  }}>{v}</button>
+                );
+              })}
+            </div>
+            {data.energy && <span style={{ fontSize: "0.8rem", color: data.energy <= 3 ? "#f87171" : data.energy <= 6 ? "#fbbf24" : "#4ade80", fontWeight: 600 }}>{data.energy}/10</span>}
+          </div>
+
+          {/* Hunger */}
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: "0.8rem", color: "var(--muted)", whiteSpace: "nowrap" }}>🍽 Голод між їжею:</span>
+            <div style={{ display: "flex", gap: 5 }}>
+              {([true, false] as const).map(val => (
+                <button key={String(val)} onClick={() => setHunger(val)} style={{
+                  padding: "3px 12px", borderRadius: 7, cursor: "pointer",
+                  border: `1px solid ${data.hunger === val ? (val ? "#fb923c" : "#4ade80") : "var(--border)"}`,
+                  background: data.hunger === val ? (val ? "#fb923c22" : "#4ade8022") : "var(--surface2)",
+                  color: data.hunger === val ? (val ? "#fb923c" : "#4ade80") : "var(--muted)",
+                  fontSize: "0.8rem", fontWeight: data.hunger === val ? 600 : 400,
+                }}>
+                  {val ? "Є" : "Немає"}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Sleep */}
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: "0.8rem", color: "var(--muted)", whiteSpace: "nowrap" }}>😴 Сон:</span>
+            <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+              <button onClick={() => setSleep((data.sleep ?? 0) - 0.5)} style={{
+                width: 24, height: 24, borderRadius: 6, border: "1px solid var(--border)",
+                background: "var(--surface2)", color: "var(--muted)", cursor: "pointer", fontSize: "0.9rem",
+              }}>−</button>
+              <span style={{ fontSize: "0.88rem", fontWeight: 600, color: "var(--text)", minWidth: 38, textAlign: "center" }}>
+                {data.sleep != null ? `${data.sleep}г` : "—"}
+              </span>
+              <button onClick={() => setSleep((data.sleep ?? 0) + 0.5)} style={{
+                width: 24, height: 24, borderRadius: 6, border: "1px solid var(--border)",
+                background: "var(--surface2)", color: "var(--muted)", cursor: "pointer", fontSize: "0.9rem",
+              }}>+</button>
+            </div>
           </div>
         </div>
 
