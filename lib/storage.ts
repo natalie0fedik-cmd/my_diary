@@ -4,11 +4,12 @@ import {
   BudgetPlan, BudgetEntry,
   DayFood, FoodItem, MealType,
   DayActivity, ActivityEntry, ActivityType,
+  BodyProfile,
 } from "./types";
 import { markDirty } from "./cloudSync";
 
 // suppress unused import warnings
-void (null as unknown as Task | KpiItem | Goal | GoalCategory | BudgetEntry | FoodItem | MealType | ActivityEntry | ActivityType);
+void (null as unknown as Task | KpiItem | Goal | GoalCategory | BudgetEntry | FoodItem | MealType | ActivityEntry | ActivityType | BodyProfile);
 
 function isClient() {
   return typeof window !== "undefined";
@@ -375,5 +376,30 @@ export function getMonthStats(year: number, month: number): MonthStats {
     monthKey, daysCount, daysFilled,
     avgMood: moodCount > 0 ? Math.round(moodSum / moodCount * 10) / 10 : null,
     totalSteps, totalExpense, totalIncome, goalsPct, totalWater,
+  };
+}
+
+// ── Body profile ──────────────────────────────────────────────────────────────
+
+const BODY_KEY = "diary_body_profile";
+
+export function getBodyProfile(): BodyProfile {
+  if (!isClient()) return makeEmptyBodyProfile();
+  const raw = localStorage.getItem(up() + BODY_KEY);
+  if (!raw) return makeEmptyBodyProfile();
+  return JSON.parse(raw) as BodyProfile;
+}
+
+export function saveBodyProfile(data: BodyProfile): void {
+  if (!isClient()) return;
+  localStorage.setItem(up() + BODY_KEY, JSON.stringify(data));
+  markDirty(BODY_KEY);
+}
+
+function makeEmptyBodyProfile(): BodyProfile {
+  return {
+    name: "", gender: "female", age: 0, height: 0, weight: 0, goalWeight: 0,
+    activityLevel: "moderate",
+    caloriesMaintenance: 0, caloriesDeficit: 0, caloriesSurplus: 0,
   };
 }

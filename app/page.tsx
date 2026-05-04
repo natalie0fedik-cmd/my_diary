@@ -337,6 +337,16 @@ export default function Home() {
               ⇄ Порівняти місяці
             </span>
           </Link>
+          <Link href="/profile" style={{ textDecoration: "none" }}>
+            <span style={{
+              display: "inline-block", padding: "8px 14px", borderRadius: 8,
+              border: "1px solid var(--border)", background: "var(--surface)",
+              color: "var(--muted)", fontSize: 13, fontFamily: "var(--font-body)",
+              cursor: "pointer", whiteSpace: "nowrap",
+            }}>
+              🌸 Моє тіло
+            </span>
+          </Link>
           {streak >= 2 && (
             <div style={{
               padding: "8px 14px", borderRadius: 8,

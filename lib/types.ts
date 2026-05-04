@@ -85,7 +85,34 @@ export interface DayActivity {
   generalNote: string;
 }
 
-// ── Food diary ───────────────────────────────────────────────────────────────
+// ── Body profile ─────────────────────────────────────────────────────────────
+
+export type Gender = "female" | "male";
+export type ActivityLevel = "sedentary" | "light" | "moderate" | "active" | "veryActive";
+
+export interface BodyProfile {
+  name: string;
+  gender: Gender;
+  age: number;
+  height: number;       // cm
+  weight: number;       // kg
+  goalWeight: number;   // kg
+  activityLevel: ActivityLevel;
+  caloriesMaintenance: number;  // ручне або авто
+  caloriesDeficit: number;
+  caloriesSurplus: number;
+  // Об'єми (cm)
+  neck?: number;
+  chest?: number;
+  waist?: number;
+  hips?: number;
+  arm?: number;         // біцепс
+  thigh?: number;
+  calf?: number;
+  // Додатково
+  proteinGoal?: number;   // g/day — авто або ручне
+  waterGoal?: number;     // ml/day — авто або ручне
+}
 
 export type MealType = "breakfast" | "lunch" | "dinner" | "snacks";
 
