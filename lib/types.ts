@@ -103,7 +103,9 @@ export interface DayFood {
   snacks: FoodItem[];
   water: number;
   notes: string;
-  energy?: number;   // 1–10
-  hunger?: boolean;  // true = є, false = немає
-  sleep?: number;    // години
+  energy?: number;    // 1–10
+  hunger?: boolean;   // true = є, false = немає
+  sleep?: number;     // тривалість годин (авто з sleepFrom/sleepTo)
+  sleepFrom?: number; // година початку (0–23)
+  sleepTo?: number;   // година кінця (0–23)
 }

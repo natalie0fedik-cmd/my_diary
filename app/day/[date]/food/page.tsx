@@ -88,6 +88,46 @@ export default function FoodPage({ params }: Props) {
     setData(updated); save(updated);
   };
 
+  // Hours column 17→16 (wraps around midnight)
+  const SLEEP_HOURS = Array.from({ length: 24 }, (_, i) => (17 + i) % 24);
+
+  const calcSleepDuration = (from: number, to: number) => {
+    const fromIdx = SLEEP_HOURS.indexOf(from);
+    const toIdx = SLEEP_HOURS.indexOf(to);
+    if (fromIdx === -1 || toIdx === -1 || toIdx <= fromIdx) return null;
+    return toIdx - fromIdx;
+  };
+
+  const handleSleepHourClick = (hour: number) => {
+    if (!data) return;
+    const { sleepFrom, sleepTo } = data;
+    if (sleepFrom === undefined || sleepTo !== undefined) {
+      // reset and start new selection
+      const updated = { ...data, sleepFrom: hour, sleepTo: undefined, sleep: undefined };
+      setData(updated); save(updated);
+    } else {
+      const fromIdx = SLEEP_HOURS.indexOf(sleepFrom);
+      const toIdx = SLEEP_HOURS.indexOf(hour);
+      if (toIdx > fromIdx) {
+        const duration = toIdx - fromIdx;
+        const updated = { ...data, sleepTo: hour, sleep: duration };
+        setData(updated); save(updated);
+      } else {
+        // clicked before start — reset
+        const updated = { ...data, sleepFrom: hour, sleepTo: undefined, sleep: undefined };
+        setData(updated); save(updated);
+      }
+    }
+  };
+
+  const isSleepHourInRange = (hour: number) => {
+    if (data?.sleepFrom === undefined || data?.sleepTo === undefined) return false;
+    const fromIdx = SLEEP_HOURS.indexOf(data.sleepFrom!);
+    const toIdx = SLEEP_HOURS.indexOf(data.sleepTo!);
+    const idx = SLEEP_HOURS.indexOf(hour);
+    return idx >= fromIdx && idx <= toIdx;
+  };
+
   const updateNotes = (notes: string) => {
     if (!data) return;
     const updated = { ...data, notes }; setData(updated); save(updated);
@@ -329,20 +369,69 @@ export default function FoodPage({ params }: Props) {
             </div>
 
             {/* Sleep */}
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={{ fontSize: "0.82rem", color: "var(--muted)", minWidth: 130 }}>😴 Сон:</span>
-              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <button onClick={() => setSleep((data.sleep ?? 0) - 0.5)} style={{
-                  width: 28, height: 28, borderRadius: 7, border: "1px solid var(--border)",
-                  background: "var(--surface2)", color: "var(--muted)", cursor: "pointer", fontSize: "1rem",
-                }}>−</button>
-                <span style={{ fontSize: "0.9rem", fontWeight: 600, color: "var(--text)", minWidth: 44, textAlign: "center" }}>
-                  {data.sleep != null ? `${data.sleep} г` : "—"}
-                </span>
-                <button onClick={() => setSleep((data.sleep ?? 0) + 0.5)} style={{
-                  width: 28, height: 28, borderRadius: 7, border: "1px solid var(--border)",
-                  background: "var(--surface2)", color: "var(--muted)", cursor: "pointer", fontSize: "1rem",
-                }}>+</button>
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 10, flexWrap: "wrap" }}>
+              <span style={{ fontSize: "0.82rem", color: "var(--muted)", minWidth: 130, paddingTop: 4 }}>😴 Сон:</span>
+              <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+                {/* Hours column 17→16 */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                  {SLEEP_HOURS.map(h => {
+                    const inRange = isSleepHourInRange(h);
+                    const isFrom = data.sleepFrom === h;
+                    const isTo = data.sleepTo === h;
+                    const isMidnight = h === 0;
+                    return (
+                      <div key={h} style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                        {isMidnight && (
+                          <span style={{ fontSize: "0.6rem", color: "var(--muted)", position: "absolute", marginLeft: -24, opacity: 0.6 }}>00</span>
+                        )}
+                        <button
+                          onClick={() => handleSleepHourClick(h)}
+                          style={{
+                            width: 36, height: 18,
+                            borderRadius: isFrom ? "4px 4px 0 0" : isTo ? "0 0 4px 4px" : 3,
+                            border: `1px solid ${isFrom || isTo ? "#60a5fa" : inRange ? "#60a5fa44" : "var(--border)"}`,
+                            background: isFrom || isTo ? "#60a5fa" : inRange ? "#60a5fa22" : "var(--surface2)",
+                            color: isFrom || isTo ? "#fff" : inRange ? "#60a5fa" : "var(--muted)",
+                            cursor: "pointer",
+                            fontSize: "0.65rem",
+                            fontWeight: isFrom || isTo ? 700 : 400,
+                            lineHeight: 1,
+                            padding: 0,
+                          }}
+                        >
+                          {String(h).padStart(2, "0")}
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Summary */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 6, paddingTop: 2 }}>
+                  {data.sleepFrom !== undefined && (
+                    <div style={{ fontSize: "0.82rem", color: "var(--muted)" }}>
+                      Від: <span style={{ color: "#60a5fa", fontWeight: 600 }}>{String(data.sleepFrom).padStart(2,"0")}:00</span>
+                    </div>
+                  )}
+                  {data.sleepTo !== undefined && (
+                    <div style={{ fontSize: "0.82rem", color: "var(--muted)" }}>
+                      До: <span style={{ color: "#60a5fa", fontWeight: 600 }}>{String(data.sleepTo).padStart(2,"0")}:00</span>
+                    </div>
+                  )}
+                  {data.sleep != null && (
+                    <div style={{ fontSize: "1rem", fontWeight: 700, color: "#60a5fa" }}>
+                      {data.sleep} год
+                    </div>
+                  )}
+                  {data.sleepFrom !== undefined && (
+                    <button
+                      onClick={() => { const u = { ...data, sleepFrom: undefined, sleepTo: undefined, sleep: undefined }; setData(u); save(u); }}
+                      style={{ fontSize: "0.72rem", color: "var(--muted)", background: "none", border: "1px solid var(--border)", borderRadius: 5, padding: "2px 8px", cursor: "pointer" }}
+                    >
+                      Скинути
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
 
