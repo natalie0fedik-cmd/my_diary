@@ -374,15 +374,20 @@ export default function FoodPage({ params }: Props) {
               <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
                 {/* Hours column 17→16 */}
                 <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                  {SLEEP_HOURS.map(h => {
+                  <div style={{ fontSize: "0.6rem", color: "var(--muted)", textAlign: "center", marginBottom: 2, letterSpacing: "0.05em" }}>вчора</div>
+                  {SLEEP_HOURS.map((h, idx) => {
                     const inRange = isSleepHourInRange(h);
                     const isFrom = data.sleepFrom === h;
                     const isTo = data.sleepTo === h;
                     const isMidnight = h === 0;
                     return (
-                      <div key={h} style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                      <div key={h}>
                         {isMidnight && (
-                          <span style={{ fontSize: "0.6rem", color: "var(--muted)", position: "absolute", marginLeft: -24, opacity: 0.6 }}>00</span>
+                          <div style={{
+                            fontSize: "0.6rem", color: "var(--accent)", textAlign: "center",
+                            borderTop: "1px dashed var(--border)", margin: "3px 0 2px",
+                            letterSpacing: "0.05em",
+                          }}>сьогодні</div>
                         )}
                         <button
                           onClick={() => handleSleepHourClick(h)}
@@ -397,6 +402,7 @@ export default function FoodPage({ params }: Props) {
                             fontWeight: isFrom || isTo ? 700 : 400,
                             lineHeight: 1,
                             padding: 0,
+                            display: "block",
                           }}
                         >
                           {String(h).padStart(2, "0")}
