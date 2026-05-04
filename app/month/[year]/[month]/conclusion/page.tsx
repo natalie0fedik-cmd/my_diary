@@ -23,6 +23,7 @@ export default function ConclusionPage({ params }: Props) {
   const [data, setData] = useState<MonthConclusion | null>(null);
   const [saving, setSaving] = useState(false);
   const [newKpiName, setNewKpiName] = useState("");
+  const [kpiCategory, setKpiCategory] = useState("all");
 
   useEffect(() => {
     setData(getMonthConclusion(monthKey));
@@ -451,55 +452,169 @@ export default function ConclusionPage({ params }: Props) {
           </div>
 
           {/* KPI examples */}
-          <div style={{ marginTop: 10 }}>
-            <div style={{ fontSize: "0.72rem", color: "var(--muted)", marginBottom: 6, letterSpacing: "0.04em" }}>
-              Приклади KPI — клікни щоб додати:
-            </div>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
-              {[
-                "💰 Дохід",
-                "📈 Нові клієнти",
-                "🏃 Тренувань на місяць",
-                "📚 Книг прочитано",
-                "💧 Вода щодня (склянок)",
-                "😴 Середній сон (год)",
-                "🧘 Медитацій",
-                "💸 Заощаджено",
-                "📝 Статей написано",
-                "🎯 Задач виконано",
-                "📞 Дзвінків / зустрічей",
-                "🏠 Прибирань",
-                "🚶 Середній крок/день",
-                "🍎 Днів правильного харчування",
-              ].map(example => (
-                <button
-                  key={example}
-                  onClick={() => { setNewKpiName(example); }}
-                  style={{
-                    padding: "3px 10px",
-                    borderRadius: 6,
-                    border: "1px solid var(--border)",
-                    background: "var(--surface2)",
-                    color: "var(--muted)",
-                    cursor: "pointer",
-                    fontSize: "0.75rem",
-                    fontFamily: "inherit",
-                    transition: "all 0.12s",
-                  }}
-                  onMouseEnter={e => {
-                    (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--accent)";
-                    (e.currentTarget as HTMLButtonElement).style.color = "var(--accent)";
-                  }}
-                  onMouseLeave={e => {
-                    (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border)";
-                    (e.currentTarget as HTMLButtonElement).style.color = "var(--muted)";
-                  }}
-                >
-                  {example}
-                </button>
-              ))}
-            </div>
-          </div>
+          {(() => {
+            const KPI_CATEGORIES: { id: string; label: string; color: string; items: string[] }[] = [
+              {
+                id: "work",
+                label: "💼 Робота",
+                color: "#60a5fa",
+                items: [
+                  "📈 Нові клієнти",
+                  "💰 Дохід (грн)",
+                  "💸 Заощаджено (грн)",
+                  "📞 Дзвінків / зустрічей",
+                  "📝 Статей / постів написано",
+                  "🎯 Задач виконано",
+                  "⏱ Годин роботи",
+                  "🤝 Партнерств укладено",
+                  "📊 Проєктів завершено",
+                  "💼 Відправлено резюме",
+                  "🔁 Конверсія (%)",
+                  "📧 Листів оброблено",
+                ],
+              },
+              {
+                id: "health",
+                label: "🏃 Здоров'я",
+                color: "#4ade80",
+                items: [
+                  "🏋 Тренувань на місяць",
+                  "🚶 Середній крок/день",
+                  "💧 Вода щодня (склянок)",
+                  "😴 Середній сон (год)",
+                  "🧘 Медитацій",
+                  "🍎 Днів правильного харчування",
+                  "🏃 Кілометрів пробіг",
+                  "🚴 Велопробіг (км)",
+                  "🩺 Лікарів відвідано",
+                  "💊 Днів без пропуску вітамінів",
+                  "🧘 Сеансів йоги",
+                  "🧖 Масажів",
+                ],
+              },
+              {
+                id: "learning",
+                label: "📚 Навчання",
+                color: "#fbbf24",
+                items: [
+                  "📚 Книг прочитано",
+                  "🎓 Курсів пройдено",
+                  "📹 Відео / уроків переглянуто",
+                  "✍️ Сторінок прочитано",
+                  "🗣 Занять мовою",
+                  "🧩 Нових навичок освоєно",
+                  "📓 Конспектів зроблено",
+                  "🎙 Подкастів прослухано",
+                  "📰 Статей опрацьовано",
+                  "🔬 Годин практики",
+                ],
+              },
+              {
+                id: "personal",
+                label: "🌱 Особисте",
+                color: "#a78bfa",
+                items: [
+                  "🏠 Прибирань",
+                  "👨‍👩‍👧 Зустрічей з близькими",
+                  "🎨 Творчих проєктів",
+                  "🌍 Нових місць відвідано",
+                  "🎉 Приємних подій",
+                  "📸 Фото / спогадів",
+                  "🤗 Добрих справ",
+                  "🎵 Концертів / заходів",
+                  "✅ Звичок виконано (%)",
+                  "🔋 Середня енергія (1–10)",
+                  "😊 Днів гарного настрою",
+                  "💬 Нових знайомств",
+                ],
+              },
+            ];
+
+            const visibleItems = kpiCategory === "all"
+              ? KPI_CATEGORIES.flatMap(c => c.items.map(item => ({ item, color: c.color })))
+              : (KPI_CATEGORIES.find(c => c.id === kpiCategory)?.items ?? []).map(item => ({
+                  item,
+                  color: KPI_CATEGORIES.find(c => c.id === kpiCategory)!.color,
+                }));
+
+            return (
+              <div style={{ marginTop: 14 }}>
+                <div style={{ fontSize: "0.72rem", color: "var(--muted)", marginBottom: 8, letterSpacing: "0.04em" }}>
+                  Приклади KPI — вибери категорію та клікни:
+                </div>
+
+                {/* Category tabs */}
+                <div style={{ display: "flex", gap: 5, marginBottom: 10, flexWrap: "wrap" }}>
+                  <button
+                    onClick={() => setKpiCategory("all")}
+                    style={{
+                      padding: "3px 11px",
+                      borderRadius: 6,
+                      border: `1px solid ${kpiCategory === "all" ? "var(--accent)" : "var(--border)"}`,
+                      background: kpiCategory === "all" ? "color-mix(in srgb, var(--accent) 13%, transparent)" : "var(--surface2)",
+                      color: kpiCategory === "all" ? "var(--accent)" : "var(--muted)",
+                      cursor: "pointer",
+                      fontSize: "0.75rem",
+                      fontFamily: "inherit",
+                      fontWeight: kpiCategory === "all" ? 600 : 400,
+                    }}
+                  >
+                    Всі
+                  </button>
+                  {KPI_CATEGORIES.map(cat => (
+                    <button
+                      key={cat.id}
+                      onClick={() => setKpiCategory(kpiCategory === cat.id ? "all" : cat.id)}
+                      style={{
+                        padding: "3px 11px",
+                        borderRadius: 6,
+                        border: `1px solid ${kpiCategory === cat.id ? cat.color : "var(--border)"}`,
+                        background: kpiCategory === cat.id ? `${cat.color}20` : "var(--surface2)",
+                        color: kpiCategory === cat.id ? cat.color : "var(--muted)",
+                        cursor: "pointer",
+                        fontSize: "0.75rem",
+                        fontFamily: "inherit",
+                        fontWeight: kpiCategory === cat.id ? 600 : 400,
+                      }}
+                    >
+                      {cat.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Example chips */}
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+                  {visibleItems.map(({ item, color }) => (
+                    <button
+                      key={item}
+                      onClick={() => setNewKpiName(item)}
+                      style={{
+                        padding: "3px 10px",
+                        borderRadius: 6,
+                        border: "1px solid var(--border)",
+                        background: "var(--surface2)",
+                        color: "var(--muted)",
+                        cursor: "pointer",
+                        fontSize: "0.75rem",
+                        fontFamily: "inherit",
+                        transition: "all 0.12s",
+                      }}
+                      onMouseEnter={e => {
+                        (e.currentTarget as HTMLButtonElement).style.borderColor = color;
+                        (e.currentTarget as HTMLButtonElement).style.color = color;
+                      }}
+                      onMouseLeave={e => {
+                        (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border)";
+                        (e.currentTarget as HTMLButtonElement).style.color = "var(--muted)";
+                      }}
+                    >
+                      {item}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
         </div>
       </div>
       </div>
