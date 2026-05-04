@@ -325,13 +325,12 @@ export default function ProfilePage() {
               Об&apos;єми тіла (см)
             </h2>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-              <Field label="Шия"><input type="number" value={data.neck || ""} onChange={e => upd("neck", +e.target.value)} placeholder="35" style={FIELD_STYLE} /></Field>
-              <Field label="Груди / Бюст"><input type="number" value={data.chest || ""} onChange={e => upd("chest", +e.target.value)} placeholder="90" style={FIELD_STYLE} /></Field>
+              <Field label="Груди"><input type="number" value={data.chest || ""} onChange={e => upd("chest", +e.target.value)} placeholder="90" style={FIELD_STYLE} /></Field>
+              <Field label="Підгруддя"><input type="number" value={data.underBust || ""} onChange={e => upd("underBust", +e.target.value)} placeholder="75" style={FIELD_STYLE} /></Field>
               <Field label="Талія"><input type="number" value={data.waist || ""} onChange={e => upd("waist", +e.target.value)} placeholder="70" style={FIELD_STYLE} /></Field>
+              <Field label="Живіт"><input type="number" value={data.belly || ""} onChange={e => upd("belly", +e.target.value)} placeholder="80" style={FIELD_STYLE} /></Field>
               <Field label="Стегна"><input type="number" value={data.hips || ""} onChange={e => upd("hips", +e.target.value)} placeholder="95" style={FIELD_STYLE} /></Field>
-              <Field label="Біцепс"><input type="number" value={data.arm || ""} onChange={e => upd("arm", +e.target.value)} placeholder="28" style={FIELD_STYLE} /></Field>
-              <Field label="Стегно"><input type="number" value={data.thigh || ""} onChange={e => upd("thigh", +e.target.value)} placeholder="55" style={FIELD_STYLE} /></Field>
-              <Field label="Гомілка"><input type="number" value={data.calf || ""} onChange={e => upd("calf", +e.target.value)} placeholder="35" style={FIELD_STYLE} /></Field>
+              <Field label="Обхват ноги"><input type="number" value={data.thigh || ""} onChange={e => upd("thigh", +e.target.value)} placeholder="55" style={FIELD_STYLE} /></Field>
             </div>
           </div>
         </div>

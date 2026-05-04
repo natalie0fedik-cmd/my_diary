@@ -102,13 +102,12 @@ export interface BodyProfile {
   caloriesDeficit: number;
   caloriesSurplus: number;
   // Об'єми (cm)
-  neck?: number;
-  chest?: number;
-  waist?: number;
-  hips?: number;
-  arm?: number;         // біцепс
-  thigh?: number;
-  calf?: number;
+  chest?: number;       // груди
+  underBust?: number;   // підгруддя
+  waist?: number;       // талія
+  belly?: number;       // живіт
+  hips?: number;        // стегна
+  thigh?: number;       // обхват ноги
   // Додатково
   proteinGoal?: number;   // g/day — авто або ручне
   waterGoal?: number;     // ml/day — авто або ручне
