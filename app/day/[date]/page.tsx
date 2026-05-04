@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { getDayData, saveDayData, generateId, getImportantDates, toggleImportantDate, getHabitTracker, saveHabitTracker, HabitTracker } from "@/lib/storage";
+import { getDayData, saveDayData, generateId, getImportantDates, toggleImportantDate, getHabitTracker, saveHabitTracker, HabitTracker, Habit } from "@/lib/storage";
 import { DayData, Task } from "@/lib/types";
 
 const MONTHS_UA = [
@@ -12,6 +12,8 @@ const MONTHS_UA = [
 ];
 
 const DAYS_UA_FULL = ["Неділя", "Понеділок", "Вівторок", "Середа", "Четвер", "П'ятниця", "Субота"];
+
+const HABIT_PALETTE = ["#60a5fa","#4ade80","#fbbf24","#f472b6","#a78bfa","#38bdf8","#fb923c","#f87171"];
 
 const MOOD_LABELS = ["", "Погано", "Нижче норми", "Нормально", "Добре", "Відмінно"];
 const MOOD_COLORS = ["", "#f87171", "#fb923c", "#fbbf24", "#4ade80", "#4ec564"];
@@ -41,6 +43,9 @@ export default function DayPage({ params }: Props) {
   const [isImportant, setIsImportant] = useState(false);
   const [showAllHours, setShowAllHours] = useState(false);
   const [habitTracker, setHabitTracker] = useState<HabitTracker>({ habits: [], checks: {} });
+  const [addingHabit, setAddingHabit] = useState(false);
+  const [newHabitName, setNewHabitName] = useState("");
+  const [newHabitColor, setNewHabitColor] = useState(HABIT_PALETTE[0]);
 
   useEffect(() => {
     setData(getDayData(date));
@@ -48,13 +53,32 @@ export default function DayPage({ params }: Props) {
     setHabitTracker(getHabitTracker(monthKey));
   }, [date, monthKey, dayNum]);
 
+  const saveHabits = (updated: HabitTracker) => {
+    setHabitTracker(updated);
+    saveHabitTracker(monthKey, updated);
+  };
+
   const toggleHabit = (habitId: string) => {
     const checks = { ...habitTracker.checks };
     if (!checks[habitId]) checks[habitId] = {};
     checks[habitId] = { ...checks[habitId], [dayNum]: !checks[habitId][dayNum] };
-    const updated = { ...habitTracker, checks };
-    setHabitTracker(updated);
-    saveHabitTracker(monthKey, updated);
+    saveHabits({ ...habitTracker, checks });
+  };
+
+  const addHabit = () => {
+    if (!newHabitName.trim()) return;
+    const habit: Habit = { id: generateId(), name: newHabitName.trim(), color: newHabitColor };
+    saveHabits({ ...habitTracker, habits: [...habitTracker.habits, habit] });
+    setNewHabitName("");
+    setNewHabitColor(HABIT_PALETTE[0]);
+    setAddingHabit(false);
+  };
+
+  const deleteHabit = (id: string) => {
+    const habits = habitTracker.habits.filter(h => h.id !== id);
+    const checks = { ...habitTracker.checks };
+    delete checks[id];
+    saveHabits({ ...habitTracker, habits, checks });
   };
 
   const save = useCallback((updated: DayData) => {
@@ -572,25 +596,25 @@ export default function DayPage({ params }: Props) {
         </div>
 
         {/* Habits */}
-        {habitTracker.habits.length > 0 && (
-          <div style={{
-            background: "var(--surface)", border: "1px solid var(--border)",
-            borderRadius: 14, padding: "1.25rem", marginTop: 14,
-          }}>
-            <h2 style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--muted)", margin: "0 0 12px", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-              Звички дня
-            </h2>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-              {habitTracker.habits.map(habit => {
-                const checked = habitTracker.checks[habit.id]?.[dayNum] ?? false;
-                return (
+        <div style={{
+          background: "var(--surface)", border: "1px solid var(--border)",
+          borderRadius: 14, padding: "1.25rem", marginTop: 14,
+        }}>
+          <h2 style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--muted)", margin: "0 0 12px", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+            Звички дня
+          </h2>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: habitTracker.habits.length > 0 ? 10 : 0 }}>
+            {habitTracker.habits.map(habit => {
+              const checked = habitTracker.checks[habit.id]?.[dayNum] ?? false;
+              return (
+                <div key={habit.id} style={{ display: "flex", alignItems: "center", gap: 0 }}>
                   <button
-                    key={habit.id}
                     onClick={() => toggleHabit(habit.id)}
                     style={{
                       display: "flex", alignItems: "center", gap: 8,
-                      padding: "7px 14px", borderRadius: 10, cursor: "pointer",
+                      padding: "7px 10px 7px 14px", borderRadius: "10px 0 0 10px", cursor: "pointer",
                       border: `1px solid ${checked ? habit.color : "var(--border)"}`,
+                      borderRight: "none",
                       background: checked ? habit.color + "22" : "var(--surface2)",
                       color: checked ? habit.color : "var(--muted)",
                       fontSize: "0.88rem", fontFamily: "inherit",
@@ -612,11 +636,82 @@ export default function DayPage({ params }: Props) {
                     </div>
                     {habit.name}
                   </button>
-                );
-              })}
-            </div>
+                  <button
+                    onClick={() => deleteHabit(habit.id)}
+                    title="Видалити звичку"
+                    style={{
+                      padding: "7px 8px", borderRadius: "0 10px 10px 0", cursor: "pointer",
+                      border: `1px solid ${checked ? habit.color : "var(--border)"}`,
+                      borderLeft: `1px solid ${checked ? habit.color + "44" : "var(--border)"}`,
+                      background: checked ? habit.color + "22" : "var(--surface2)",
+                      color: "var(--muted)", fontSize: "0.85rem", lineHeight: 1,
+                      transition: "all 0.15s",
+                    }}
+                  >
+                    ×
+                  </button>
+                </div>
+              );
+            })}
           </div>
-        )}
+
+          {/* Add habit form */}
+          {addingHabit ? (
+            <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", marginTop: 8 }}>
+              <input
+                autoFocus
+                value={newHabitName}
+                onChange={e => setNewHabitName(e.target.value)}
+                onKeyDown={e => e.key === "Enter" && addHabit()}
+                placeholder="Назва звички..."
+                style={{
+                  flex: 1, minWidth: 150, padding: "6px 12px", borderRadius: 8,
+                  border: "1px solid var(--border)", background: "var(--surface2)",
+                  color: "var(--text)", fontSize: "0.85rem", fontFamily: "inherit",
+                }}
+              />
+              <div style={{ display: "flex", gap: 4 }}>
+                {HABIT_PALETTE.map(c => (
+                  <div
+                    key={c}
+                    onClick={() => setNewHabitColor(c)}
+                    style={{
+                      width: 20, height: 20, borderRadius: 4, background: c, cursor: "pointer",
+                      outline: newHabitColor === c ? "2px solid var(--text)" : "none",
+                      outlineOffset: 2,
+                    }}
+                  />
+                ))}
+              </div>
+              <button onClick={addHabit} style={{
+                padding: "6px 14px", borderRadius: 8, cursor: "pointer",
+                border: "none", background: "var(--accent)", color: "#000",
+                fontWeight: 700, fontSize: "0.85rem",
+              }}>
+                Додати
+              </button>
+              <button onClick={() => { setAddingHabit(false); setNewHabitName(""); }} style={{
+                padding: "6px 10px", borderRadius: 8, cursor: "pointer",
+                border: "1px solid var(--border)", background: "transparent",
+                color: "var(--muted)", fontSize: "0.85rem",
+              }}>
+                ✕
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setAddingHabit(true)}
+              style={{
+                padding: "6px 14px", borderRadius: 8, cursor: "pointer",
+                border: "1px dashed color-mix(in srgb, var(--accent) 50%, transparent)",
+                background: "transparent", color: "var(--accent)",
+                fontSize: "0.82rem", fontFamily: "inherit",
+              }}
+            >
+              + Додати звичку
+            </button>
+          )}
+        </div>
 
         {/* Navigation */}
         <div style={{ marginTop: 14, display: "flex", justifyContent: "center" }}>
