@@ -114,7 +114,6 @@ export default function ProfilePage() {
 
   const bmr  = calcBMR(data);
   const tdee = calcTDEE(data);
-  const bmi  = calcBMI(data);
   const proteinNorm = data.weight ? Math.round(data.weight * 1.8) : 0;
   const toGoal = data.weight && data.goalWeight ? Math.round((data.weight - data.goalWeight) * 10) / 10 : null;
 
