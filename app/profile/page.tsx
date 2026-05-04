@@ -6,11 +6,11 @@ import { getBodyProfile, saveBodyProfile } from "@/lib/storage";
 import { BodyProfile, Gender, ActivityLevel } from "@/lib/types";
 
 const ACTIVITY_LABELS: Record<ActivityLevel, string> = {
-  sedentary:  "Сидячий (без тренувань)",
-  light:      "Легка активність (1–2 рази/тиж)",
-  moderate:   "Помірна (3–5 разів/тиж)",
-  active:     "Активний (6–7 разів/тиж)",
-  veryActive: "Дуже активний (спорт щодня)",
+  sedentary:  "Мінімальна (сидячий спосіб життя)",
+  light:      "Легка (1-2 тренування/тиж)",
+  moderate:   "Помірна (3-5 тренувань/тиж)",
+  active:     "Висока (6-7 тренувань/тиж)",
+  veryActive: "Дуже висока (щодня + важка праця)",
 };
 
 const ACTIVITY_MULT: Record<ActivityLevel, number> = {
@@ -28,17 +28,6 @@ function calcTDEE(p: BodyProfile): number {
   return bmr ? Math.round(bmr * ACTIVITY_MULT[p.activityLevel]) : 0;
 }
 
-function calcBMI(p: BodyProfile): number | null {
-  if (!p.weight || !p.height) return null;
-  return Math.round((p.weight / Math.pow(p.height / 100, 2)) * 10) / 10;
-}
-
-function bmiLabel(bmi: number): { text: string; color: string } {
-  if (bmi < 18.5) return { text: "Недостатня вага", color: "#60a5fa" };
-  if (bmi < 25)   return { text: "Норма", color: "#4ade80" };
-  if (bmi < 30)   return { text: "Надмірна вага", color: "#fbbf24" };
-  return { text: "Ожиріння", color: "#f87171" };
-}
 
 const FIELD_STYLE = {
   padding: "8px 12px", borderRadius: 8,
@@ -126,7 +115,6 @@ export default function ProfilePage() {
   const bmr  = calcBMR(data);
   const tdee = calcTDEE(data);
   const bmi  = calcBMI(data);
-  const waterNorm = data.weight ? Math.round(data.weight * 33) : 0;
   const proteinNorm = data.weight ? Math.round(data.weight * 1.8) : 0;
   const toGoal = data.weight && data.goalWeight ? Math.round((data.weight - data.goalWeight) * 10) / 10 : null;
 
@@ -164,18 +152,8 @@ export default function ProfilePage() {
         </div>
 
         {/* Auto-calculated stats */}
-        {(bmr > 0 || bmi !== null) && (
+        {bmr > 0 && (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))", gap: 10, marginBottom: 14 }}>
-            {bmi !== null && (() => {
-              const { text, color } = bmiLabel(bmi);
-              return (
-                <div style={{ background: "var(--surface)", border: `1px solid ${color}44`, borderRadius: 12, padding: "0.9rem", textAlign: "center" }}>
-                  <div style={{ fontSize: "1.6rem", fontWeight: 700, color }}>{bmi}</div>
-                  <div style={{ fontSize: "0.68rem", color, fontWeight: 600 }}>BMI</div>
-                  <div style={{ fontSize: "0.65rem", color: "var(--muted)", marginTop: 2 }}>{text}</div>
-                </div>
-              );
-            })()}
             {bmr > 0 && (
               <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "0.9rem", textAlign: "center" }}>
                 <div style={{ fontSize: "1.4rem", fontWeight: 700, color: "var(--accent)" }}>{bmr}</div>
@@ -188,13 +166,6 @@ export default function ProfilePage() {
                 <div style={{ fontSize: "1.4rem", fontWeight: 700, color: "#4ade80" }}>{tdee}</div>
                 <div style={{ fontSize: "0.68rem", color: "#4ade80", fontWeight: 600 }}>TDEE</div>
                 <div style={{ fontSize: "0.65rem", color: "var(--muted)", marginTop: 2 }}>підтримка ваги</div>
-              </div>
-            )}
-            {waterNorm > 0 && (
-              <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "0.9rem", textAlign: "center" }}>
-                <div style={{ fontSize: "1.4rem", fontWeight: 700, color: "#38bdf8" }}>{waterNorm}</div>
-                <div style={{ fontSize: "0.68rem", color: "#38bdf8", fontWeight: 600 }}>мл/день</div>
-                <div style={{ fontSize: "0.65rem", color: "var(--muted)", marginTop: 2 }}>норма води</div>
               </div>
             )}
             {proteinNorm > 0 && (
@@ -345,9 +316,9 @@ export default function ProfilePage() {
               <input type="number" value={data.proteinGoal || ""} onChange={e => upd("proteinGoal", +e.target.value)}
                 placeholder={proteinNorm ? String(proteinNorm) : "100"} style={FIELD_STYLE} />
             </Field>
-            <Field label={`Норма води (мл/день)${waterNorm ? ` · авто: ${waterNorm}` : ""}`}>
+            <Field label="Норма води (мл/день)">
               <input type="number" value={data.waterGoal || ""} onChange={e => upd("waterGoal", +e.target.value)}
-                placeholder={waterNorm ? String(waterNorm) : "2000"} style={FIELD_STYLE} />
+                placeholder="2000" style={FIELD_STYLE} />
             </Field>
           </div>
         </div>
