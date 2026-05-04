@@ -363,6 +363,27 @@ export default function DayPage({ params }: Props) {
                         el.style.height = el.scrollHeight + "px";
                       }}
                     />
+                    <button
+                      onClick={() => openInGoogleCalendar(entry.hour, entry.text.trim())}
+                      title="Додати в Google Calendar"
+                      style={{
+                        flexShrink: 0,
+                        width: 24,
+                        height: 24,
+                        borderRadius: 6,
+                        border: "1px solid #4285f4",
+                        background: "#4285f4",
+                        color: "#fff",
+                        cursor: "pointer",
+                        fontSize: "1rem",
+                        lineHeight: 1,
+                        padding: 0,
+                        visibility: entry.text.trim() ? "visible" : "hidden",
+                        pointerEvents: entry.text.trim() ? "auto" : "none",
+                      }}
+                    >
+                      +
+                    </button>
                   </div>
                 ))}
               </div>
