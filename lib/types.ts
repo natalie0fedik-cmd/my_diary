@@ -15,9 +15,6 @@ export interface DayData {
   notes: string;
   tasks: Task[];
   mood?: number;
-  energy?: number;   // 1–10
-  hunger?: boolean;  // true = є, false = немає
-  sleep?: number;    // години
 }
 
 export interface KpiItem {
@@ -106,4 +103,7 @@ export interface DayFood {
   snacks: FoodItem[];
   water: number;
   notes: string;
+  energy?: number;   // 1–10
+  hunger?: boolean;  // true = є, false = немає
+  sleep?: number;    // години
 }

@@ -70,6 +70,24 @@ export default function FoodPage({ params }: Props) {
     setData(updated); save(updated);
   };
 
+  const setEnergy = (v: number) => {
+    if (!data) return;
+    const updated = { ...data, energy: data.energy === v ? undefined : v };
+    setData(updated); save(updated);
+  };
+
+  const setHunger = (v: boolean) => {
+    if (!data) return;
+    const updated = { ...data, hunger: data.hunger === v ? undefined : v };
+    setData(updated); save(updated);
+  };
+
+  const setSleep = (v: number) => {
+    if (!data) return;
+    const updated = { ...data, sleep: Math.max(0, Math.min(24, v)) };
+    setData(updated); save(updated);
+  };
+
   const updateNotes = (notes: string) => {
     if (!data) return;
     const updated = { ...data, notes }; setData(updated); save(updated);
@@ -259,6 +277,76 @@ export default function FoodPage({ params }: Props) {
               </div>
             );
           })}
+        </div>
+
+        {/* Wellbeing */}
+        <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "1rem 1.25rem", marginBottom: "1rem" }}>
+          <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1rem", color: "var(--muted)", margin: "0 0 12px" }}>
+            Самопочуття
+          </h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+
+            {/* Energy */}
+            <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+              <span style={{ fontSize: "0.82rem", color: "var(--muted)", minWidth: 130 }}>⚡ Енергія (1–10):</span>
+              <div style={{ display: "flex", gap: 3 }}>
+                {[1,2,3,4,5,6,7,8,9,10].map(v => {
+                  const col = v <= 3 ? "#f87171" : v <= 6 ? "#fbbf24" : "#4ade80";
+                  return (
+                    <button key={v} onClick={() => setEnergy(v)} style={{
+                      width: 26, height: 26, borderRadius: 6, cursor: "pointer",
+                      border: `1px solid ${data.energy === v ? col : "var(--border)"}`,
+                      background: data.energy === v ? col + "33" : "var(--surface2)",
+                      color: data.energy === v ? col : "var(--muted)",
+                      fontSize: "0.75rem", fontWeight: 700,
+                    }}>{v}</button>
+                  );
+                })}
+              </div>
+              {data.energy && (
+                <span style={{ fontSize: "0.82rem", fontWeight: 600, color: data.energy <= 3 ? "#f87171" : data.energy <= 6 ? "#fbbf24" : "#4ade80" }}>
+                  {data.energy}/10
+                </span>
+              )}
+            </div>
+
+            {/* Hunger */}
+            <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+              <span style={{ fontSize: "0.82rem", color: "var(--muted)", minWidth: 130 }}>🍽 Голод між їжею:</span>
+              <div style={{ display: "flex", gap: 6 }}>
+                {([true, false] as const).map(val => (
+                  <button key={String(val)} onClick={() => setHunger(val)} style={{
+                    padding: "4px 16px", borderRadius: 8, cursor: "pointer",
+                    border: `1px solid ${data.hunger === val ? (val ? "#fb923c" : "#4ade80") : "var(--border)"}`,
+                    background: data.hunger === val ? (val ? "#fb923c22" : "#4ade8022") : "var(--surface2)",
+                    color: data.hunger === val ? (val ? "#fb923c" : "#4ade80") : "var(--muted)",
+                    fontSize: "0.82rem", fontWeight: data.hunger === val ? 600 : 400,
+                  }}>
+                    {val ? "Є" : "Немає"}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Sleep */}
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{ fontSize: "0.82rem", color: "var(--muted)", minWidth: 130 }}>😴 Сон:</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <button onClick={() => setSleep((data.sleep ?? 0) - 0.5)} style={{
+                  width: 28, height: 28, borderRadius: 7, border: "1px solid var(--border)",
+                  background: "var(--surface2)", color: "var(--muted)", cursor: "pointer", fontSize: "1rem",
+                }}>−</button>
+                <span style={{ fontSize: "0.9rem", fontWeight: 600, color: "var(--text)", minWidth: 44, textAlign: "center" }}>
+                  {data.sleep != null ? `${data.sleep} г` : "—"}
+                </span>
+                <button onClick={() => setSleep((data.sleep ?? 0) + 0.5)} style={{
+                  width: 28, height: 28, borderRadius: 7, border: "1px solid var(--border)",
+                  background: "var(--surface2)", color: "var(--muted)", cursor: "pointer", fontSize: "1rem",
+                }}>+</button>
+              </div>
+            </div>
+
+          </div>
         </div>
 
         {/* Notes */}
