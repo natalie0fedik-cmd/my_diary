@@ -2,8 +2,35 @@
 
 import { use, useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { getMonthGoals, saveMonthGoals, generateId } from "@/lib/storage";
-import { MonthGoals, Goal, GoalCategory } from "@/lib/types";
+import { getMonthGoals, saveMonthGoals, getMonthConclusion, saveMonthConclusion, generateId } from "@/lib/storage";
+import { MonthGoals, Goal, GoalCategory, KpiItem } from "@/lib/types";
+
+const KPI_CATEGORIES: { id: string; label: string; color: string; items: string[] }[] = [
+  {
+    id: "work", label: "💼 Робота", color: "#60a5fa",
+    items: ["📈 Нові клієнти","💰 Дохід (грн)","💸 Заощаджено (грн)","📞 Дзвінків / зустрічей","📝 Статей / постів написано","🎯 Задач виконано","⏱ Годин роботи","🤝 Партнерств укладено","📊 Проєктів завершено","💼 Відправлено резюме","🔁 Конверсія (%)","📧 Листів оброблено"],
+  },
+  {
+    id: "health", label: "🏃 Здоров'я", color: "#4ade80",
+    items: ["🏋 Тренувань на місяць","🚶 Середній крок/день","💧 Вода щодня (склянок)","😴 Середній сон (год)","🧘 Медитацій","🍎 Днів правильного харчування","🏃 Кілометрів пробіг","🚴 Велопробіг (км)","🩺 Лікарів відвідано","💊 Днів без пропуску вітамінів","🧘 Сеансів йоги","🧖 Масажів"],
+  },
+  {
+    id: "learning", label: "📚 Навчання", color: "#fbbf24",
+    items: ["📚 Книг прочитано","🎓 Курсів пройдено","📹 Відео / уроків переглянуто","✍️ Сторінок прочитано","🗣 Занять мовою","🧩 Нових навичок освоєно","📓 Конспектів зроблено","🎙 Подкастів прослухано","📰 Статей опрацьовано","🔬 Годин практики"],
+  },
+  {
+    id: "personal", label: "🌱 Особисте", color: "#a78bfa",
+    items: ["🏠 Прибирань","🌍 Нових місць відвідано","🎉 Приємних подій","📸 Фото / спогадів","🤗 Добрих справ","🎵 Концертів / заходів","✅ Звичок виконано (%)","🔋 Середня енергія (1–10)","😊 Днів гарного настрою","🎨 Творчих сесій","🧹 Генеральних прибирань","🌿 Днів без алкоголю"],
+  },
+  {
+    id: "relations", label: "💞 Стосунки", color: "#f472b6",
+    items: ["👨‍👩‍👧 Зустрічей з близькими","📞 Дзвінків рідним","💬 Нових знайомств","❤️ Побачень / романтичних вечорів","🤝 Нових корисних контактів","🎁 Подарованих приємних моментів","💌 Листів / повідомлень підтримки","🫂 Годин якісного часу з партнером","👫 Спільних активностей","🙏 Конфліктів вирішено","🌟 Компліментів зроблено","🥂 Святкувань з друзями"],
+  },
+  {
+    id: "mind", label: "🧠 Ментальне", color: "#38bdf8",
+    items: ["🧘 Медитацій","📔 Сторінок щоденника","🛁 Годин для себе","😌 Сеансів релаксації","🧠 Сеансів терапії / коучингу","🌅 Ранкових ритуалів","🌙 Вечірніх ритуалів","📵 Днів без соцмереж","🎯 Днів з чітким фокусом","💭 Афірмацій / практик вдячності","🧩 Годин без телефону","🌳 Прогулянок на природі"],
+  },
+];
 
 const MONTHS_UA = [
   "Січень", "Лютий", "Березень", "Квітень",
@@ -38,6 +65,8 @@ export default function GoalsPage({ params }: Props) {
   const [data, setData] = useState<MonthGoals | null>(null);
   const [newText, setNewText] = useState("");
   const [newCat, setNewCat] = useState<GoalCategory>("personal");
+  const [newTarget, setNewTarget] = useState("");
+  const [kpiCat, setKpiCat] = useState("work");
 
   useEffect(() => { setData(getMonthGoals(monthKey)); }, [monthKey]);
 
@@ -47,7 +76,15 @@ export default function GoalsPage({ params }: Props) {
     if (!data || !newText.trim()) return;
     const goal: Goal = { id: generateId(), text: newText.trim(), done: false, category: newCat };
     const updated = { ...data, goals: [...data.goals, goal] };
-    setData(updated); save(updated); setNewText("");
+    setData(updated); save(updated);
+
+    if (newTarget.trim()) {
+      const conclusion = getMonthConclusion(monthKey);
+      const kpi: KpiItem = { id: generateId(), name: newText.trim(), target: newTarget.trim(), actual: "", note: "" };
+      saveMonthConclusion({ ...conclusion, kpis: [...conclusion.kpis, kpi] });
+    }
+
+    setNewText(""); setNewTarget("");
   };
 
   const toggleGoal = (id: string) => {
@@ -216,6 +253,18 @@ export default function GoalsPage({ params }: Props) {
                 fontSize: "0.88rem", color: "var(--text)", fontFamily: "var(--font-body)",
               }}
             />
+            <input
+              type="text" value={newTarget}
+              onChange={e => setNewTarget(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && addGoal()}
+              placeholder="Ціль (число)"
+              style={{
+                width: 110, padding: "8px 12px", borderRadius: 8,
+                border: `1px solid ${newTarget ? "color-mix(in srgb, var(--accent) 50%, transparent)" : "var(--border)"}`,
+                background: newTarget ? "color-mix(in srgb, var(--accent) 8%, transparent)" : "var(--surface2)",
+                fontSize: "0.88rem", color: "var(--text)", fontFamily: "var(--font-body)",
+              }}
+            />
             <select value={newCat} onChange={e => setNewCat(e.target.value as GoalCategory)} style={{
               padding: "8px 10px", borderRadius: 8, border: "1px solid var(--border)",
               background: "var(--surface2)", color: "var(--text)", fontSize: "0.85rem",
@@ -231,6 +280,63 @@ export default function GoalsPage({ params }: Props) {
             }}>
               + Додати
             </button>
+          </div>
+          {newTarget && (
+            <div style={{ marginTop: 7, fontSize: "0.72rem", color: "var(--accent)", opacity: 0.8 }}>
+              ✦ Автоматично з&apos;явиться як KPI в Підсумках — залишиться лише вписати факт
+            </div>
+          )}
+
+          {/* KPI example chips */}
+          <div style={{ marginTop: 14, borderTop: "1px solid var(--border)", paddingTop: 12 }}>
+            <div style={{ fontSize: "0.72rem", color: "var(--muted)", marginBottom: 8, letterSpacing: "0.04em" }}>
+              Приклади цілей — клікни щоб заповнити:
+            </div>
+            <div style={{ display: "flex", gap: 5, marginBottom: 9, flexWrap: "wrap" }}>
+              {KPI_CATEGORIES.map(cat => (
+                <button
+                  key={cat.id}
+                  onClick={() => setKpiCat(cat.id)}
+                  style={{
+                    padding: "3px 11px", borderRadius: 6,
+                    border: `1px solid ${kpiCat === cat.id ? cat.color : "var(--border)"}`,
+                    background: kpiCat === cat.id ? `${cat.color}20` : "var(--surface2)",
+                    color: kpiCat === cat.id ? cat.color : "var(--muted)",
+                    cursor: "pointer", fontSize: "0.75rem", fontFamily: "inherit",
+                    fontWeight: kpiCat === cat.id ? 600 : 400,
+                  }}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+              {(() => {
+                const cat = KPI_CATEGORIES.find(c => c.id === kpiCat) ?? KPI_CATEGORIES[0];
+                return cat.items.map(item => (
+                  <button
+                    key={item}
+                    onClick={() => { setNewText(item); }}
+                    style={{
+                      padding: "3px 10px", borderRadius: 6,
+                      border: "1px solid var(--border)", background: "var(--surface2)",
+                      color: "var(--muted)", cursor: "pointer", fontSize: "0.75rem",
+                      fontFamily: "inherit", transition: "all 0.12s",
+                    }}
+                    onMouseEnter={e => {
+                      (e.currentTarget as HTMLButtonElement).style.borderColor = cat.color;
+                      (e.currentTarget as HTMLButtonElement).style.color = cat.color;
+                    }}
+                    onMouseLeave={e => {
+                      (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border)";
+                      (e.currentTarget as HTMLButtonElement).style.color = "var(--muted)";
+                    }}
+                  >
+                    {item}
+                  </button>
+                ));
+              })()}
+            </div>
           </div>
         </div>
 
