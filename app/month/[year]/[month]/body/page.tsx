@@ -71,7 +71,7 @@ export default function MonthBodyPage({ params }: Props) {
     // Previous = last month's snapshot, fallback to global body profile
     const prevKey = prevMonthKey(year, month);
     const prevSnap = getMonthBodySnapshot(prevKey);
-    const hasAnyPrevData = MEASUREMENTS.some(m => (prevSnap as Record<string, unknown>)[m.key] != null);
+    const hasAnyPrevData = MEASUREMENTS.some(m => (prevSnap as unknown as Record<string, unknown>)[m.key] != null);
     if (hasAnyPrevData) {
       setPrev(prevSnap);
     } else {
@@ -186,8 +186,8 @@ export default function MonthBodyPage({ params }: Props) {
               </thead>
               <tbody>
                 {MEASUREMENTS.map(({ key, label, unit }) => {
-                  const prevVal = prev ? (prev as Record<string, number | undefined>)[key] : undefined;
-                  const curVal = (snap as Record<string, number | undefined>)[key];
+                  const prevVal = prev ? (prev as unknown as Record<string, number | undefined>)[key] : undefined;
+                  const curVal = (snap as unknown as Record<string, number | undefined>)[key];
                   const d = delta(curVal, prevVal);
                   // For weight: negative is good (losing weight); for measurements: negative is good (shrinking)
                   const isGood = d !== null && d < 0;
