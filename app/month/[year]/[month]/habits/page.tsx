@@ -50,11 +50,27 @@ export default function HabitsPage({ params }: Props) {
     saveHabitTracker(monthKey, updated);
   }
 
-  function toggleDay(habitId: string, day: number) {
+  function cycleDay(habitId: string, day: number) {
     const checks = { ...tracker.checks };
+    const crosses = { ...(tracker.crosses ?? {}) };
     if (!checks[habitId]) checks[habitId] = {};
-    checks[habitId] = { ...checks[habitId], [day]: !checks[habitId][day] };
-    save({ ...tracker, checks });
+    if (!crosses[habitId]) crosses[habitId] = {};
+
+    const isDone    = !!checks[habitId][day];
+    const isCrossed = !!crosses[habitId][day];
+
+    if (!isDone && !isCrossed) {
+      // empty → done
+      checks[habitId] = { ...checks[habitId], [day]: true };
+    } else if (isDone) {
+      // done → crossed
+      checks[habitId] = { ...checks[habitId], [day]: false };
+      crosses[habitId] = { ...crosses[habitId], [day]: true };
+    } else {
+      // crossed → empty
+      crosses[habitId] = { ...crosses[habitId], [day]: false };
+    }
+    save({ ...tracker, checks, crosses });
   }
 
   function addHabit() {
@@ -85,6 +101,11 @@ export default function HabitsPage({ params }: Props) {
 
   function countDone(habitId: string) {
     const c = tracker.checks[habitId] ?? {};
+    return Object.values(c).filter(Boolean).length;
+  }
+
+  function countCrossed(habitId: string) {
+    const c = (tracker.crosses ?? {})[habitId] ?? {};
     return Object.values(c).filter(Boolean).length;
   }
 
@@ -180,7 +201,8 @@ export default function HabitsPage({ params }: Props) {
               </thead>
               <tbody>
                 {tracker.habits.map((habit, hi) => {
-                  const done = countDone(habit.id);
+                  const done    = countDone(habit.id);
+                  const crossed = countCrossed(habit.id);
                   const pct = Math.round(done / daysCount * 100);
                   return (
                     <tr key={habit.id} style={{ background: hi % 2 === 0 ? "transparent" : "color-mix(in srgb, var(--surface2) 50%, transparent)" }}>
@@ -245,8 +267,11 @@ export default function HabitsPage({ params }: Props) {
 
                       {/* Day cells */}
                       {days.map(d => {
-                        const checked = tracker.checks[habit.id]?.[d] ?? false;
-                        const isToday = isCurrentMonth && d === todayDay;
+                        const isDone    = !!tracker.checks[habit.id]?.[d];
+                        const isCrossed = !!(tracker.crosses ?? {})[habit.id]?.[d];
+                        const isToday   = isCurrentMonth && d === todayDay;
+                        const bg = isDone ? habit.color : isCrossed ? "#f8717122" : "var(--surface2)";
+                        const borderColor = isDone ? habit.color : isCrossed ? "#f87171" : isToday ? "var(--accent)" : "color-mix(in srgb, var(--border) 80%, transparent)";
                         return (
                           <td key={d} style={{
                             textAlign: "center", padding: "3px 2px",
@@ -254,21 +279,27 @@ export default function HabitsPage({ params }: Props) {
                             borderLeft: "1px solid color-mix(in srgb, var(--border) 40%, transparent)",
                           }}>
                             <div
-                              onClick={() => toggleDay(habit.id, d)}
+                              onClick={() => cycleDay(habit.id, d)}
+                              title="Клік: виконано → не виконано → порожньо"
                               style={{
                                 width: 22, height: 22, borderRadius: 4, margin: "0 auto",
-                                background: checked ? habit.color : "var(--surface2)",
-                                border: `1px solid ${checked ? habit.color : isToday ? "var(--accent)" : "color-mix(in srgb, var(--border) 80%, transparent)"}`,
+                                background: bg,
+                                border: `1px solid ${borderColor}`,
                                 cursor: "pointer",
-                                transition: "background 0.1s, transform 0.1s",
+                                transition: "background 0.1s",
                                 display: "flex", alignItems: "center", justifyContent: "center",
                               }}
-                              onMouseEnter={e => { if (!checked) (e.currentTarget as HTMLDivElement).style.background = habit.color + "55"; }}
-                              onMouseLeave={e => { if (!checked) (e.currentTarget as HTMLDivElement).style.background = "var(--surface2)"; }}
+                              onMouseEnter={e => { if (!isDone && !isCrossed) (e.currentTarget as HTMLDivElement).style.background = habit.color + "44"; }}
+                              onMouseLeave={e => { if (!isDone && !isCrossed) (e.currentTarget as HTMLDivElement).style.background = "var(--surface2)"; }}
                             >
-                              {checked && (
+                              {isDone && (
                                 <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
                                   <path d="M1.5 5L4 7.5L8.5 2.5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                                </svg>
+                              )}
+                              {isCrossed && (
+                                <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                                  <path d="M2 2L8 8M8 2L2 8" stroke="#f87171" strokeWidth="1.8" strokeLinecap="round"/>
                                 </svg>
                               )}
                             </div>
@@ -283,6 +314,7 @@ export default function HabitsPage({ params }: Props) {
                         borderLeft: "1px solid var(--border)",
                       }}>
                         <div style={{ fontSize: 12, fontWeight: 600, color: habit.color }}>{done}</div>
+                        {crossed > 0 && <div style={{ fontSize: 10, color: "#f87171" }}>✗{crossed}</div>}
                         <div style={{ fontSize: 10, color: "var(--muted)" }}>{pct}%</div>
                       </td>
 
@@ -369,7 +401,7 @@ export default function HabitsPage({ params }: Props) {
 
         {/* Hint */}
         <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 8, textAlign: "center" }}>
-          Натисни на назву звички щоб перейменувати · клітинку щоб відмітити
+          Натисни на клітинку: 1 клік — виконала ✓, 2 кліки — не виконала ✗, 3 кліки — очистити
         </div>
 
       </div>

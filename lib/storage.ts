@@ -213,6 +213,7 @@ export interface Habit {
 export interface HabitTracker {
   habits: Habit[];
   checks: Record<string, Record<number, boolean>>; // habitId → day → checked
+  crosses?: Record<string, Record<number, boolean>>; // habitId → day → crossed (not done)
 }
 
 const DEFAULT_HABITS: Habit[] = [
